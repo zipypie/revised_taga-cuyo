@@ -13,6 +13,7 @@ android/gradle-wrapper.jar
 android/gradlew
 android/gradlew.bat
 android/local.properties
+android/gradle
 
 # iOS specific
 ios/Pods/
