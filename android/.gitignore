@@ -1,0 +1,42 @@
+# Flutter/Dart related
+.dart_tool/
+.idea/
+.vscode/
+.packages
+.pub-cache/
+.pub/
+
+# Android specific
+android/.gradle/
+android/gradle-wrapper.jar
+/android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+
+# iOS specific
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.podspec
+
+# Generated files
+GeneratedPluginRegistrant.java
+**/*.keystore
+**/*.jks
+key.properties
+
+# Build outputs
+build/
+
+# User-specific files
+.metadata
+*.log
+
+# IDE-specific files
+.idea/
+taga_cuyo.iml
+
+
+# Flutter configuration files
+pubspec.lock
+analysis_options.yaml

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "908851804845",
+    "project_id": "taga-cuyo-app",
+    "storage_bucket": "taga-cuyo-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:908851804845:android:11d38b3fa6d88ffe23a424",
+        "android_client_info": {
+          "package_name": "com.example.taga_cuyo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4Wfqy2TvkmLk0YnF6SSVQ9KS5AMO54FY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
