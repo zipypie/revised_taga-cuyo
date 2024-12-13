@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taga_cuyo/core/common_widgets/bot_nav.dart';
+import 'package:taga_cuyo/core/common_widgets/app_screen.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -9,7 +9,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.amber),
-      home: const BottomNavBar(),
+      home: const MainAppScreen(),
     );
   }
 }

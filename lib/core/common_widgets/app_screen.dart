@@ -8,14 +8,14 @@ import 'package:taga_cuyo/screens/lesson/lesson.dart';
 import 'package:taga_cuyo/screens/profile/profile.dart';
 import 'package:taga_cuyo/screens/translator/translator.dart';
 
-class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
+class MainAppScreen extends StatefulWidget {
+  const MainAppScreen({super.key});
 
   @override
-  State<BottomNavBar> createState() => _BottomNavBarState();
+  State<MainAppScreen> createState() => _MainAppScreenState();
 }
 
-class _BottomNavBarState extends State<BottomNavBar> {
+class _MainAppScreenState extends State<MainAppScreen> {
   int _currentIndex = 0;
 
   // List of screen widgets
@@ -39,7 +39,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 75,
+        toolbarHeight: 65,
         title: Text(
           _title[_currentIndex],
           style: TextStyles.heading1,
