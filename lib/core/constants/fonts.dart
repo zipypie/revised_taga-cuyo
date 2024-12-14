@@ -27,10 +27,9 @@ class TextStyles {
   );
 
   static const TextStyle heading4 = TextStyle(
-    fontFamily: AppFonts.fcr,
+    fontFamily: AppFonts.fcb,
     fontSize: 21,
-    fontWeight: FontWeight.bold,
-    color: AppColors.titleColor,
+    color: Color.fromARGB(255, 71, 71, 71),
   );
 
   static const TextStyle buttonLight = TextStyle(
