@@ -27,8 +27,9 @@ class TextStyles {
   );
 
   static const TextStyle heading4 = TextStyle(
-    fontFamily: AppFonts.fcb,
-    fontSize: 18,
+    fontFamily: AppFonts.fcr,
+    fontSize: 21,
+    fontWeight: FontWeight.bold,
     color: AppColors.titleColor,
   );
 
