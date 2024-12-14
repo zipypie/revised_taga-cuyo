@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
     final width = ScreenUtils.getScreenWidth(context) - 130;
     final height = ScreenUtils.getScreenHeight(context);
     return Container(
-      height: height * 0.14,
+      height: height * 0.15,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         color: AppColors.secondaryBackground,
@@ -60,8 +60,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: width * 0.4, // 30% of the screen width
-              height: width * 0.4,
+              height: height * 0.15,
               child: Image.asset(
                 LocalImages.cashew1,
                 fit: BoxFit
@@ -125,7 +124,7 @@ class HomeScreen extends StatelessWidget {
         );
       }).toList(),
       options: FlutterCarouselOptions(
-        height: 250,
+        height: 225,
         autoPlay: true,
         enableInfiniteScroll: true,
         enlargeCenterPage: true,
@@ -201,7 +200,7 @@ class HomeScreen extends StatelessWidget {
         );
       }).toList(),
       options: FlutterCarouselOptions(
-        height: 250,
+        height: 225,
         autoPlay: true,
         enableInfiniteScroll: true,
         enlargeCenterPage: true,

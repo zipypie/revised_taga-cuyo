@@ -3,6 +3,8 @@ import 'package:taga_cuyo/core/common_widgets/button.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/utils/screen_utils.dart';
 import 'package:taga_cuyo/core/utils/string_count.dart';
+import 'package:taga_cuyo/core/models/language_model.dart';
+import 'package:taga_cuyo/presentation/translator/language_switcher.dart';
 
 class TranslatorScreen extends StatefulWidget {
   const TranslatorScreen({super.key});
@@ -14,10 +16,12 @@ class TranslatorScreen extends StatefulWidget {
 class _TranslatorScreenState extends State<TranslatorScreen> {
   final TextEditingController _inputController = TextEditingController();
   final TextEditingController _outputController = TextEditingController();
+  LanguagePair languagePair =
+      LanguagePair.defaultPair(); // Direct initialization
 
-  //count string
+  // Count string
   int _inputCount = 0;
-  final int _outputCount = 0;
+  int _outputCount = 0;
 
   @override
   void initState() {
@@ -36,6 +40,21 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
     super.dispose();
   }
 
+  void _swapLanguages() {
+    setState(() {
+      languagePair.swap(); // Immediately swap the languages.
+    });
+  }
+
+  void _translateText() {
+    // Add your translation logic here, e.g., using an API or local method.
+    // For now, let's just display the input text in the output field.
+    setState(() {
+      _outputController.text = _inputController.text; // Example output
+      _outputCount = getStringCount(_outputController.text);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,12 +62,17 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
         child: Stack(
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+              padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
               child: Column(
                 children: [
-                  SizedBox(height: 100),
+                  const SizedBox(height: 20),
+                  LanguageSwitcher(
+                    languagePair: languagePair,
+                    onLanguageSwap: _swapLanguages,
+                  ),
+                  const SizedBox(height: 20),
                   _inputContainer(context),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _outputContainer(context),
                 ],
               ),
@@ -58,7 +82,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
               left: 25,
               right: 25,
               child: CustomButton(
-                onTab: () {},
+                onTab: _translateText, // Call the translation function
                 text: 'Translate',
               ),
             ),
@@ -68,88 +92,94 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
     );
   }
 
-  // Using the utility function to get the screen width
+  // Input container
   Widget _inputContainer(BuildContext context) {
     return Container(
-        width: ScreenUtils.getScreenWidth(context),
-        decoration: BoxDecoration(
-            color: AppColors.accentColor,
-            borderRadius: BorderRadius.circular(10)),
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            children: [
-              TextField(
-                controller: _inputController,
-                maxLines: 5,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                  hintText: "Ilagay ang gustong malaman...",
-                  hintStyle: TextStyle(color: Color.fromARGB(221, 89, 86, 86)),
-                ),
+      width: ScreenUtils.getScreenWidth(context),
+      decoration: BoxDecoration(
+        color: AppColors.accentColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          children: [
+            Text(languagePair.language1),
+            TextField(
+              controller: _inputController,
+              maxLines: 5,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(borderSide: BorderSide.none),
+                hintText: "Ilagay ang gustong malaman...",
+                hintStyle: TextStyle(color: Color.fromARGB(221, 89, 86, 86)),
               ),
-              SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(
-                    Icons.camera_alt,
-                    color: AppColors.titleColor, // Set the icon color
-                    size: 32.0, // Set the icon size
-                  ),
-                  Text("$_inputCount characters")
-                ],
-              )
-            ],
-          ),
-        ));
+            ),
+            const SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Icon(
+                  Icons.camera_alt,
+                  color: AppColors.titleColor, // Set the icon color
+                  size: 32.0, // Set the icon size
+                ),
+                Text("$_inputCount characters"),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  // Using the utility function to get the screen width
+  // Output container
   Widget _outputContainer(BuildContext context) {
     return Container(
-        width: ScreenUtils.getScreenWidth(context),
-        decoration: BoxDecoration(
-            color: AppColors.accentColor,
-            borderRadius: BorderRadius.circular(10)),
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            children: [
-              TextField(
-                controller: _outputController,
-                readOnly: true,
-                maxLines: 5,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                  hintText: "Output will be displayed here...",
-                  hintStyle: TextStyle(color: Color.fromARGB(221, 89, 86, 86)),
-                ),
+      width: ScreenUtils.getScreenWidth(context),
+      decoration: BoxDecoration(
+        color: AppColors.accentColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          children: [
+            Text(languagePair.language2),
+            TextField(
+              controller: _outputController,
+              readOnly: true,
+              maxLines: 5,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(borderSide: BorderSide.none),
+                hintText: "Output will be displayed here...",
+                hintStyle: TextStyle(color: Color.fromARGB(221, 89, 86, 86)),
               ),
-              SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.copy_rounded,
-                        color: AppColors.titleColor, // Set the icon color
-                        size: 32.0, // Set the icon size
-                      ),
-                      SizedBox(width: 25),
-                      Icon(
-                        Icons.volume_up_rounded,
-                        color: AppColors.titleColor, // Set the icon color
-                        size: 32.0, // Set the icon size
-                      ),
-                    ],
-                  ),
-                  Text("$_outputCount characters")
-                ],
-              )
-            ],
-          ),
-        ));
+            ),
+            const SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: const [
+                    Icon(
+                      Icons.copy_rounded,
+                      color: AppColors.titleColor, // Set the icon color
+                      size: 32.0, // Set the icon size
+                    ),
+                    SizedBox(width: 25),
+                    Icon(
+                      Icons.volume_up_rounded,
+                      color: AppColors.titleColor, // Set the icon color
+                      size: 32.0, // Set the icon size
+                    ),
+                  ],
+                ),
+                Text("$_outputCount characters"),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
