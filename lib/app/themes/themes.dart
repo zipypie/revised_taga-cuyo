@@ -9,7 +9,7 @@ class AppThemes {
       secondary: AppColors.secondary, // Secondary color
       surface: AppColors.primaryBackground, // Background color
     ),
-    scaffoldBackgroundColor: AppColors.primaryBackground,
+    scaffoldBackgroundColor: const Color.fromARGB(255, 241, 241, 241),
     textTheme: const TextTheme(
       bodyLarge: TextStyle(color: Color(0xFF000000)), // Replace bodyText1
       bodyMedium: TextStyle(color: Color(0xFF000000)), // Replace bodyText2

@@ -2,6 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
+import 'package:taga_cuyo/core/constants/images.dart';
 import 'package:taga_cuyo/screens/category/category_screen.dart';
 import 'package:taga_cuyo/screens/home/home_screen.dart';
 import 'package:taga_cuyo/screens/lesson/lesson_screen.dart';
@@ -45,6 +46,15 @@ class _MainAppScreenState extends State<MainAppScreen> {
           style: TextStyles.heading1,
         ),
         backgroundColor: AppColors.primary,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              LogoImage.logoPath,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: CurvedNavigationBar(
         index: _currentIndex,
