@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:taga_cuyo/core/models/translate_model.dart';
-import 'package:taga_cuyo/core/utils/Logger.dart';
+import 'package:taga_cuyo/core/utils/logger.dart';
 
 class TranslateApi {
   final String apiUrl =
