@@ -13,9 +13,9 @@ class AppFonts {
 
 class TextStyles {
   //for small heading
-  static const TextStyle smallHeading = TextStyle(
+  static const TextStyle heading6 = TextStyle(
     fontFamily: AppFonts.lilitaOne,
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: FontWeight.bold,
     color: AppColors.titleColor,
   );

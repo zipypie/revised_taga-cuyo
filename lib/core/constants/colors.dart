@@ -9,5 +9,5 @@ class AppColors {
   static const Color primary = Color(0xFFFFD54F);
   static const Color correct = Color(0xFF88E9A3);
   static const Color wrong = Color(0xFFF90909);
-  static const Color accentColor = Color(0xFFABBAEF);
+  static const Color accentColor = Color.fromARGB(255, 133, 188, 250);
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taga_cuyo/core/common_widgets/button.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
+import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/core/utils/screen_utils.dart';
 import 'package:taga_cuyo/core/utils/string_count.dart';
 import 'package:taga_cuyo/core/models/language_model.dart';
@@ -62,7 +63,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+              padding: const EdgeInsets.fromLTRB(35, 0, 35, 0),
               child: Column(
                 children: [
                   const SizedBox(height: 20),
@@ -96,6 +97,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
   Widget _inputContainer(BuildContext context) {
     return Container(
       width: ScreenUtils.getScreenWidth(context),
+      height: ScreenUtils.getScreenHeight(context) * 0.33,
       decoration: BoxDecoration(
         color: AppColors.accentColor,
         borderRadius: BorderRadius.circular(10),
@@ -103,25 +105,39 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
       child: Padding(
         padding: const EdgeInsets.all(15),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(languagePair.language1),
+            Text(
+              languagePair.language1,
+              style: TextStyles.heading6,
+            ),
             TextField(
               controller: _inputController,
               maxLines: 5,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(borderSide: BorderSide.none),
-                hintText: "Ilagay ang gustong malaman...",
+                hintText: "Input you want to translate here...",
                 hintStyle: TextStyle(color: Color.fromARGB(221, 89, 86, 86)),
               ),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(
-                  Icons.camera_alt,
-                  color: AppColors.titleColor, // Set the icon color
-                  size: 32.0, // Set the icon size
+                Row(
+                  children: [
+                    Icon(
+                      Icons.camera_alt,
+                      color: AppColors.titleColor,
+                      size: 32.0,
+                    ),
+                    SizedBox(width: 25),
+                    Icon(
+                      Icons.volume_up,
+                      color: AppColors.titleColor,
+                      size: 32.0,
+                    )
+                  ],
                 ),
                 Text("$_inputCount characters"),
               ],
@@ -136,6 +152,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
   Widget _outputContainer(BuildContext context) {
     return Container(
       width: ScreenUtils.getScreenWidth(context),
+      height: ScreenUtils.getScreenHeight(context) * 0.33,
       decoration: BoxDecoration(
         color: AppColors.accentColor,
         borderRadius: BorderRadius.circular(10),
@@ -143,8 +160,12 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
       child: Padding(
         padding: const EdgeInsets.all(15),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(languagePair.language2),
+            Text(
+              languagePair.language2,
+              style: TextStyles.heading6,
+            ),
             TextField(
               controller: _outputController,
               readOnly: true,
@@ -155,7 +176,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
                 hintStyle: TextStyle(color: Color.fromARGB(221, 89, 86, 86)),
               ),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

@@ -31,10 +31,10 @@ class LanguageSwitcherState extends State<LanguageSwitcher> {
     return Center(
       child: Container(
         width: ScreenUtils.getScreenWidth(context),
-        height: ScreenUtils.getScreenHeight(context) * 0.1,
+        height: ScreenUtils.getScreenHeight(context) * 0.09,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(25),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.2),
@@ -50,7 +50,7 @@ class LanguageSwitcherState extends State<LanguageSwitcher> {
             children: [
               // Language 1 container with AnimatedSwitcher
               SizedBox(
-                width: 150,
+                width: 145,
                 child: AnimatedSwitcher(
                   duration: const Duration(
                       milliseconds: 500), // Set animation duration
@@ -93,7 +93,7 @@ class LanguageSwitcherState extends State<LanguageSwitcher> {
 
               // Language 2 container with AnimatedSwitcher
               SizedBox(
-                width: 150,
+                width: 145,
                 child: AnimatedSwitcher(
                   duration: const Duration(
                       milliseconds: 500), // Set animation duration
