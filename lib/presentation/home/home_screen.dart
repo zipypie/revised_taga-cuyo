@@ -77,7 +77,7 @@ class HomeScreen extends StatelessWidget {
   Widget _festivalSubtitle() {
     return Align(
         alignment: Alignment.topLeft,
-        child: Text(AppString.hsub1, style: TextStyles.heading4));
+        child: Text(AppString.hsub1, style: TextStyles.h3b));
   }
 
 // Displays a carousel of festival images with titles
@@ -150,7 +150,7 @@ class HomeScreen extends StatelessWidget {
   Widget _destinationSubtitle() {
     return Align(
         alignment: Alignment.topLeft,
-        child: Text(AppString.hsub2, style: TextStyles.heading4));
+        child: Text(AppString.hsub2, style: TextStyles.h3b));
   }
 
   // Displays a carousel of destination images with titles

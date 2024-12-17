@@ -1,33 +1,41 @@
 // app_routes.dart
 import 'package:flutter/material.dart';
-import 'package:taga_cuyo/presentation/category/category_screen.dart';
-import 'package:taga_cuyo/presentation/home/home_screen.dart';
-import 'package:taga_cuyo/presentation/lesson/lesson_screen.dart';
-import 'package:taga_cuyo/presentation/profile/profile_screen.dart';
-import 'package:taga_cuyo/presentation/translator/translator_screen.dart';
+import 'package:taga_cuyo/core/common_widgets/app_screen.dart';
+import 'package:taga_cuyo/presentation/profile/change_password/change_password_screen.dart';
+import 'package:taga_cuyo/presentation/profile/feedback/feedback_screen.dart';
+import 'package:taga_cuyo/presentation/profile/logout/logout_screen.dart';
+import 'package:taga_cuyo/presentation/profile/setting_menu.dart';
+import 'package:taga_cuyo/presentation/profile/submit_ticket/submit_ticket_screen.dart';
+import 'package:taga_cuyo/presentation/profile/update_profile/update_profile_screen.dart';
 
 class AppRoutes {
-  static const String home = '/home';
-  static const String translator = '/translator';
-  static const String lesson = '/lesson';
-  static const String category = '/category';
-  static const String profile = '/profile';
+  static const String cp = '/Change Password';
+  static const String st = '/Submit Ticket';
+  static const String f = '/Feedbac';
+  static const String l = '/Logout';
+  static const String up = '/Update Profile';
+  static const String so = '/settings';
+  static const String main = '/main_screen';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case home:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
-      case translator:
-        return MaterialPageRoute(builder: (_) => const TranslatorScreen());
-      case lesson:
-        return MaterialPageRoute(builder: (_) => const LessonScreen());
-      case category:
-        return MaterialPageRoute(builder: (_) => const CategoryScreen());
-      case profile:
-        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      case main:
+        return MaterialPageRoute(builder: (_) => const MainAppScreen());
+      case up:
+        return MaterialPageRoute(builder: (_) => const UpdateProfileScreen());
+      case cp:
+        return MaterialPageRoute(builder: (_) => const ChangePasswordScreen());
+      case f:
+        return MaterialPageRoute(builder: (_) => const FeedbackScreen());
+      case st:
+        return MaterialPageRoute(builder: (_) => const SubmitTicketScreen());
+      case l:
+        return MaterialPageRoute(builder: (_) => const LogoutScreen());
+      case so:
+        return MaterialPageRoute(builder: (_) => const SettingsMenu());
       default:
         return MaterialPageRoute(
-            builder: (_) => const HomeScreen()); // Fallback
+            builder: (_) => const MainAppScreen()); // Fallback
     }
   }
 }

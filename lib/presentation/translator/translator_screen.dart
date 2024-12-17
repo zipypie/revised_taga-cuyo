@@ -109,7 +109,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
           children: [
             Text(
               languagePair.language1,
-              style: TextStyles.heading6,
+              style: TextStyles.h3bLilita,
             ),
             TextField(
               controller: _inputController,
@@ -164,7 +164,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
           children: [
             Text(
               languagePair.language2,
-              style: TextStyles.heading6,
+              style: TextStyles.h3bLilita,
             ),
             TextField(
               controller: _outputController,

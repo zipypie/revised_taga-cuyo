@@ -6,4 +6,6 @@ class AppIcon {
   static const progress5 = 'assets/icons/progress_5.png';
   static const progress6 = 'assets/icons/progress_6.png';
   static const play = 'assets/icons/play.png';
+  static const setting = 'assets/icons/setting.png';
+  static const lock = 'assets/icons/unlock.png';
 }

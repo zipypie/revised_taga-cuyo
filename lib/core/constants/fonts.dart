@@ -13,22 +13,39 @@ class AppFonts {
 
 class TextStyles {
   //for small heading
-  static const TextStyle heading6 = TextStyle(
+  static const TextStyle h3bLilita = TextStyle(
     fontFamily: AppFonts.lilitaOne,
     fontSize: 18,
-    fontWeight: FontWeight.bold,
     color: AppColors.titleColor,
   );
 
-  static const TextStyle heading1 = TextStyle(
+  static const TextStyle h1b = TextStyle(
     fontFamily: AppFonts.fcb,
     fontSize: 24,
     color: AppColors.titleColor,
   );
 
-  static const TextStyle heading4 = TextStyle(
+  static const TextStyle h2b = TextStyle(
     fontFamily: AppFonts.fcb,
     fontSize: 21,
+    color: AppColors.titleColor,
+  );
+
+  static const TextStyle h3r = TextStyle(
+    fontFamily: AppFonts.fcr,
+    fontSize: 18,
+    letterSpacing: 2,
+    color: Color.fromARGB(255, 44, 41, 41),
+  );
+
+  static const TextStyle h4n = TextStyle(
+    fontSize: 14,
+    color: Color.fromARGB(255, 44, 41, 41),
+  );
+
+  static const TextStyle h3b = TextStyle(
+    fontFamily: AppFonts.fcb,
+    fontSize: 18,
     color: Color.fromARGB(255, 71, 71, 71),
   );
 

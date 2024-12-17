@@ -40,10 +40,11 @@ class _MainAppScreenState extends State<MainAppScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         toolbarHeight: 65,
         title: Text(
           _title[_currentIndex],
-          style: TextStyles.heading1,
+          style: TextStyles.h1b,
         ),
         backgroundColor: AppColors.primary,
         actions: [
