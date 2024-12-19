@@ -17,8 +17,7 @@ class TranslatorScreen extends StatefulWidget {
 class _TranslatorScreenState extends State<TranslatorScreen> {
   final TextEditingController _inputController = TextEditingController();
   final TextEditingController _outputController = TextEditingController();
-  LanguagePair languagePair =
-      LanguagePair.defaultPair(); // Direct initialization
+  LanguagePair languagePair = LanguagePair.defaultPair();
 
   // Count string
   int _inputCount = 0;
@@ -97,7 +96,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
   Widget _inputContainer(BuildContext context) {
     return Container(
       width: ScreenUtils.getScreenWidth(context),
-      height: ScreenUtils.getScreenHeight(context) * 0.33,
+      height: ScreenUtils.getScreenHeight(context, subtract: 130) * 0.33,
       decoration: BoxDecoration(
         color: AppColors.accentColor,
         borderRadius: BorderRadius.circular(10),
@@ -152,7 +151,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
   Widget _outputContainer(BuildContext context) {
     return Container(
       width: ScreenUtils.getScreenWidth(context),
-      height: ScreenUtils.getScreenHeight(context) * 0.33,
+      height: ScreenUtils.getScreenHeight(context, subtract: 130) * 0.33,
       decoration: BoxDecoration(
         color: AppColors.accentColor,
         borderRadius: BorderRadius.circular(10),

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:taga_cuyo/app/routes/routes.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/icons.dart';
+import 'package:taga_cuyo/presentation/profile/change_password/change_password_screen.dart';
+import 'package:taga_cuyo/presentation/profile/feedback/feedback_screen.dart';
+import 'package:taga_cuyo/presentation/profile/logout/logout_screen.dart';
+import 'package:taga_cuyo/presentation/profile/submit_ticket/submit_ticket_screen.dart';
+import 'package:taga_cuyo/presentation/profile/update_profile/update_profile_screen.dart';
 
 class SettingsMenu extends StatelessWidget {
   const SettingsMenu({super.key});
@@ -21,26 +25,56 @@ class SettingsMenu extends StatelessWidget {
       offset: const Offset(0, 50), // Adjust the position as needed
       onSelected: (String value) {
         switch (value) {
+          case 'Update Profile':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const UpdateProfileScreen()),
+            );
+            break;
           case 'Change Password':
-            Navigator.pushNamed(context, AppRoutes.cp);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ChangePasswordScreen()),
+            );
             break;
           case 'Submit Ticket':
-            Navigator.pushNamed(context, AppRoutes.st);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SubmitTicketScreen()),
+            );
             break;
           case 'Feedback':
-            Navigator.pushNamed(context, AppRoutes.f);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const FeedbackScreen()),
+            );
             break;
           case 'Logout':
-            Navigator.pushNamed(context, AppRoutes.l);
+            showDialog<void>(
+              context: context,
+              barrierDismissible:
+                  false, // Prevent closing the dialog by tapping outside
+              builder: (BuildContext context) {
+                return LogoutScreen();
+              },
+            );
             break;
-          case 'Update Profile':
-            Navigator.pushNamed(context, AppRoutes.up);
-            break;
+
           default:
             break;
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          value: 'Update Profile',
+          child: Row(
+            children: [
+              Icon(Icons.person, color: AppColors.titleColor),
+              const SizedBox(width: 10),
+              const Text('Update Profile'),
+            ],
+          ),
+        ),
         PopupMenuItem<String>(
           value: 'Change Password',
           child: Row(
@@ -78,16 +112,6 @@ class SettingsMenu extends StatelessWidget {
               Icon(Icons.logout, color: AppColors.titleColor),
               const SizedBox(width: 10),
               const Text('Logout'),
-            ],
-          ),
-        ),
-        PopupMenuItem<String>(
-          value: 'Update Profile',
-          child: Row(
-            children: [
-              Icon(Icons.person, color: AppColors.titleColor),
-              const SizedBox(width: 10),
-              const Text('Update Profile'),
             ],
           ),
         ),

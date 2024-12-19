@@ -36,7 +36,7 @@ class HomeScreen extends StatelessWidget {
 
 // Custom header widget that displays a welcome message and an image
   Widget _header1(BuildContext context) {
-    final width = ScreenUtils.getScreenWidth(context) - 130;
+    final width = ScreenUtils.getScreenWidth(context) - 150;
     final height = ScreenUtils.getScreenHeight(context);
     return Container(
       height: height * 0.15,

@@ -33,7 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 Widget _userProfile(BuildContext context) {
   return Container(
     width: ScreenUtils.getScreenWidth(context),
-    height: ScreenUtils.getScreenHeight(context) / 6,
+    height: ScreenUtils.getScreenHeight(context, subtract: 130) / 6,
     decoration: BoxDecoration(
       color: AppColors.primaryBackground,
       border: const Border(
