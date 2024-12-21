@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 
@@ -5,16 +6,16 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
   final String hintText;
-  final bool obscureText;
   final String? Function(String?)? validator;
+  final TextInputType keyboardType;
 
   const CustomTextField({
     super.key,
     required this.controller,
     required this.labelText,
     required this.hintText,
-    this.obscureText = false,
     this.validator,
+    this.keyboardType = TextInputType.text, // Default to TextInputType.text
   });
 
   @override
@@ -22,7 +23,7 @@ class CustomTextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       textAlign: TextAlign.start,
-      obscureText: obscureText, // for hiding the text in case of passwords
+      keyboardType: keyboardType, // Use the keyboardType passed into the widget
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,

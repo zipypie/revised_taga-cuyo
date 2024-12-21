@@ -37,10 +37,11 @@ class _SubmitTicketScreenState extends State<SubmitTicketScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Submit a Ticket', style: TextStyles.h1b),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(30.0),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

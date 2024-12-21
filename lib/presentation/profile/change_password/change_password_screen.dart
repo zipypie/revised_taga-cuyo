@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taga_cuyo/core/common_widgets/button.dart';
-import 'package:taga_cuyo/core/common_widgets/pass_textfield.dart';
+import 'package:taga_cuyo/core/common_widgets/password_textfield.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/icons.dart';
 import 'package:taga_cuyo/core/utils/screen_utils.dart';
@@ -35,80 +35,84 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         child: Padding(
           padding: const EdgeInsets.all(25),
           child: Form(
-            // Wrap the content in a Form widget for validation
             key: _formKey,
             child: Column(
               children: [
-                Container(
-                  width: screenWidth,
-                  height: screenHeight * 0.25, // Dynamically adjusted
-                  decoration: BoxDecoration(
-                    color: AppColors.secondaryBackground,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      AppIcon.lock,
-                      width: 100,
-                      height: 100,
-                    ),
-                  ),
-                ),
+                _buildPasswordImage(screenWidth, screenHeight),
                 const SizedBox(height: 20),
-                const Text(
-                  "Create a strong and secure password to protect your account, including a mix of letters, numbers, and special characters for better security.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
+                _buildDescriptionText(),
                 const SizedBox(height: 20),
-                PasswordTextField(
-                    controller: _oldpassword,
-                    labelText: 'Current Password',
-                    hintText: 'Enter your current password',
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please enter your current password';
-                      }
-                      return null;
-                    }),
+                _buildPasswordField(_oldpassword, 'Current Password',
+                    'Enter your current password', false),
                 const SizedBox(height: 20),
-                PasswordTextField(
-                    controller: _npassword,
-                    labelText: 'New Password',
-                    hintText: 'Enter your new password',
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please enter your new password';
-                      }
-                      return null;
-                    }),
+                _buildPasswordField(_npassword, 'New Password',
+                    'Enter your new password', false),
                 const SizedBox(height: 20),
-                PasswordTextField(
-                    controller: _cnpassword,
-                    labelText: 'Confirm New Password',
-                    hintText: 'Please confirm your password',
-                    obscureText: true,
-                    validator: (value) {
-                      if (value != value) {
-                        return 'Passwords do not match';
-                      }
-                      return null;
-                    }),
+                _buildPasswordField(_cnpassword, 'Confirm New Password',
+                    'Please confirm your password', true),
                 const SizedBox(height: 20),
                 CustomButton(
-                  onTab: () {},
+                  onTab: () {
+                    // Add password update logic here
+                  },
                   text: "Update Password",
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  // Helper method for password field generation
+  Widget _buildPasswordField(TextEditingController controller, String labelText,
+      String hintText, bool isConfirmPassword) {
+    return PasswordTextField(
+      controller: controller,
+      labelText: labelText,
+      hintText: hintText,
+      obscureText: true,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your $labelText';
+        }
+        if (isConfirmPassword && value != _npassword.text) {
+          return 'Passwords do not match';
+        }
+        return null;
+      },
+    );
+  }
+
+  // Helper method for the password image
+  Widget _buildPasswordImage(double screenWidth, double screenHeight) {
+    return Container(
+      width: screenWidth,
+      height: screenHeight * 0.25,
+      decoration: BoxDecoration(
+        color: AppColors.secondaryBackground,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Align(
+        alignment: Alignment.center,
+        child: Image.asset(
+          AppIcon.lock,
+          width: 100,
+          height: 100,
+        ),
+      ),
+    );
+  }
+
+  // Helper method for the description text
+  Widget _buildDescriptionText() {
+    return const Text(
+      "Create a strong and secure password to protect your account, including a mix of letters, numbers, and special characters for better security.",
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 16,
+        color: Colors.grey,
       ),
     );
   }

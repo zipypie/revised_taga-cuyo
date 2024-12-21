@@ -15,112 +15,38 @@ class FeedbackScreenState extends State<FeedbackScreen> {
   int _rating = 0;
   final List<bool> _selectedOptions = [false, false, false, false];
   final TextEditingController _commentController = TextEditingController();
+  final List<String> optionTitles = [
+    'User Interface and Design',
+    'Easy Navigation',
+    'Content and Features',
+    'Learning Experience'
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Padding(
-          padding: EdgeInsets.only(top: 25),
-          child: Text(
-            'Share Your Feedback',
-            style: TextStyles.h1b,
-          ),
+        title: Text(
+          'Share Your Feedback',
+          style: TextStyles.h1b,
         ),
-        leading: Padding(
-          padding: const EdgeInsets.only(top: 25),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(40.0),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Rate Your Experience',
-              style: TextStyles.h2b,
-            ),
+            const Text('Rate Your Experience', style: TextStyles.h2b),
             const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(5, (index) {
-                return IconButton(
-                  icon: Icon(
-                    _rating > index ? Icons.star : Icons.star_border,
-                    color: Colors.yellow,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _rating = index + 1;
-                    });
-                  },
-                );
-              }),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(5, (index) {
-                return Text('${index + 1} star');
-              }),
-            ),
+            _buildRatingRow(),
             const SizedBox(height: 20),
-            const Text(
-              'What did you like?',
-              style: TextStyles.h2b,
-            ),
+            const Text('What did you like?', style: TextStyles.h2b),
             const SizedBox(height: 10),
-            // Now calling the CustomOption widget
-            CustomOption(
-              title: 'User Interface and Design',
-              index: 0,
-              isSelected: _selectedOptions[0],
-              onTap: () {
-                setState(() {
-                  _selectedOptions[0] = !_selectedOptions[0];
-                });
-              },
-            ),
-            CustomOption(
-              title: 'Easy Navigation',
-              index: 1,
-              isSelected: _selectedOptions[1],
-              onTap: () {
-                setState(() {
-                  _selectedOptions[1] = !_selectedOptions[1];
-                });
-              },
-            ),
-            CustomOption(
-              title: 'Content and Features',
-              index: 2,
-              isSelected: _selectedOptions[2],
-              onTap: () {
-                setState(() {
-                  _selectedOptions[2] = !_selectedOptions[2];
-                });
-              },
-            ),
-            CustomOption(
-              title: 'Learning Experience',
-              index: 3,
-              isSelected: _selectedOptions[3],
-              onTap: () {
-                setState(() {
-                  _selectedOptions[3] = !_selectedOptions[3];
-                });
-              },
-            ),
+            _buildOptionsList(),
             const SizedBox(height: 20),
-            const Text(
-              'Your comments or suggestions (optional)',
-              style: TextStyle(fontSize: 16),
-            ),
+            const Text('Your comments or suggestions (optional)',
+                style: TextStyle(fontSize: 16)),
             const SizedBox(height: 15),
             BigTextfield(
               controller: _commentController,
@@ -140,6 +66,54 @@ class FeedbackScreenState extends State<FeedbackScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  // Refactored Rating Row to avoid repeating code
+  Widget _buildRatingRow() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(5, (index) {
+            return IconButton(
+              icon: Icon(
+                _rating > index ? Icons.star : Icons.star_border,
+                color: Colors.yellow,
+              ),
+              onPressed: () {
+                setState(() {
+                  _rating = index + 1;
+                });
+              },
+            );
+          }),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(5, (index) {
+            return Text('${index + 1} star');
+          }),
+        ),
+      ],
+    );
+  }
+
+  // Dynamically generate the options list
+  Widget _buildOptionsList() {
+    return Column(
+      children: List.generate(optionTitles.length, (index) {
+        return CustomOption(
+          title: optionTitles[index],
+          index: index,
+          isSelected: _selectedOptions[index],
+          onTap: () {
+            setState(() {
+              _selectedOptions[index] = !_selectedOptions[index];
+            });
+          },
+        );
+      }),
     );
   }
 }

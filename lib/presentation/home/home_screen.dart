@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
             SizedBox(
               width: width * 0.72,
               child: Text(
-                'Welcome to\nTaga-Cuyo App', // Use \n to break the line
+                'Welcome to Taga-Cuyo App', // Use \n to break the line
                 style: TextStyle(
                   fontFamily: AppFonts.fcb,
                   fontSize: 24,

@@ -1,61 +1,44 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
-
 class User {
-  String uid;
-  String firstName;
-  String lastName;
+  final String uid;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String gender;
+  final int age;
+  final String? profileImage;
+
   User({
     required this.uid,
     required this.firstName,
     required this.lastName,
+    required this.email,
+    required this.gender,
+    required this.age,
+    this.profileImage,
   });
-  User copyWith({
-    String? uid,
-    String? firstName,
-    String? lastName,
-  }) {
+
+  // Factory constructor for Firestore data
+  factory User.fromFirestore(String uid, Map<String, dynamic> data) {
     return User(
-      uid: uid ?? this.uid,
-      firstName: firstName ?? this.firstName,
-      lastName: lastName ?? this.lastName,
+      uid: uid,
+      firstName: data['firstName'] ?? '',
+      lastName: data['lastName'] ?? '',
+      email: data['email'] ?? '',
+      gender: data['gender'] ?? '',
+      age: data['age'] ?? 0,
+      profileImage: data['profileImage'],
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'uid': uid,
+  // Firestore-compatible map
+  Map<String, dynamic> toFirestore() {
+    return {
       'firstName': firstName,
       'lastName': lastName,
+      'email': email,
+      'gender': gender,
+      'age': age,
+      'profileImage': profileImage,
     };
   }
-
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      uid: map['uid'] as String,
-      firstName: map['firstName'] as String,
-      lastName: map['lastName'] as String,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory User.fromJson(String source) =>
-      User.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() =>
-      'User(uid: $uid, firstName: $firstName, lastName: $lastName)';
-
-  @override
-  bool operator ==(covariant User other) {
-    if (identical(this, other)) return true;
-
-    return other.uid == uid &&
-        other.firstName == firstName &&
-        other.lastName == lastName;
-  }
-
-  @override
-  int get hashCode => uid.hashCode ^ firstName.hashCode ^ lastName.hashCode;
 }

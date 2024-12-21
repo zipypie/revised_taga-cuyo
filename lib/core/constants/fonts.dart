@@ -12,13 +12,6 @@ class AppFonts {
 }
 
 class TextStyles {
-  //for small heading
-  static const TextStyle h3bLilita = TextStyle(
-    fontFamily: AppFonts.lilitaOne,
-    fontSize: 18,
-    color: AppColors.titleColor,
-  );
-
   static const TextStyle h1b = TextStyle(
     fontFamily: AppFonts.fcb,
     fontSize: 24,
@@ -46,7 +39,7 @@ class TextStyles {
   static const TextStyle h3b = TextStyle(
     fontFamily: AppFonts.fcb,
     fontSize: 18,
-    color: Color.fromARGB(255, 71, 71, 71),
+    color: Color.fromARGB(255, 47, 47, 47),
   );
 
   static const TextStyle buttonLight = TextStyle(

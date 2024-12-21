@@ -10,11 +10,11 @@ class AppColors {
   static const Color correct = Color(0xFF88E9A3);
   static const Color wrong = Color(0xFFF90909);
   static const Color accentColor = Color.fromARGB(255, 133, 188, 250);
+  static const Color grey = Color.fromARGB(255, 122, 122, 122);
 }
 
 class CustomColors {
-  static const Color userAvatar = Color.fromARGB(255, 78, 71, 71);
-
+  static const Color userAvatar = Color.fromARGB(255, 189, 189, 189);
   //colors for progress
   static const Color p1c = Color.fromARGB(255, 255, 100, 62);
   static const Color p2c = Color(0xFFFFD54F); // Primary Yellow
