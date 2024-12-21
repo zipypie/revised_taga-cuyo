@@ -12,110 +12,57 @@ class SettingsMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      icon: Image.asset(
-        AppIcon.setting, // Your settings icon asset
-        width: 35,
-        height: 35,
-      ),
-      color: AppColors.secondaryBackground,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      offset: const Offset(0, 50), // Adjust the position as needed
-      onSelected: (String value) {
-        switch (value) {
-          case 'Update Profile':
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const UpdateProfileScreen()),
-            );
-            break;
-          case 'Change Password':
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ChangePasswordScreen()),
-            );
-            break;
-          case 'Submit Ticket':
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const SubmitTicketScreen()),
-            );
-            break;
-          case 'Feedback':
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const FeedbackScreen()),
-            );
-            break;
-          case 'Logout':
-            showDialog<void>(
-              context: context,
-              barrierDismissible:
-                  false, // Prevent closing the dialog by tapping outside
-              builder: (BuildContext context) {
-                return LogoutScreen();
-              },
-            );
-            break;
+    final menuItems = {
+      'Update Profile': Icons.person,
+      'Change Password': Icons.lock,
+      'Submit Ticket': Icons.airplane_ticket,
+      'Feedback': Icons.feedback,
+      'Logout': Icons.logout,
+    };
 
-          default:
-            break;
-        }
-      },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        PopupMenuItem<String>(
-          value: 'Update Profile',
-          child: Row(
-            children: [
-              Icon(Icons.person, color: AppColors.titleColor),
-              const SizedBox(width: 10),
-              const Text('Update Profile'),
-            ],
-          ),
-        ),
-        PopupMenuItem<String>(
-          value: 'Change Password',
-          child: Row(
-            children: [
-              Icon(Icons.lock, color: AppColors.titleColor),
-              const SizedBox(width: 10),
-              const Text('Change Password'),
-            ],
-          ),
-        ),
-        PopupMenuItem<String>(
-          value: 'Submit Ticket',
-          child: Row(
-            children: [
-              Icon(Icons.airplane_ticket, color: AppColors.titleColor),
-              const SizedBox(width: 10),
-              const Text('Submit Ticket'),
-            ],
-          ),
-        ),
-        PopupMenuItem<String>(
-          value: 'Feedback',
-          child: Row(
-            children: [
-              Icon(Icons.feedback, color: AppColors.titleColor),
-              const SizedBox(width: 10),
-              const Text('Feedback'),
-            ],
-          ),
-        ),
-        PopupMenuItem<String>(
-          value: 'Logout',
-          child: Row(
-            children: [
-              Icon(Icons.logout, color: AppColors.titleColor),
-              const SizedBox(width: 10),
-              const Text('Logout'),
-            ],
-          ),
-        ),
-      ],
+    return PopupMenuButton<String>(
+      icon: Image.asset(AppIcon.setting, width: 35, height: 35),
+      color: AppColors.secondaryBackground,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      offset: const Offset(0, 50),
+      onSelected: (value) => handleSelection(context, value),
+      itemBuilder: (_) => menuItems.entries
+          .map(
+            (entry) => PopupMenuItem<String>(
+              value: entry.key,
+              child: Row(
+                children: [
+                  Icon(entry.value, color: AppColors.titleColor),
+                  const SizedBox(width: 10),
+                  Text(entry.key),
+                ],
+              ),
+            ),
+          )
+          .toList(),
     );
+  }
+
+  void handleSelection(BuildContext context, String value) {
+    final routes = {
+      'Update Profile': const UpdateProfileScreen(),
+      'Change Password': const ChangePasswordScreen(),
+      'Submit Ticket': const SubmitTicketScreen(),
+      'Feedback': const FeedbackScreen(),
+      'Logout': LogoutScreen(),
+    };
+
+    if (value == 'Logout') {
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => LogoutScreen(),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => routes[value]!),
+      );
+    }
   }
 }

@@ -25,19 +25,14 @@ class BigTextfield extends StatelessWidget {
         hintText: hintText,
         hintStyle: TextStyle(color: Colors.grey.shade600),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(
             color: AppColors.primary,
             width: 2,
           ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: AppColors.accentColor, width: 1),
         ),
         contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       ),
