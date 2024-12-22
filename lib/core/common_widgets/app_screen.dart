@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/core/constants/images.dart';
-import 'package:taga_cuyo/presentation/category/category_screen.dart';
-import 'package:taga_cuyo/presentation/home/home_screen.dart';
-import 'package:taga_cuyo/presentation/lesson/lesson_screen.dart';
-import 'package:taga_cuyo/presentation/profile/profile_screen.dart';
-import 'package:taga_cuyo/presentation/translator/translator_screen.dart';
+import 'package:taga_cuyo/presentation/main/category/category_screen.dart';
+import 'package:taga_cuyo/presentation/main/home/home_screen.dart';
+import 'package:taga_cuyo/presentation/main/lesson/lesson_screen.dart';
+import 'package:taga_cuyo/presentation/main/profile/profile_screen.dart';
+import 'package:taga_cuyo/presentation/main/translator/translator_screen.dart';
 
 class MainAppScreen extends StatefulWidget {
   const MainAppScreen({super.key});

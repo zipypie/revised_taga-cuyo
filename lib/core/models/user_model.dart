@@ -7,6 +7,7 @@ class User {
   final int age;
   final String? profileImage;
 
+  // Unnamed constructor for creating a User object
   User({
     required this.uid,
     required this.firstName,

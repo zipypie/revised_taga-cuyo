@@ -1,12 +1,12 @@
 // app_routes.dart
 import 'package:flutter/material.dart';
 import 'package:taga_cuyo/core/common_widgets/app_screen.dart';
-import 'package:taga_cuyo/presentation/profile/change_password/change_password_screen.dart';
-import 'package:taga_cuyo/presentation/profile/feedback/feedback_screen.dart';
-import 'package:taga_cuyo/presentation/profile/logout/logout_screen.dart';
-import 'package:taga_cuyo/presentation/profile/setting_menu.dart';
-import 'package:taga_cuyo/presentation/profile/submit_ticket/submit_ticket_screen.dart';
-import 'package:taga_cuyo/presentation/profile/update_profile/update_profile_screen.dart';
+import 'package:taga_cuyo/presentation/main/profile/change_password/change_password_screen.dart';
+import 'package:taga_cuyo/presentation/main/profile/feedback/feedback_screen.dart';
+import 'package:taga_cuyo/presentation/main/profile/logout/logout_screen.dart';
+import 'package:taga_cuyo/presentation/main/profile/setting_menu.dart';
+import 'package:taga_cuyo/presentation/main/profile/submit_ticket/submit_ticket_screen.dart';
+import 'package:taga_cuyo/presentation/main/profile/update_profile/update_profile_screen.dart';
 
 class AppRoutes {
   static const String cp = '/change_password';
