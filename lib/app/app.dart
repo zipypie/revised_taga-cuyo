@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:taga_cuyo/app/routes/routes.dart';
 import 'package:taga_cuyo/app/themes/themes.dart';
 import 'package:taga_cuyo/core/common_widgets/app_screen.dart';
+// import 'package:taga_cuyo/core/common_widgets/app_screen.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -11,8 +13,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppThemes.lightTheme,
       darkTheme: AppThemes.darkTheme,
-      // onGenerateRoute: AppRoutes.generateRoute,
-      // initialRoute: AppRoutes.main,
+      onGenerateRoute: AppRoutes.generateRoute,
       home: const MainAppScreen(),
     );
   }

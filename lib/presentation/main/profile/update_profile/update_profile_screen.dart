@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taga_cuyo/core/common_widgets/button.dart';
 import 'package:taga_cuyo/core/common_widgets/textfield_editable.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
+import 'package:taga_cuyo/core/constants/fonts.dart';
 // import 'package:taga_cuyo/core/models/user_model.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
@@ -51,7 +52,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Profile'),
+        title: Text(
+          'Update Profile',
+          style: TextStyles.h1b,
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -65,37 +69,31 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   backgroundColor: CustomColors.userAvatar,
                 ),
               ),
-              SizedBox(height: 20),
               TextfieldWithEditIcon(
                 label: 'First Name',
                 controller: fnController,
                 keyboardType: TextInputType.text,
               ),
-              SizedBox(height: 20),
               TextfieldWithEditIcon(
                 label: 'Last Name',
                 controller: lnController,
                 keyboardType: TextInputType.text,
               ),
-              SizedBox(height: 20),
               TextfieldWithEditIcon(
                 label: 'Email',
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
               ),
-              SizedBox(height: 20),
               TextfieldWithEditIcon(
                 label: 'Gender',
                 controller: genderController,
                 keyboardType: TextInputType.text,
               ),
-              SizedBox(height: 20),
               TextfieldWithEditIcon(
                 label: 'Age',
                 controller: ageController,
                 keyboardType: TextInputType.number,
               ),
-              SizedBox(height: 20),
               CustomButton(
                   onTab: () {
                     // User updatedUser = User(

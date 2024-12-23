@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:taga_cuyo/core/common_widgets/button.dart';
-import 'package:taga_cuyo/core/common_widgets/password_textfield.dart';
+import 'package:taga_cuyo/core/common_widgets/textfield.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
+import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/core/constants/icons.dart';
 import 'package:taga_cuyo/core/utils/screen_utils.dart';
 
@@ -25,11 +26,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Padding(
-          padding: EdgeInsets.only(left: screenWidth * 0.07),
-          child: const Text("Create New Password"),
+        title: const Text(
+          "Create New Password",
+          style: TextStyles.h1b,
         ),
-        toolbarHeight: 70,
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -41,16 +42,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 _buildPasswordImage(screenWidth, screenHeight),
                 const SizedBox(height: 20),
                 _buildDescriptionText(),
-                const SizedBox(height: 20),
                 _buildPasswordField(_oldpassword, 'Current Password',
                     'Enter your current password', false),
-                const SizedBox(height: 20),
                 _buildPasswordField(_npassword, 'New Password',
                     'Enter your new password', false),
-                const SizedBox(height: 20),
                 _buildPasswordField(_cnpassword, 'Confirm New Password',
                     'Please confirm your password', true),
-                const SizedBox(height: 20),
                 CustomButton(
                   onTab: () {
                     // Add password update logic here
@@ -68,11 +65,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   // Helper method for password field generation
   Widget _buildPasswordField(TextEditingController controller, String labelText,
       String hintText, bool isConfirmPassword) {
-    return PasswordTextField(
+    return CustomTextField(
       controller: controller,
       labelText: labelText,
       hintText: hintText,
-      obscureText: true,
+      isPassword: true,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your $labelText';

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:taga_cuyo/app/routes/routes.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/icons.dart';
-import 'package:taga_cuyo/presentation/main/profile/change_password/change_password_screen.dart';
-import 'package:taga_cuyo/presentation/main/profile/feedback/feedback_screen.dart';
 import 'package:taga_cuyo/presentation/main/profile/logout/logout_screen.dart';
-import 'package:taga_cuyo/presentation/main/profile/submit_ticket/submit_ticket_screen.dart';
-import 'package:taga_cuyo/presentation/main/profile/update_profile/update_profile_screen.dart';
 
 class SettingsMenu extends StatelessWidget {
   const SettingsMenu({super.key});
@@ -45,24 +42,24 @@ class SettingsMenu extends StatelessWidget {
 
   void handleSelection(BuildContext context, String value) {
     final routes = {
-      'Update Profile': const UpdateProfileScreen(),
-      'Change Password': const ChangePasswordScreen(),
-      'Submit Ticket': const SubmitTicketScreen(),
-      'Feedback': const FeedbackScreen(),
-      'Logout': LogoutScreen(),
+      'Update Profile': AppRoutes.updateProfile,
+      'Change Password': AppRoutes.changePassword,
+      'Submit Ticket': AppRoutes.submitTicket,
+      'Feedback': AppRoutes.feedback,
     };
 
     if (value == 'Logout') {
       showDialog<void>(
         context: context,
         barrierDismissible: false,
-        builder: (_) => LogoutScreen(),
+        builder: (_) => const LogoutScreen(), // Use your custom LogoutScreen
       );
+    } else if (routes.containsKey(value)) {
+      Navigator.pushNamed(
+          context, routes[value]!); // Navigate using named routes
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => routes[value]!),
-      );
+      // Handle invalid or unrecognized options if needed
+      print('Unknown option selected: $value');
     }
   }
 }

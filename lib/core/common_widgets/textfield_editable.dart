@@ -51,39 +51,42 @@ class _TextfieldWithEditIconState extends State<TextfieldWithEditIcon> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget.controller,
-      keyboardType: widget.keyboardType,
-      readOnly: !_isEditable, // Field is read-only until icon is clicked
-      focusNode: _focusNode, // Use the focus node to manage focus
-      style: TextStyle(
-        fontFamily: AppFonts.fcb,
-        fontSize: 18,
-        color: _isEditable
-            ? Colors.black
-            : Colors.grey, // Text color changes based on editability
-      ),
-      decoration: InputDecoration(
-        labelText: widget.label,
-        labelStyle: TextStyles.h2b,
-        suffixIcon: IconButton(
-          icon: Icon(
-            Icons.edit,
-            color: _isEditable
-                ? AppColors.wrong
-                : Colors.blue, // Change color based on edit state
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: TextFormField(
+        controller: widget.controller,
+        keyboardType: widget.keyboardType,
+        readOnly: !_isEditable, // Field is read-only until icon is clicked
+        focusNode: _focusNode, // Use the focus node to manage focus
+        style: TextStyle(
+          fontFamily: AppFonts.fcb,
+          fontSize: 18,
+          color: _isEditable
+              ? AppColors.titleColor
+              : Colors.grey, // Text color changes based on editability
+        ),
+        decoration: InputDecoration(
+          labelText: widget.label,
+          labelStyle: TextStyles.h2g,
+          suffixIcon: IconButton(
+            icon: Icon(
+              Icons.edit,
+              color: _isEditable
+                  ? AppColors.wrong
+                  : Colors.blue, // Change color based on edit state
+            ),
+            onPressed: _toggleEditable, // Toggle editable when icon is tapped
           ),
-          onPressed: _toggleEditable, // Toggle editable when icon is tapped
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: _isEditable
+              ? AppColors.secondaryBackground
+              : AppColors.secondaryBackground
+                  .withOpacity(0.7), // Apply opacity when not editable
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        filled: true,
-        fillColor: _isEditable
-            ? AppColors.secondaryBackground
-            : AppColors.secondaryBackground
-                .withOpacity(0.7), // Apply opacity when not editable
       ),
     );
   }

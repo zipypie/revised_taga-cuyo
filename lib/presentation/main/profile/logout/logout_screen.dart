@@ -24,11 +24,7 @@ class LogoutScreen extends StatelessWidget {
           children: [
             const Text(
               "Log Out",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-                fontFamily: AppFonts.fcb,
-              ),
+              style: TextStyles.h1b,
             ),
             const SizedBox(height: 10),
             const Text(

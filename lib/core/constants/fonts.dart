@@ -24,6 +24,11 @@ class TextStyles {
     color: AppColors.titleColor,
   );
 
+  static const TextStyle h2g = TextStyle(
+    fontFamily: AppFonts.fcb,
+    fontSize: 21,
+    color: AppColors.grey,
+  );
   static const TextStyle h3r = TextStyle(
     fontFamily: AppFonts.fcr,
     fontSize: 18,
@@ -31,6 +36,11 @@ class TextStyles {
     color: Color.fromARGB(255, 44, 41, 41),
   );
 
+  static const TextStyle knt18 = TextStyle(
+    letterSpacing: 1,
+    fontFamily: AppFonts.kanitLight,
+    fontSize: 18,
+  );
   static const TextStyle h4n = TextStyle(
     fontSize: 14,
     color: Color.fromARGB(255, 44, 41, 41),
