@@ -14,6 +14,7 @@ class SettingsMenu extends StatelessWidget {
       'Change Password': Icons.lock,
       'Submit Ticket': Icons.airplane_ticket,
       'Feedback': Icons.feedback,
+      'Terms and Conditions': Icons.description,
       'Logout': Icons.logout,
     };
 
@@ -46,6 +47,7 @@ class SettingsMenu extends StatelessWidget {
       'Change Password': AppRoutes.changePassword,
       'Submit Ticket': AppRoutes.submitTicket,
       'Feedback': AppRoutes.feedback,
+      'Terms and Conditions': AppRoutes.termsAndCondition,
     };
 
     if (value == 'Logout') {

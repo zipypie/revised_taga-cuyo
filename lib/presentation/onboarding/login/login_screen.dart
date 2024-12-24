@@ -81,11 +81,11 @@ class _FormSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 20),
+          SizedBox(height: height * 0.025), // Adjustable space here
           CustomTextField(
             controller: emailController,
             hintText: "Enter your email",
@@ -101,11 +101,10 @@ class _FormSection extends StatelessWidget {
             isPassword: true,
             backgroundColor: AppColors.primaryBackground,
           ),
-          const SizedBox(height: 10),
           _ForgetPasswordLink(),
-          const SizedBox(height: 20),
+          SizedBox(height: height * 0.025), // Adjustable space here
+          SizedBox(height: 20), // Adjustable space here
           CustomButton(onTab: () {}, text: "Login"),
-          SizedBox(height: height / 20),
           _SignUpOption(),
         ],
       ),
@@ -140,31 +139,24 @@ class _ForgetPasswordLink extends StatelessWidget {
 class _SignUpOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          'Don\'t have an account? Choose',
-          style: TextStyle(
-            fontFamily: AppFonts.kanitLight,
-            fontSize: 16,
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, AppRoutes.signUpScreen);
-          },
-          child: const Text(
-            ' SignUp.',
-            style: TextStyle(
-              fontFamily: AppFonts.kanitLight,
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1,
+    return TextButton(
+      onPressed: () {
+        Navigator.pushNamed(context, AppRoutes.signUpScreen);
+      },
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: 'Don\'t have an account? Choose',
+              style: TextStyles.knt16,
             ),
-          ),
+            TextSpan(
+              text: ' Signup.',
+              style: TextStyles.knt18b,
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

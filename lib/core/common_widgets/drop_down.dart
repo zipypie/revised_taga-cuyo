@@ -7,6 +7,7 @@ class DropDown extends StatefulWidget {
   final List<String> items;
   final void Function(String?)? onChanged;
   final String hintText;
+  final String? labelText;
 
   const DropDown({
     super.key,
@@ -14,6 +15,7 @@ class DropDown extends StatefulWidget {
     required this.items,
     this.onChanged,
     required this.hintText,
+    this.labelText,
   });
 
   @override
@@ -36,7 +38,7 @@ class _DropDownState extends State<DropDown> {
               : AppColors.secondaryBackground,
         ),
         padding: const EdgeInsets.symmetric(
-            horizontal: 10), // Added padding for better appearance
+            horizontal: 10, vertical: 5), // Added padding for better appearance
         child: DropdownButtonFormField<String>(
           dropdownColor: AppColors.secondaryBackground,
           value: widget.value,
@@ -73,10 +75,8 @@ class _DropDownState extends State<DropDown> {
           }).toList(),
           onChanged: widget.onChanged,
           style: TextStyle(color: AppColors.titleColor), // Default text color
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             border: InputBorder.none, // Removed fillColor
-            contentPadding:
-                EdgeInsets.zero, // Adjusted padding to match the container
           ),
           icon: const Padding(
             padding: EdgeInsets.only(right: 5),

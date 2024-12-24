@@ -60,15 +60,14 @@ class CustomTextFieldState extends State<CustomTextField> {
         obscureText: _obscureText, // Use the state variable
         focusNode: _focusNode,
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 14,
           color: widget.isEditable ? Colors.black : Colors.grey,
         ),
         decoration: InputDecoration(
           labelText: widget.labelText,
           hintText: widget.hintText,
-          labelStyle: TextStyle(
-              color: AppColors.grey, fontFamily: AppFonts.fcb, fontSize: 21),
-          hintStyle: TextStyle(color: Colors.grey, fontFamily: AppFonts.fcb),
+          labelStyle: TextStyles.h2g,
+          hintStyle: TextStyles.h2g,
           filled: true,
           fillColor: widget.backgroundColor,
           border: OutlineInputBorder(

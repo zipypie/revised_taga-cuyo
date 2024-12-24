@@ -1,6 +1,7 @@
 // app_routes.dart
 import 'package:flutter/material.dart';
 import 'package:taga_cuyo/core/common_widgets/app_screen.dart';
+import 'package:taga_cuyo/core/common_widgets/terms%20and%20condition/terms_and_condition.dart';
 import 'package:taga_cuyo/presentation/main/profile/change_password/change_password_screen.dart';
 import 'package:taga_cuyo/presentation/main/profile/feedback/feedback_screen.dart';
 import 'package:taga_cuyo/presentation/main/profile/logout/logout_screen.dart';
@@ -23,6 +24,7 @@ class AppRoutes {
   static const String forgotPassword = '/forgot_password';
   static const String loginScreen = '/login_screen';
   static const String signUpScreen = '/signup_screen';
+  static const String termsAndCondition = '/terms_and_condition';
 
   // Route generator
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -49,6 +51,11 @@ class AppRoutes {
       case signUpScreen:
         return MaterialPageRoute(
           builder: (_) => SignupScreen(),
+          settings: settings,
+        );
+      case termsAndCondition:
+        return MaterialPageRoute(
+          builder: (_) => TermsAndCondition(),
           settings: settings,
         );
 

@@ -12,12 +12,14 @@ class AppFonts {
 }
 
 class TextStyles {
+  /// Title Text Styles
   static const TextStyle h1b = TextStyle(
     fontFamily: AppFonts.fcb,
     fontSize: 24,
     color: AppColors.titleColor,
   );
 
+  /// Header Text Styles
   static const TextStyle h2b = TextStyle(
     fontFamily: AppFonts.fcb,
     fontSize: 21,
@@ -25,8 +27,8 @@ class TextStyles {
   );
 
   static const TextStyle h2g = TextStyle(
-    fontFamily: AppFonts.fcb,
-    fontSize: 21,
+    fontWeight: FontWeight.bold,
+    fontSize: 18,
     color: AppColors.grey,
   );
   static const TextStyle h3r = TextStyle(
@@ -39,7 +41,21 @@ class TextStyles {
   static const TextStyle knt18 = TextStyle(
     letterSpacing: 1,
     fontFamily: AppFonts.kanitLight,
+    color: Color.fromARGB(255, 47, 47, 47),
     fontSize: 18,
+  );
+
+  static const TextStyle knt18b = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontFamily: AppFonts.kanitLight,
+    color: Color.fromARGB(255, 47, 47, 47),
+    fontSize: 18,
+  );
+
+  static const TextStyle knt16 = TextStyle(
+    fontFamily: AppFonts.kanitLight,
+    color: Color.fromARGB(255, 47, 47, 47),
+    fontSize: 16,
   );
   static const TextStyle h4n = TextStyle(
     fontSize: 14,
@@ -52,6 +68,7 @@ class TextStyles {
     color: Color.fromARGB(255, 47, 47, 47),
   );
 
+  /// Button Text Styles
   static const TextStyle buttonLight = TextStyle(
     fontFamily: AppFonts.fcb,
     fontSize: 21,
@@ -62,5 +79,22 @@ class TextStyles {
     fontFamily: AppFonts.fcb,
     fontSize: 21,
     color: AppColors.titleColor,
+  );
+
+  /// Terms and Condition Text Styles
+  static const TextStyle termsTitle = TextStyle(
+    fontFamily: AppFonts.fcb,
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const TextStyle termsContent = TextStyle(
+    fontSize: 15,
+  );
+
+  static const TextStyle termsSectionTitle = TextStyle(
+    fontFamily: AppFonts.fcb,
+    fontSize: 21,
+    fontWeight: FontWeight.bold,
   );
 }
