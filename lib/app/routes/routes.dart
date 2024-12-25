@@ -1,6 +1,6 @@
 // app_routes.dart
 import 'package:flutter/material.dart';
-import 'package:taga_cuyo/core/common_widgets/app_screen.dart';
+import 'package:taga_cuyo/app/app.dart';
 import 'package:taga_cuyo/core/common_widgets/terms%20and%20condition/terms_and_condition.dart';
 import 'package:taga_cuyo/presentation/main/profile/change_password/change_password_screen.dart';
 import 'package:taga_cuyo/presentation/main/profile/feedback/feedback_screen.dart';

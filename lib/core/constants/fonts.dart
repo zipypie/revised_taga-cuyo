@@ -58,7 +58,7 @@ class TextStyles {
     fontSize: 16,
   );
   static const TextStyle h4n = TextStyle(
-    fontSize: 14,
+    fontSize: 15,
     color: Color.fromARGB(255, 44, 41, 41),
   );
 

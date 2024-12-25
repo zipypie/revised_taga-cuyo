@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taga_cuyo/app/routes/routes.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/icons.dart';
+import 'package:taga_cuyo/core/utils/logger.dart';
 import 'package:taga_cuyo/presentation/main/profile/logout/logout_screen.dart';
 
 class SettingsMenu extends StatelessWidget {
@@ -61,7 +62,7 @@ class SettingsMenu extends StatelessWidget {
           context, routes[value]!); // Navigate using named routes
     } else {
       // Handle invalid or unrecognized options if needed
-      print('Unknown option selected: $value');
+      logger.e('Invalid option selected: $value');
     }
   }
 }
