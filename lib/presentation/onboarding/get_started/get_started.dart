@@ -74,7 +74,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                             children: [
                               SizedBox(
                                   height: ScreenUtils.getScreenHeight(context) *
-                                      0.03),
+                                      0.025),
 
                               /// Title
                               Text(
@@ -84,7 +84,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                               ),
                               SizedBox(
                                   height: ScreenUtils.getScreenHeight(context) *
-                                      0.03),
+                                      0.025),
 
                               /// Content Text
                               Text(
@@ -131,6 +131,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
 
             /// Page Indicator
             bottomNavigationBar: Container(
+              padding: const EdgeInsets.only(bottom: 20),
               color: AppColors.secondaryBackground,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

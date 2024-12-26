@@ -5,6 +5,7 @@ import 'package:taga_cuyo/core/common_widgets/textfield.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/core/constants/images.dart';
+import 'package:taga_cuyo/presentation/onboarding/login/email_verification/email_verification.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -103,8 +104,21 @@ class _FormSection extends StatelessWidget {
           ),
           _ForgetPasswordLink(),
           SizedBox(height: height * 0.025), // Adjustable space here
-          SizedBox(height: 20), // Adjustable space here
-          CustomButton(onTab: () {}, text: "Login"),
+
+          /// Login Button
+          /// Firebase Authentication
+          /// TODO: Implement Firebase Authentication
+          /// TODO: Implement Firebase Email Verification
+          ///
+
+          CustomButton(
+              onTab: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => EmailVerificationDialog(),
+                );
+              },
+              text: "Login"),
           _SignUpOption(),
         ],
       ),
