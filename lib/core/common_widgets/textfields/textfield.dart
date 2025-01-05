@@ -13,6 +13,7 @@ class CustomTextField extends StatefulWidget {
   final bool isEditable;
   final Color backgroundColor;
   final Icon? suffixIcon;
+  final ValueChanged<String>? onChanged; // Added onChanged callback
 
   const CustomTextField({
     super.key,
@@ -26,6 +27,7 @@ class CustomTextField extends StatefulWidget {
     this.isEditable = true,
     this.backgroundColor = AppColors.secondaryBackground,
     this.suffixIcon,
+    this.onChanged, // Accept the onChanged callback
   });
 
   @override
@@ -51,8 +53,8 @@ class CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+    return SizedBox(
+      height: 80, // Set the fixed height for the text field
       child: TextFormField(
         controller: widget.controller,
         textAlign: TextAlign.start,
@@ -60,9 +62,11 @@ class CustomTextFieldState extends State<CustomTextField> {
         obscureText: _obscureText, // Use the state variable
         focusNode: _focusNode,
         style: TextStyle(
-          fontSize: 14,
+          fontSize: 16,
           color: widget.isEditable ? Colors.black : Colors.grey,
         ),
+        onChanged:
+            widget.onChanged, // Pass the onChanged callback to TextFormField
         decoration: InputDecoration(
           labelText: widget.labelText,
           hintText: widget.hintText,
@@ -88,6 +92,28 @@ class CustomTextFieldState extends State<CustomTextField> {
                   },
                 )
               : widget.suffixIcon,
+          // Add error styling when the validation fails
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: _focusNode.hasFocus
+                  ? AppColors.primaryBackground // Focused border color
+                  : widget.backgroundColor,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: _focusNode.hasFocus
+                  ? AppColors.primaryBackground
+                  : widget.backgroundColor,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Colors.red), // Red border when error occurs
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         validator: widget.validator,
       ),

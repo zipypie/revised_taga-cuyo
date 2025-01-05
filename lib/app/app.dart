@@ -1,84 +1,45 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:taga_cuyo/core/constants/colors.dart';
-import 'package:taga_cuyo/core/constants/fonts.dart';
-import 'package:taga_cuyo/core/constants/images.dart';
-import 'package:taga_cuyo/presentation/main/category/category_screen.dart';
-import 'package:taga_cuyo/presentation/main/home/home_screen.dart';
-import 'package:taga_cuyo/presentation/main/lesson/lesson_screen.dart';
-import 'package:taga_cuyo/presentation/main/profile/profile_screen.dart';
-import 'package:taga_cuyo/presentation/main/translator/translator_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:taga_cuyo/app/app_viewer.dart';
+import 'package:taga_cuyo/app/routes/routes.dart';
+import 'package:taga_cuyo/app/themes/themes.dart';
+import 'package:taga_cuyo/core/bloc/authentication_bloc/authentication_bloc.dart';
+import 'package:taga_cuyo/core/bloc/sign_in_bloc/sign_in_bloc.dart';
+import 'package:taga_cuyo/core/bloc/sign_up_bloc/sign_up_bloc.dart'; // Import SignUpBloc
+import 'package:taga_cuyo/core/repositories/user_repository/src/user_repo.dart';
+import 'package:taga_cuyo/presentation/onboarding/get_started/get_started.dart';
 
-class MainAppScreen extends StatefulWidget {
-  const MainAppScreen({super.key});
-
-  @override
-  State<MainAppScreen> createState() => _MainAppScreenState();
-}
-
-class _MainAppScreenState extends State<MainAppScreen> {
-  int _currentIndex = 0;
-
-  // List of screen widgets
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const TranslatorScreen(),
-    const LessonScreen(),
-    const CategoryScreen(),
-    const ProfileScreen(),
-  ];
-
-  final List<String> _title = [
-    'Home',
-    'Translator',
-    'Lesson',
-    'Category',
-    'Profile',
-  ];
+class MainApp extends StatelessWidget {
+  final UserRepository userRepository;
+  const MainApp(this.userRepository, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        toolbarHeight: 65,
-        title: Text(
-          _title[_currentIndex],
-          style: TextStyles.h1b,
-        ),
-        backgroundColor: AppColors.primary,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset(
-              LogoImage.logoPath,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ],
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<AuthenticationBloc>(
+            create: (_) =>
+                AuthenticationBloc(myUserRepository: userRepository)),
+        RepositoryProvider<SignUpBloc>(
+            create: (_) => SignUpBloc(userRepository: userRepository)),
+        RepositoryProvider<SignInBloc>(
+            create: (_) => SignInBloc(userRepository: userRepository)),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppThemes.lightTheme,
+        darkTheme: AppThemes.darkTheme,
+        onGenerateRoute: AppRoutes.generateRoute,
+        home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            if (state.status == AuthenticationStatus.authenticated) {
+              return MainAppScreen();
+            } else {
+              return GetStartedScreen();
+            }
+          },
+        ), // This screen will now have access to AuthenticationBloc and SignUpBloc
       ),
-      bottomNavigationBar: CurvedNavigationBar(
-        index: _currentIndex,
-        height: 65.0,
-        items: const [
-          Icon(Icons.home, size: 33, color: AppColors.titleColor),
-          Icon(Icons.translate, size: 33, color: AppColors.titleColor),
-          Icon(Icons.book, size: 33, color: AppColors.titleColor),
-          Icon(Icons.category, size: 33, color: AppColors.titleColor),
-          Icon(Icons.person, size: 33, color: AppColors.titleColor),
-        ],
-        color: AppColors.primary,
-        buttonBackgroundColor: AppColors.primary,
-        backgroundColor: Colors.transparent,
-        animationCurve: Curves.easeInOut,
-        animationDuration: const Duration(milliseconds: 500),
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
-      body: _screens[_currentIndex], // Show the current screen based on index
     );
   }
 }

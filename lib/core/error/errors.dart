@@ -1,40 +1,36 @@
-import 'package:flutter/material.dart';
-import 'package:taga_cuyo/core/common_widgets/alert_dialog.dart';
+class SignUpWithEmailAndPasswordFailure implements Exception {
+  /// {@macro sign_up_with_email_and_password_failure}
+  const SignUpWithEmailAndPasswordFailure([
+    this.message = 'An unknown exception occurred.',
+  ]);
 
-class ErrorHandler {
-  static void handleError(BuildContext context, String errorType,
-      {String errorMessage = ''}) {
-    String title = '';
-    String message = '';
-
-    switch (errorType) {
-      case 'missing_name':
-        title = 'Kulang na Impormasyon';
-        message = 'Mangyaring ilagay ang iyong buong pangalan.';
-        break;
-      case 'missing_email':
-        title = 'Kulang na Impormasyon';
-        message = 'Mangyaring ilagay ang iyong email address.';
-        break;
-      case 'missing_issue':
-        title = 'Kulang na Impormasyon';
-        message = 'Mangyaring ilarawan ang iyong isyu.';
-        break;
-      case 'invalid_email':
-        title = 'Invalid Email';
-        message = 'Mangyaring ilagay ang isang wastong email address.';
-        break;
-      case 'submission_error':
-        title = 'Error';
-        message =
-            'Nangyari ang isang error sa pagsumite ng iyong ticket: $errorMessage';
-        break;
+  factory SignUpWithEmailAndPasswordFailure.fromCode(String code) {
+    switch (code) {
+      case 'invalid-email':
+        return const SignUpWithEmailAndPasswordFailure(
+          'Email is not valid or badly formatted.',
+        );
+      case 'user-disabled':
+        return const SignUpWithEmailAndPasswordFailure(
+          'This user has been disabled. Please contact support for help.',
+        );
+      case 'email-already-in-use':
+        return const SignUpWithEmailAndPasswordFailure(
+          'An account already exists for that email.',
+        );
+      case 'operation-not-allowed':
+        return const SignUpWithEmailAndPasswordFailure(
+          'Operation is not allowed.  Please contact support.',
+        );
+      case 'weak-password':
+        return const SignUpWithEmailAndPasswordFailure(
+          'Please enter a stronger password.',
+        );
       default:
-        title = 'Unknown Error';
-        message = 'Isang hindi kilalang error ang nangyari.';
+        return const SignUpWithEmailAndPasswordFailure();
     }
-
-    // Call your existing custom alert dialog function
-    showCustomAlertDialog(context, title, message);
   }
+
+  /// The associated error message.
+  final String message;
 }

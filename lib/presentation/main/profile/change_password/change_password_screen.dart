@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:taga_cuyo/core/common_widgets/button.dart';
-import 'package:taga_cuyo/core/common_widgets/textfield.dart';
+import 'package:taga_cuyo/core/common_widgets/selectables/button.dart';
+import 'package:taga_cuyo/core/common_widgets/textfields/textfield.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/core/constants/icons.dart';

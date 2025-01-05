@@ -28,7 +28,7 @@ class TextStyles {
 
   static const TextStyle h2g = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 18,
+    fontSize: 15,
     color: AppColors.grey,
   );
   static const TextStyle h3r = TextStyle(

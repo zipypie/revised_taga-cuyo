@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:taga_cuyo/core/common_widgets/big_textfield.dart';
-import 'package:taga_cuyo/core/common_widgets/button.dart';
-import 'package:taga_cuyo/core/common_widgets/options_feedback.dart';
+import 'package:taga_cuyo/core/common_widgets/textfields/big_textfield.dart';
+import 'package:taga_cuyo/core/common_widgets/selectables/button.dart';
+import 'package:taga_cuyo/core/common_widgets/selectables/options_feedback.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
 
 class FeedbackScreen extends StatefulWidget {

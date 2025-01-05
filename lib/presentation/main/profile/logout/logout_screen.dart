@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/presentation/onboarding/login/login_screen.dart';
+import 'package:taga_cuyo/core/bloc/sign_in_bloc/sign_in_bloc.dart'; // Add the SignInBloc import
 
 class LogoutScreen extends StatelessWidget {
   const LogoutScreen({super.key});
@@ -73,6 +75,10 @@ class LogoutScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
+                    // Trigger the log out action from the SignInBloc
+                    BlocProvider.of<SignInBloc>(context).add(SignOutRequired());
+
+                    // After logging out, navigate to the Login Screen
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => LoginScreen()),

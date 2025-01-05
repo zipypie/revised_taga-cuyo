@@ -1,41 +1,50 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-class CustomImage extends StatelessWidget {
-  final String src;
-  final double width;
-  final double height;
+class LocalImages {
+  // Example: String paths for assets
+  static const String cashew1 = 'assets/images/cashew_megaphone.png';
+  static const String event1 = 'assets/images/event1.jpg';
+  static const String event2 = 'assets/images/event2.jpg';
+  static const String destination2 = 'assets/images/destination2.jpg';
+  static const String destination1 = 'assets/images/destination1.jpg';
+  static const String getStarted1 = 'assets/images/get_started_1.png';
+  static const String getStarted2 = 'assets/images/get_started_2.png';
+  static const String getStarted3 = 'assets/images/get_started_3.png';
 
-  const CustomImage({
-    super.key,
-    required this.src,
-    required this.width,
-    required this.height,
-  });
+  // Widget factories for direct usage
+  static Widget cashew1Image(
+          {double? width, double? height, BoxFit fit = BoxFit.cover}) =>
+      ImageFactory.asset(src: cashew1, width: width, height: height, fit: fit);
 
-  @override
-  Widget build(BuildContext context) {
+  static Widget event1Image(
+          {double? width, double? height, BoxFit fit = BoxFit.cover}) =>
+      ImageFactory.asset(src: event1, width: width, height: height, fit: fit);
+
+  // Repeat for other images...
+}
+
+class LogoImage {
+  static const String logoPath = 'assets/images/taga_cuyo.png';
+
+  // Direct widget creation
+  static Widget logo(
+          {double? width, double? height, BoxFit fit = BoxFit.cover}) =>
+      ImageFactory.asset(src: logoPath, width: width, height: height, fit: fit);
+}
+
+class ImageFactory {
+  // Loads an image asset as a widget with optional parameters
+  static Widget asset({
+    required String src,
+    double? width,
+    double? height,
+    BoxFit fit = BoxFit.cover,
+  }) {
     return Image.asset(
       src,
       width: width,
       height: height,
-      fit: BoxFit
-          .cover, // You can change this to BoxFit.contain or any other option if needed
+      fit: fit,
     );
   }
-}
-
-class LocalImages {
-  static String get cashew1 => 'assets/images/cashew_megaphone.png';
-  static String get event1 => 'assets/images/event1.jpg';
-  static String get event2 => 'assets/images/event2.jpg';
-  static String get destination2 => 'assets/images/destination2.jpg';
-  static String get destination1 => 'assets/images/destination1.jpg';
-  static String get getStarted1 => 'assets/images/get_started_1.png';
-  static String get getStarted2 => 'assets/images/get_started_2.png';
-  static String get getStarted3 => 'assets/images/get_started_3.png';
-}
-
-class LogoImage {
-  static String get logoPath => 'assets/images/taga_cuyo.png';
-  static Image get logo => Image.asset('assets/images/taga_cuyo.png');
 }

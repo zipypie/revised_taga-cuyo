@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:taga_cuyo/core/common_widgets/button.dart';
-import 'package:taga_cuyo/core/common_widgets/snackbar.dart';
+import 'package:taga_cuyo/core/common_widgets/selectables/button.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Firebase Import
 
 class EmailVerificationDialog extends StatefulWidget {
   const EmailVerificationDialog({super.key});
@@ -11,8 +11,6 @@ class EmailVerificationDialog extends StatefulWidget {
   State<EmailVerificationDialog> createState() =>
       _EmailVerificationDialogState();
 }
-
-///TODO: Implement the Email Verification  and Sending link to the email
 
 class _EmailVerificationDialogState extends State<EmailVerificationDialog> {
   @override
@@ -37,27 +35,73 @@ class _EmailVerificationDialogState extends State<EmailVerificationDialog> {
             ),
             const SizedBox(height: 20),
             CustomButton(
-              onTab: () {
+              onTab: () async {
                 Navigator.of(context).pop(); // Close the dialog first
-                // showSnackBar(
-                //   context,
-                //   'Verification email sent',
-                //   backgroundColor: AppColors.accentColor,
-                //   textColor: AppColors.primaryBackground,
-                //   behavior: SnackBarBehavior.floating,
-                //   borderRadius: BorderRadius.circular(15),
-                //   duration: const Duration(seconds: 5),
-                // ); // Custom duration);
 
-                showSnackBar(
-                  context,
-                  'Failed to send verification email',
-                  backgroundColor: AppColors.wrong,
-                  textColor: AppColors.primaryBackground,
-                  behavior: SnackBarBehavior.floating,
-                  borderRadius: BorderRadius.circular(15),
-                  duration: const Duration(seconds: 5),
-                ); // Custom duration);
+                try {
+                  // Send verification email
+                  User? user = FirebaseAuth.instance.currentUser;
+                  if (user != null && !user.emailVerified) {
+                    await user.sendEmailVerification();
+
+                    // Use the correct context to show the snackbar
+                    if (mounted) {
+                      // Delay context usage in an async function
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) {
+                          // Use ScaffoldMessenger to show snackbar
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Verification email sent'),
+                              backgroundColor: AppColors.accentColor,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              duration: const Duration(seconds: 5),
+                            ),
+                          );
+                        }
+                      });
+                    }
+                  } else {
+                    if (mounted) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Email is already verified'),
+                              backgroundColor: AppColors.accentColor,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              duration: const Duration(seconds: 5),
+                            ),
+                          );
+                        }
+                      });
+                    }
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Failed to send verification email'),
+                            backgroundColor: AppColors.wrong,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            duration: const Duration(seconds: 5),
+                          ),
+                        );
+                      }
+                    });
+                  }
+                }
               },
               text: 'Send Verification Email',
             ),
