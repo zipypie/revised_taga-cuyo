@@ -15,7 +15,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       : _userRepository = userRepository,
         super(SignInInitial()) {
     on<SignInRequired>((event, emit) async {
-      emit(SignInProcess());
+      emit(SignInLoading()); // Emit loading state
 
       try {
         // Check the credentials before attempting sign-in

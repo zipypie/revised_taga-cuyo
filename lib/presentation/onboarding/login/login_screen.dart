@@ -10,6 +10,7 @@ import 'package:taga_cuyo/core/bloc/sign_in_bloc/sign_in_bloc.dart';
 import 'package:taga_cuyo/core/models/field_validator.dart';
 import 'package:taga_cuyo/presentation/onboarding/login/email_verification/email_verification.dart';
 
+import '../../../core/common_widgets/animations/splash_animation.dart';
 import '../../../core/common_widgets/popup displays/alert_dialog.dart';
 
 // Declare a scaffoldMessengerKey to manage Snackbar messages
@@ -29,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
 
-  bool _isDialogShown = false; // Add this flag
+  bool _isDialogShown = false;
 
   @override
   Widget build(BuildContext context) {
@@ -51,21 +52,35 @@ class _LoginScreenState extends State<LoginScreen> {
               });
             }
           },
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _TopSection(height: height),
-                _FormSection(
-                  height: height,
-                  emailController: emailController,
-                  passwordController: passwordController,
-                  formKey: _formKey,
-                  autovalidateMode: _autovalidateMode,
-                  onSubmit: validateAndSubmit,
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _TopSection(height: height),
+                    _FormSection(
+                      height: height,
+                      emailController: emailController,
+                      passwordController: passwordController,
+                      formKey: _formKey,
+                      autovalidateMode: _autovalidateMode,
+                      onSubmit: validateAndSubmit,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              BlocBuilder<SignInBloc, SignInState>(
+                builder: (context, state) {
+                  if (state is SignInLoading) {
+                    return Center(
+                      child: SplashAnimation.loading(),
+                    );
+                  }
+                  return Container(); // No overlay when not loading
+                },
+              ),
+            ],
           ),
         ),
       ),
@@ -100,6 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
+///
 class _FormSection extends StatelessWidget {
   final double height;
   final TextEditingController emailController;

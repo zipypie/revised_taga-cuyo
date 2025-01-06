@@ -29,6 +29,12 @@ class SplashAnimation extends StatefulWidget {
     );
   }
 
+  factory SplashAnimation.confetti({double size = double.infinity}) {
+    return SplashAnimation(
+      mainAnimationPath: AnimationStrings.loading,
+      mainAnimationSize: size,
+    );
+  }
   @override
   SplashAnimationState createState() => SplashAnimationState();
 }

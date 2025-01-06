@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taga_cuyo/app/routes/routes.dart';
 import 'package:taga_cuyo/core/bloc/sign_up_bloc/sign_up_bloc.dart';
+import 'package:taga_cuyo/core/common_widgets/animations/splash_animation.dart';
 import 'package:taga_cuyo/core/common_widgets/popup%20displays/snackbar.dart';
 import 'package:taga_cuyo/core/common_widgets/terms%20and%20condition/terms_and_condition.dart';
 import 'package:taga_cuyo/core/models/field_validator.dart';
@@ -38,56 +39,20 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   void initState() {
     super.initState();
-
-    // Add listeners for each TextEditingController using the reusable method
-    addListenerToController(fnController);
-    addListenerToController(lnController);
-    addListenerToController(emailController);
-    addListenerToController(pController);
-    addListenerToController(ageController);
   }
 
   @override
   void dispose() {
-    // Remove listeners when the widget is disposed
-    removeListenerFromController(fnController);
-    removeListenerFromController(lnController);
-    removeListenerFromController(emailController);
-    removeListenerFromController(pController);
-    removeListenerFromController(ageController);
     super.dispose();
-  }
-
-  // Reusable method to add listeners to controllers
-  void addListenerToController(TextEditingController controller) {
-    controller.addListener(() {
-      validateForm();
-    });
-  }
-
-  // Reusable method to remove listeners from controllers
-  void removeListenerFromController(TextEditingController controller) {
-    controller.removeListener(() {
-      validateForm();
-    });
-  }
-
-  void validateForm() {
-    // Trigger form validation manually on every field change
-    bool formValid = _formKey.currentState?.validate() ?? false;
-    if (formValid != isFormValid) {
-      setState(() {
-        isFormValid = formValid;
-      });
-    }
   }
 
   void validateAndSubmit() {
     setState(() {
-      _autovalidateMode = AutovalidateMode.always;
+      _autovalidateMode =
+          AutovalidateMode.always; // Trigger validation only on submit
     });
 
-    // Manually trigger validation again before submitting
+    // Manually trigger validation before submitting
     if (!_formKey.currentState!.validate()) {
       showSnackBar(
         context,
@@ -145,108 +110,127 @@ class _SignupScreenState extends State<SignupScreen> {
           }
         },
         builder: (context, state) {
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(30),
-              child: Form(
-                key: _formKey,
-                autovalidateMode: _autovalidateMode,
-                child: Column(
-                  children: [
-                    Image.asset(LogoImage.logoPath, height: height * 0.15),
-                    Text('Sign Up', style: TextStyles.h1b),
-                    Text('Create an account to get started.',
-                        style: TextStyles.knt18),
-                    CustomTextField(
-                      controller: fnController,
-                      labelText: 'First Name',
-                      hintText: 'Enter your first name',
-                      validator: (value) =>
-                          FieldValidators.validateName(value, 'First Name'),
-                    ),
-                    CustomTextField(
-                      controller: lnController,
-                      labelText: 'Last Name',
-                      hintText: 'Enter your last name',
-                      validator: (value) =>
-                          FieldValidators.validateName(value, 'Last Name'),
-                    ),
-                    CustomTextField(
-                      controller: emailController,
-                      labelText: 'Email',
-                      hintText: 'Enter your email',
-                      validator: (value) =>
-                          FieldValidators.validateEmail(value),
-                    ),
-                    CustomTextField(
-                      controller: pController,
-                      labelText: 'Password',
-                      hintText: 'Enter your password',
-                      isPassword: true,
-                      validator: (value) =>
-                          FieldValidators.validatePassword(value),
-                    ),
-                    CustomTextField(
-                      controller: ageController,
-                      labelText: 'Age',
-                      hintText: 'Enter your age',
-                      validator: (value) => FieldValidators.validateAge(value),
-                    ),
-                    DropDown(
-                      labelText: 'Gender',
-                      value: selectedGender,
-                      items: ['Male', 'Female', 'Other', 'Prefer not to say'],
-                      validator: (value) =>
-                          FieldValidators.validateGender(value),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedGender = newValue;
-                        });
-                      },
-                      hintText: 'Please select here',
-                    ),
-                    Row(
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(30),
+                  child: Form(
+                    key: _formKey,
+                    autovalidateMode: _autovalidateMode,
+                    child: Column(
                       children: [
-                        Checkbox(
-                          value: isChecked,
-                          onChanged: (bool? value) async {
-                            if (value == true) {
-                              bool? agreed = await showDialog<bool>(
-                                context: context,
-                                builder: (context) =>
-                                    TermsAndCondition(onShowRow: true),
-                              );
-                              setState(() => isChecked = agreed ?? false);
-                            } else {
-                              setState(() => isChecked = false);
-                            }
-                          },
+                        Image.asset(LogoImage.logoPath, height: height * 0.15),
+                        Text('Sign Up', style: TextStyles.h1b),
+                        Text('Create an account to get started.',
+                            style: TextStyles.knt18),
+                        CustomTextField(
+                          controller: fnController,
+                          labelText: 'First Name',
+                          hintText: 'Enter your first name',
+                          validator: (value) =>
+                              FieldValidators.validateName(value, 'First Name'),
                         ),
-                        Expanded(
-                            child: Text("I agree to the terms and conditions.",
-                                style: TextStyle(
-                                    fontSize: 18, fontFamily: AppFonts.fcr))),
+                        CustomTextField(
+                          controller: lnController,
+                          labelText: 'Last Name',
+                          hintText: 'Enter your last name',
+                          validator: (value) =>
+                              FieldValidators.validateName(value, 'Last Name'),
+                        ),
+                        CustomTextField(
+                          controller: emailController,
+                          labelText: 'Email',
+                          hintText: 'Enter your email',
+                          validator: (value) =>
+                              FieldValidators.validateEmail(value),
+                        ),
+                        CustomTextField(
+                          controller: pController,
+                          labelText: 'Password',
+                          hintText: 'Enter your password',
+                          isPassword: true,
+                          validator: (value) =>
+                              FieldValidators.validatePassword(value),
+                        ),
+                        CustomTextField(
+                          controller: ageController,
+                          labelText: 'Age',
+                          hintText: 'Enter your age',
+                          validator: (value) =>
+                              FieldValidators.validateAge(value),
+                        ),
+                        DropDown(
+                          labelText: 'Gender',
+                          value: selectedGender,
+                          items: [
+                            'Male',
+                            'Female',
+                            'Other',
+                            'Prefer not to say'
+                          ],
+                          validator: (value) =>
+                              FieldValidators.validateGender(value),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedGender = newValue;
+                            });
+                          },
+                          hintText: 'Please select here',
+                        ),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: isChecked,
+                              onChanged: (bool? value) async {
+                                if (value == true) {
+                                  bool? agreed = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) =>
+                                        TermsAndCondition(onShowRow: true),
+                                  );
+                                  setState(() => isChecked = agreed ?? false);
+                                } else {
+                                  setState(() => isChecked = false);
+                                }
+                              },
+                            ),
+                            Expanded(
+                                child: Text(
+                                    "I agree to the terms and conditions.",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontFamily: AppFonts.fcr))),
+                          ],
+                        ),
+                        CustomButton(
+                          onTab: () => validateAndSubmit(),
+                          text: 'Sign Up',
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pushNamed(
+                              context, AppRoutes.loginScreen),
+                          child: Text.rich(TextSpan(children: [
+                            TextSpan(
+                                text: 'Already have an account? ',
+                                style: TextStyles.knt16),
+                            TextSpan(text: 'Login', style: TextStyles.knt18b),
+                          ])),
+                        ),
                       ],
                     ),
-                    if (state is SignUpProcess)
-                      const CircularProgressIndicator()
-                    else
-                      CustomButton(
-                          onTab: () => validateAndSubmit(), text: 'Sign Up'),
-                    TextButton(
-                      onPressed: () =>
-                          Navigator.pushNamed(context, AppRoutes.loginScreen),
-                      child: Text.rich(TextSpan(children: [
-                        TextSpan(
-                            text: 'Already have an account? ',
-                            style: TextStyles.knt16),
-                        TextSpan(text: 'Login', style: TextStyles.knt18b),
-                      ])),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+              BlocBuilder<SignUpBloc, SignUpState>(
+                builder: (context, state) {
+                  if (state is SignUpProcess) {
+                    return Center(child: SplashAnimation.loading());
+                  }
+                  return Container();
+                },
+              )
+            ],
           );
         },
       ),
