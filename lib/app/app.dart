@@ -6,8 +6,12 @@ import 'package:taga_cuyo/app/themes/themes.dart';
 import 'package:taga_cuyo/core/bloc/authentication_bloc/authentication_bloc.dart';
 import 'package:taga_cuyo/core/bloc/sign_in_bloc/sign_in_bloc.dart';
 import 'package:taga_cuyo/core/bloc/sign_up_bloc/sign_up_bloc.dart'; // Import SignUpBloc
+import 'package:taga_cuyo/core/common_widgets/animations/splash_animation.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/user_repo.dart';
 import 'package:taga_cuyo/presentation/onboarding/get_started/get_started.dart';
+
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 
 class MainApp extends StatelessWidget {
   final UserRepository userRepository;
@@ -17,28 +21,39 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider<UserRepository>(
+          create: (_) => userRepository, // Provide UserRepository globally
+        ),
         RepositoryProvider<AuthenticationBloc>(
-            create: (_) =>
-                AuthenticationBloc(myUserRepository: userRepository)),
+          create: (_) => AuthenticationBloc(myUserRepository: userRepository),
+        ),
         RepositoryProvider<SignUpBloc>(
-            create: (_) => SignUpBloc(userRepository: userRepository)),
+          create: (_) => SignUpBloc(userRepository: userRepository),
+        ),
         RepositoryProvider<SignInBloc>(
-            create: (_) => SignInBloc(userRepository: userRepository)),
+          create: (_) => SignInBloc(userRepository: userRepository),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppThemes.lightTheme,
         darkTheme: AppThemes.darkTheme,
         onGenerateRoute: AppRoutes.generateRoute,
+        scaffoldMessengerKey: scaffoldMessengerKey,
         home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
           builder: (context, state) {
+            if (state.status == AuthenticationStatus.unknown) {
+              return Scaffold(
+                body: SplashAnimation.loading(),
+              );
+            }
             if (state.status == AuthenticationStatus.authenticated) {
               return MainAppScreen();
             } else {
               return GetStartedScreen();
             }
           },
-        ), // This screen will now have access to AuthenticationBloc and SignUpBloc
+        ),
       ),
     );
   }

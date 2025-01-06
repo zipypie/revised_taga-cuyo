@@ -11,13 +11,14 @@ abstract class SignInEvent extends Equatable {
 class SignInRequired extends SignInEvent {
   final String email;
   final String password;
-  final BuildContext context; // Added context
 
   const SignInRequired(
-      this.email, this.password, this.context); // Constructor includes context
+    this.email,
+    this.password,
+  ); // Removed context here
 
   @override
-  List<Object> get props => [email, password, context];
+  List<Object> get props => [email, password];
 }
 
 class SignOutRequired extends SignInEvent {}

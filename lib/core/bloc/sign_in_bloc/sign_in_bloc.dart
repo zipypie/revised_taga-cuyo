@@ -1,11 +1,9 @@
-import 'dart:developer';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
-import 'package:taga_cuyo/core/common_widgets/popup%20displays/snackbar.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/user_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../error/errors.dart';
 
 part 'sign_in_event.dart';
 part 'sign_in_state.dart';
@@ -18,39 +16,32 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         super(SignInInitial()) {
     on<SignInRequired>((event, emit) async {
       emit(SignInProcess());
+
       try {
-        // Attempt sign in
+        // Check the credentials before attempting sign-in
+        await checkCredentials(event.email, event.password);
+
+        // Proceed with sign-in
         await _userRepository.signIn(event.email, event.password);
 
-        // Check if email is verified
         bool isVerified = await _userRepository.isEmailVerified();
-        log("Is email verified? $isVerified");
-
         if (isVerified) {
           emit(SignInSuccess());
         } else {
           emit(SignInEmailNotVerified());
         }
       } catch (e) {
-        if (e is FirebaseAuthException) {
-          String message = '';
-          if (e.code == 'wrong-password') {
-            message = 'Incorrect password.';
-            emit(SignInFailure(message: message));
-          } else if (e.code == 'user-not-found') {
-            message = 'No user found for that email.';
-            emit(SignInFailure(message: message));
-          } else {
-            message = 'Authentication error: ${e.message}';
-            emit(SignInFailure(message: message));
-          }
+        String errorMessage = 'An unknown error occurred during sign-in.';
 
-          // Show the snackbar using the context passed from the event
-          showSnackBar(event.context, message);
+        if (e is FirebaseAuthException) {
+          final failure = SignInWithEmailAndPasswordFailure.fromCode(e.code);
+          failure.logError(); // Log the error
+          errorMessage = failure.message; // Get the error message from failure
         } else {
-          log('Unexpected error: $e');
-          emit(SignInFailure(message: 'Sign-in failed: $e'));
+          errorMessage = 'Sign-in failed: $e';
         }
+
+        emit(SignInFailure(message: errorMessage));
       }
     });
 
@@ -58,5 +49,22 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       await _userRepository.logOut();
       emit(SignInInitial());
     });
+  }
+
+  // This is the function you're adding
+  Future<void> checkCredentials(String email, String password) async {
+    if (email.isEmpty || password.isEmpty) {
+      throw FirebaseAuthException(
+        code: 'invalid-credential',
+        message: 'Email and password cannot be empty.',
+      );
+    }
+    if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+        .hasMatch(email)) {
+      throw FirebaseAuthException(
+        code: 'invalid-email',
+        message: 'Email is not valid or badly formatted.',
+      );
+    }
   }
 }

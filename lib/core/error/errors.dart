@@ -1,36 +1,37 @@
-class SignUpWithEmailAndPasswordFailure implements Exception {
-  /// {@macro sign_up_with_email_and_password_failure}
-  const SignUpWithEmailAndPasswordFailure([
-    this.message = 'An unknown exception occurred.',
-  ]);
+import 'dart:developer';
 
-  factory SignUpWithEmailAndPasswordFailure.fromCode(String code) {
+class SignInWithEmailAndPasswordFailure implements Exception {
+  const SignInWithEmailAndPasswordFailure({
+    this.message = 'An unknown exception occurred.',
+    this.code,
+  });
+
+  factory SignInWithEmailAndPasswordFailure.fromCode(String code) {
     switch (code) {
-      case 'invalid-email':
-        return const SignUpWithEmailAndPasswordFailure(
-          'Email is not valid or badly formatted.',
+      case 'invalid-credential':
+        return const SignInWithEmailAndPasswordFailure(
+          message: 'Incorrect email or password. Please try again!',
+          code: 'invalid-credential',
         );
-      case 'user-disabled':
-        return const SignUpWithEmailAndPasswordFailure(
-          'This user has been disabled. Please contact support for help.',
-        );
-      case 'email-already-in-use':
-        return const SignUpWithEmailAndPasswordFailure(
-          'An account already exists for that email.',
-        );
-      case 'operation-not-allowed':
-        return const SignUpWithEmailAndPasswordFailure(
-          'Operation is not allowed.  Please contact support.',
-        );
-      case 'weak-password':
-        return const SignUpWithEmailAndPasswordFailure(
-          'Please enter a stronger password.',
+      case 'too-many-requests':
+        return const SignInWithEmailAndPasswordFailure(
+          message: 'Too many sign-in attempts. Please try again later.',
+          code: 'too-many-requests',
         );
       default:
-        return const SignUpWithEmailAndPasswordFailure();
+        return const SignInWithEmailAndPasswordFailure();
     }
   }
 
-  /// The associated error message.
   final String message;
+  final String? code;
+
+  @override
+  String toString() {
+    return 'SignInWithEmailAndPasswordFailure{message: $message, code: $code}';
+  }
+
+  void logError() {
+    log('Error occurred during sign-in: $message (Code: $code)');
+  }
 }

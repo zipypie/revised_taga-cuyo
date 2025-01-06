@@ -32,8 +32,8 @@ class FieldValidators {
       return 'Please enter your age';
     }
     final age = int.tryParse(value);
-    if (age == null || age < 18) {
-      return 'You must be at least 18 years old';
+    if (age == null || age < 5) {
+      return 'You must be at least 5 years old';
     }
     return null;
   }

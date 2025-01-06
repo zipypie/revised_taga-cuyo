@@ -11,6 +11,7 @@ class AppColors {
   static const Color wrong = Color(0xFFF90909);
   static const Color accentColor = Color.fromARGB(255, 133, 188, 250);
   static const Color grey = Color.fromARGB(255, 190, 190, 190);
+  static const Color darkGreen = Color.fromARGB(255, 6, 204, 62);
 }
 
 class CustomColors {

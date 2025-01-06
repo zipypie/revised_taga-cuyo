@@ -7,8 +7,14 @@ import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/core/constants/images.dart';
 import 'package:taga_cuyo/core/bloc/sign_in_bloc/sign_in_bloc.dart';
+import 'package:taga_cuyo/core/models/field_validator.dart';
+import 'package:taga_cuyo/presentation/onboarding/login/email_verification/email_verification.dart';
 
-import 'email_verification/email_verification.dart'; // Import your dialog
+import '../../../core/common_widgets/popup displays/alert_dialog.dart';
+
+// Declare a scaffoldMessengerKey to manage Snackbar messages
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,10 +25,11 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
 
-  bool _isDialogVisible = false;
+  bool _isDialogShown = false; // Add this flag
 
   @override
   Widget build(BuildContext context) {
@@ -33,25 +40,15 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: BlocListener<SignInBloc, SignInState>(
           listener: (context, state) {
-            if (state is SignInProcess) {
-              if (!_isDialogVisible) {
-                _showLoadingDialog(context);
-                _isDialogVisible = true;
-              }
-            } else {
-              if (_isDialogVisible) {
-                Navigator.pop(context); // Dismiss the loading dialog
-                _isDialogVisible = false;
-              }
-            }
-
             if (state is SignInSuccess) {
               Navigator.pushNamed(context, AppRoutes.mainScreen);
             } else if (state is SignInFailure) {
-              _showErrorSnackBar(context, state.message);
-            } else if (state is SignInEmailNotVerified) {
-              // Show the EmailVerificationDialog when email is not verified
-              _showEmailVerificationDialog(context);
+              _showErrorDialog(context, state.message);
+            } else if (state is SignInEmailNotVerified && !_isDialogShown) {
+              _isDialogShown = true;
+              showEmailVerificationDialog(context).then((_) {
+                _isDialogShown = false;
+              });
             }
           },
           child: SingleChildScrollView(
@@ -63,6 +60,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: height,
                   emailController: emailController,
                   passwordController: passwordController,
+                  formKey: _formKey,
+                  autovalidateMode: _autovalidateMode,
+                  onSubmit: validateAndSubmit,
                 ),
               ],
             ),
@@ -72,31 +72,89 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _showErrorSnackBar(BuildContext context, String? message) {
-    if (message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
-    }
-  }
+  void validateAndSubmit() {
+    setState(() {
+      _autovalidateMode = AutovalidateMode.always;
+    });
 
-  void _showLoadingDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Center(child: CircularProgressIndicator());
-      },
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    BlocProvider.of<SignInBloc>(context).add(
+      SignInRequired(
+        emailController.text,
+        passwordController.text,
+      ),
     );
   }
 
-  void _showEmailVerificationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const EmailVerificationDialog(); // Show your custom email verification dialog
-      },
+  void _showErrorDialog(BuildContext context, String? message) {
+    if (message != null && message.isNotEmpty) {
+      showCustomAlertDialog(
+        context,
+        'Login Failed',
+        message,
+      );
+    }
+  }
+}
+
+class _FormSection extends StatelessWidget {
+  final double height;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  final GlobalKey<FormState> formKey;
+  final AutovalidateMode autovalidateMode;
+  final VoidCallback onSubmit;
+
+  const _FormSection({
+    required this.height,
+    required this.emailController,
+    required this.passwordController,
+    required this.formKey,
+    required this.autovalidateMode,
+    required this.onSubmit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      child: Form(
+        key: formKey,
+        autovalidateMode: autovalidateMode,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: height * 0.025),
+            CustomTextField(
+              controller: emailController,
+              hintText: "Enter your email",
+              labelText: "E-mail",
+              backgroundColor: AppColors.primaryBackground,
+              prefixIcon: Icon(Icons.email),
+              validator: (value) => FieldValidators.validateEmail(value),
+            ),
+            CustomTextField(
+              controller: passwordController,
+              hintText: "Enter your password",
+              labelText: "Password",
+              prefixIcon: Icon(Icons.lock),
+              isPassword: true,
+              backgroundColor: AppColors.primaryBackground,
+              validator: (value) => FieldValidators.validatePassword(value),
+            ),
+            _ForgetPasswordLink(),
+            SizedBox(height: height * 0.025),
+            CustomButton(
+              onTab: onSubmit,
+              text: "Login",
+            ),
+            _SignUpOption(),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -124,64 +182,6 @@ class _TopSection extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyles.knt18),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _FormSection extends StatelessWidget {
-  final double height;
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
-
-  const _FormSection({
-    required this.height,
-    required this.emailController,
-    required this.passwordController,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: height * 0.025), // Adjustable space here
-          CustomTextField(
-            controller: emailController,
-            hintText: "Enter your email",
-            labelText: "E-mail",
-            backgroundColor: AppColors.primaryBackground,
-            prefixIcon: Icon(Icons.email),
-          ),
-          CustomTextField(
-            controller: passwordController,
-            hintText: "Enter your password",
-            labelText: "Password",
-            prefixIcon: Icon(Icons.lock),
-            isPassword: true,
-            backgroundColor: AppColors.primaryBackground,
-          ),
-          _ForgetPasswordLink(),
-          SizedBox(height: height * 0.025), // Adjustable space here
-
-          /// Login Button
-          CustomButton(
-            onTab: () {
-              // Trigger the login process via Bloc
-              BlocProvider.of<SignInBloc>(context).add(
-                SignInRequired(
-                  emailController.text,
-                  passwordController.text,
-                  context, // Pass the context to the event
-                ),
-              );
-            },
-            text: "Login",
-          ),
-          _SignUpOption(),
         ],
       ),
     );

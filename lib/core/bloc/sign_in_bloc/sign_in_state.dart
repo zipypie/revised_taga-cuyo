@@ -18,6 +18,8 @@ class SignInFailure extends SignInState {
   const SignInFailure({this.message});
 }
 
+class SignInLoading extends SignInState {}
+
 class SignInProcess extends SignInState {}
 
 class SignInEmailNotVerified extends SignInState {}

@@ -11,7 +11,6 @@ import 'package:taga_cuyo/core/common_widgets/selectables/button.dart';
 import 'package:taga_cuyo/core/common_widgets/selectables/drop_down.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/core/constants/images.dart';
-
 import '../../../core/common_widgets/textfields/textfield.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -33,23 +32,93 @@ class _SignupScreenState extends State<SignupScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  // Validate form fields and submit
-  void validateAndSubmit() {
-    if (_formKey.currentState?.validate() ?? false) {
-      final user = MyUser(
-        uid: '', // Initially empty, will be set by Firebase
-        firstName: fnController.text,
-        lastName: lnController.text,
-        email: emailController.text,
-        age: ageController.text,
-        gender: selectedGender,
-        hasCompletedSurvey: false, // Default to false
-        createdAt: DateTime.now(), // Set current timestamp for account creation
-      );
+  bool isFormValid = false;
+  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
 
-      // Trigger SignUp event
-      context.read<SignUpBloc>().add(SignUpRequired(user, pController.text));
+  @override
+  void initState() {
+    super.initState();
+
+    // Add listeners for each TextEditingController using the reusable method
+    addListenerToController(fnController);
+    addListenerToController(lnController);
+    addListenerToController(emailController);
+    addListenerToController(pController);
+    addListenerToController(ageController);
+  }
+
+  @override
+  void dispose() {
+    // Remove listeners when the widget is disposed
+    removeListenerFromController(fnController);
+    removeListenerFromController(lnController);
+    removeListenerFromController(emailController);
+    removeListenerFromController(pController);
+    removeListenerFromController(ageController);
+    super.dispose();
+  }
+
+  // Reusable method to add listeners to controllers
+  void addListenerToController(TextEditingController controller) {
+    controller.addListener(() {
+      validateForm();
+    });
+  }
+
+  // Reusable method to remove listeners from controllers
+  void removeListenerFromController(TextEditingController controller) {
+    controller.removeListener(() {
+      validateForm();
+    });
+  }
+
+  void validateForm() {
+    // Trigger form validation manually on every field change
+    bool formValid = _formKey.currentState?.validate() ?? false;
+    if (formValid != isFormValid) {
+      setState(() {
+        isFormValid = formValid;
+      });
     }
+  }
+
+  void validateAndSubmit() {
+    setState(() {
+      _autovalidateMode = AutovalidateMode.always;
+    });
+
+    // Manually trigger validation again before submitting
+    if (!_formKey.currentState!.validate()) {
+      showSnackBar(
+        context,
+        'You must fill up all the fields.',
+        backgroundColor: Colors.red,
+      );
+      return;
+    }
+
+    // Ensure the user has checked the terms and conditions
+    if (!isChecked) {
+      showSnackBar(
+        context,
+        'You must agree to the terms and conditions.',
+        backgroundColor: Colors.red,
+      );
+      return;
+    }
+
+    final user = MyUser(
+      uid: '',
+      firstName: fnController.text,
+      lastName: lnController.text,
+      email: emailController.text,
+      age: ageController.text,
+      gender: selectedGender,
+      hasCompletedSurvey: false,
+      createdAt: DateTime.now(),
+    );
+
+    context.read<SignUpBloc>().add(SignUpRequired(user, pController.text));
   }
 
   @override
@@ -81,153 +150,98 @@ class _SignupScreenState extends State<SignupScreen> {
               padding: const EdgeInsets.all(30),
               child: Form(
                 key: _formKey,
+                autovalidateMode: _autovalidateMode,
                 child: Column(
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Image.asset(LogoImage.logoPath, height: height * 0.15),
+                    Text('Sign Up', style: TextStyles.h1b),
+                    Text('Create an account to get started.',
+                        style: TextStyles.knt18),
+                    CustomTextField(
+                      controller: fnController,
+                      labelText: 'First Name',
+                      hintText: 'Enter your first name',
+                      validator: (value) =>
+                          FieldValidators.validateName(value, 'First Name'),
+                    ),
+                    CustomTextField(
+                      controller: lnController,
+                      labelText: 'Last Name',
+                      hintText: 'Enter your last name',
+                      validator: (value) =>
+                          FieldValidators.validateName(value, 'Last Name'),
+                    ),
+                    CustomTextField(
+                      controller: emailController,
+                      labelText: 'Email',
+                      hintText: 'Enter your email',
+                      validator: (value) =>
+                          FieldValidators.validateEmail(value),
+                    ),
+                    CustomTextField(
+                      controller: pController,
+                      labelText: 'Password',
+                      hintText: 'Enter your password',
+                      isPassword: true,
+                      validator: (value) =>
+                          FieldValidators.validatePassword(value),
+                    ),
+                    CustomTextField(
+                      controller: ageController,
+                      labelText: 'Age',
+                      hintText: 'Enter your age',
+                      validator: (value) => FieldValidators.validateAge(value),
+                    ),
+                    DropDown(
+                      labelText: 'Gender',
+                      value: selectedGender,
+                      items: ['Male', 'Female', 'Other', 'Prefer not to say'],
+                      validator: (value) =>
+                          FieldValidators.validateGender(value),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedGender = newValue;
+                        });
+                      },
+                      hintText: 'Please select here',
+                    ),
+                    Row(
                       children: [
-                        Image.asset(LogoImage.logoPath, height: height * 0.15),
-                        Text('Sign Up', style: TextStyles.h1b),
-                        Text(
-                          'Create an account to get started.',
-                          style: TextStyles.knt18,
+                        Checkbox(
+                          value: isChecked,
+                          onChanged: (bool? value) async {
+                            if (value == true) {
+                              bool? agreed = await showDialog<bool>(
+                                context: context,
+                                builder: (context) =>
+                                    TermsAndCondition(onShowRow: true),
+                              );
+                              setState(() => isChecked = agreed ?? false);
+                            } else {
+                              setState(() => isChecked = false);
+                            }
+                          },
                         ),
+                        Expanded(
+                            child: Text("I agree to the terms and conditions.",
+                                style: TextStyle(
+                                    fontSize: 18, fontFamily: AppFonts.fcr))),
                       ],
                     ),
-                    Column(
-                      children: [
-                        // First Name
-                        CustomTextField(
-                          controller: fnController,
-                          labelText: 'First Name',
-                          hintText: 'Enter your first name',
-                          keyboardType: TextInputType.text,
-                          validator: (value) =>
-                              FieldValidators.validateName(value, 'First Name'),
-                        ),
-                        // Last Name
-                        CustomTextField(
-                          controller: lnController,
-                          labelText: 'Last Name',
-                          hintText: 'Enter your last name',
-                          keyboardType: TextInputType.text,
-                          validator: (value) =>
-                              FieldValidators.validateName(value, 'Last Name'),
-                        ),
-                        // Email
-                        CustomTextField(
-                          controller: emailController,
-                          labelText: 'Email',
-                          hintText: 'Enter your email',
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) =>
-                              FieldValidators.validateEmail(value),
-                        ),
-                        // Password
-                        CustomTextField(
-                          controller: pController,
-                          labelText: 'Password',
-                          hintText: 'Enter your password',
-                          isPassword: true,
-                          validator: (value) =>
-                              FieldValidators.validatePassword(value),
-                        ),
-                        // Age
-                        CustomTextField(
-                          controller: ageController,
-                          labelText: 'Age',
-                          hintText: 'Enter your age',
-                          keyboardType: TextInputType.number,
-                          validator: (value) =>
-                              FieldValidators.validateAge(value),
-                        ),
-                        // Gender
-                        DropDown(
-                          labelText: 'Gender',
-                          value: selectedGender,
-                          items: [
-                            'Male',
-                            'Female',
-                            'Other',
-                            'Prefer not to say',
-                          ],
-                          hintText: 'Select your gender',
-                          validator: (value) =>
-                              FieldValidators.validateGender(value),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedGender = newValue;
-                            });
-                          },
-                        ),
-                        // Terms and Conditions
-                        Row(
-                          children: [
-                            Checkbox(
-                              value: isChecked,
-                              onChanged: (bool? value) async {
-                                if (value == true) {
-                                  bool? agreed = await showDialog<bool>(
-                                    context: context,
-                                    builder: (context) =>
-                                        TermsAndCondition(onShowRow: true),
-                                  );
-                                  setState(() => isChecked = agreed ?? false);
-                                } else {
-                                  setState(() => isChecked = false);
-                                }
-                              },
-                            ),
-                            Expanded(
-                              child: Text(
-                                "I agree to the terms and conditions.",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontFamily: AppFonts.fcr,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        // Loading or Sign-up Button
-                        if (state is SignUpProcess)
-                          const CircularProgressIndicator()
-                        else
-                          CustomButton(
-                            onTab: () {
-                              if (!isChecked) {
-                                showSnackBar(
-                                  context,
-                                  'You must agree to the terms and conditions.',
-                                  backgroundColor: Colors.red,
-                                );
-                                return;
-                              }
-                              validateAndSubmit();
-                            },
-                            text: 'Sign Up',
-                          ),
-                        // Login redirect
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, AppRoutes.loginScreen);
-                          },
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Already have an account? ',
-                                  style: TextStyles.knt16,
-                                ),
-                                TextSpan(
-                                  text: 'Login',
-                                  style: TextStyles.knt18b,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                    if (state is SignUpProcess)
+                      const CircularProgressIndicator()
+                    else
+                      CustomButton(
+                          onTab: () => validateAndSubmit(), text: 'Sign Up'),
+                    TextButton(
+                      onPressed: () =>
+                          Navigator.pushNamed(context, AppRoutes.loginScreen),
+                      child: Text.rich(TextSpan(children: [
+                        TextSpan(
+                            text: 'Already have an account? ',
+                            style: TextStyles.knt16),
+                        TextSpan(text: 'Login', style: TextStyles.knt18b),
+                      ])),
                     ),
                   ],
                 ),
