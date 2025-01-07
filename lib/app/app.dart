@@ -4,7 +4,6 @@ import 'package:taga_cuyo/app/app_viewer.dart';
 import 'package:taga_cuyo/app/routes/routes.dart';
 import 'package:taga_cuyo/app/themes/themes.dart';
 import 'package:taga_cuyo/core/bloc/authentication_bloc/authentication_bloc.dart';
-import 'package:taga_cuyo/core/bloc/my_user_bloc/my_user_bloc.dart';
 import 'package:taga_cuyo/core/bloc/progress_bloc/progress_bloc.dart';
 import 'package:taga_cuyo/core/bloc/sign_in_bloc/sign_in_bloc.dart';
 import 'package:taga_cuyo/core/bloc/sign_up_bloc/sign_up_bloc.dart'; // Import SignUpBloc
