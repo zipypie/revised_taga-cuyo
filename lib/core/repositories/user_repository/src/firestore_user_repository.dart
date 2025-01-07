@@ -102,4 +102,9 @@ class FirebaseUserRepository implements UserRepository {
       await user.sendEmailVerification();
     }
   }
+
+  @override
+  String? getCurrentUserId() {
+    return _firebaseAuth.currentUser?.uid;
+  }
 }

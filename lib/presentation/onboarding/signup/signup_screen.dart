@@ -56,7 +56,7 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!_formKey.currentState!.validate()) {
       showSnackBar(
         context,
-        'You must fill up all the fields.',
+        'You must fill up all the fields correctly.',
         backgroundColor: Colors.red,
       );
       return;
@@ -104,7 +104,7 @@ class _SignupScreenState extends State<SignupScreen> {
           } else if (state is SignUpFailure) {
             showSnackBar(
               context,
-              'Sign-up failed. Please try again.',
+              state.message, // Use the error message from the state
               backgroundColor: Colors.red,
             );
           }

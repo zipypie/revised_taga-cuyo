@@ -21,4 +21,6 @@ abstract class UserRepository {
 
   // Add method to send verification email
   Future<void> sendVerificationEmail();
+
+  String? getCurrentUserId();
 }

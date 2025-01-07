@@ -28,13 +28,13 @@ Future<void> showEmailVerificationDialog(BuildContext context) {
               ),
               const SizedBox(height: 20),
               CustomButton(
-                  onTab: () async {
+                  onTab: () {
                     Navigator.of(dialogContext).pop(); // Close the dialog
 
                     try {
                       User? user = FirebaseAuth.instance.currentUser;
                       if (user != null && !user.emailVerified) {
-                        await user.sendEmailVerification();
+                        user.sendEmailVerification();
                         showSnackBar(
                           context, // Use the context passed to the function
                           'Verification email sent',
