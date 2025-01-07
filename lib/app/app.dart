@@ -4,8 +4,11 @@ import 'package:taga_cuyo/app/app_viewer.dart';
 import 'package:taga_cuyo/app/routes/routes.dart';
 import 'package:taga_cuyo/app/themes/themes.dart';
 import 'package:taga_cuyo/core/bloc/authentication_bloc/authentication_bloc.dart';
+import 'package:taga_cuyo/core/bloc/my_user_bloc/my_user_bloc.dart';
+import 'package:taga_cuyo/core/bloc/progress_bloc/progress_bloc.dart';
 import 'package:taga_cuyo/core/bloc/sign_in_bloc/sign_in_bloc.dart';
 import 'package:taga_cuyo/core/bloc/sign_up_bloc/sign_up_bloc.dart'; // Import SignUpBloc
+import 'package:taga_cuyo/core/repositories/user_progress_repository/src/user_progress_repo.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/user_repo.dart';
 import 'package:taga_cuyo/presentation/onboarding/get_started/get_started.dart';
 import 'package:taga_cuyo/presentation/onboarding/login/login_screen.dart';
@@ -15,23 +18,33 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
 
 class MainApp extends StatelessWidget {
   final UserRepository userRepository;
-  const MainApp(this.userRepository, {super.key});
+  final UserProgressRepository userProgressRepository;
+
+  const MainApp(this.userRepository, this.userProgressRepository, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
+    return MultiBlocProvider(
       providers: [
-        RepositoryProvider<UserRepository>(
-          create: (_) => userRepository, // Provide UserRepository globally
-        ),
         RepositoryProvider<AuthenticationBloc>(
-          create: (_) => AuthenticationBloc(myUserRepository: userRepository),
+          create: (_) => AuthenticationBloc(
+            myUserRepository: userRepository,
+          ),
         ),
-        RepositoryProvider<SignUpBloc>(
-          create: (_) => SignUpBloc(userRepository: userRepository),
+        RepositoryProvider<ProgressBloc>(
+          create: (_) => ProgressBloc(
+            userProgressRepository: userProgressRepository,
+          ),
         ),
-        RepositoryProvider<SignInBloc>(
-          create: (_) => SignInBloc(userRepository: userRepository),
+        BlocProvider(
+          create: (context) => SignInBloc(
+            userRepository: context.read<AuthenticationBloc>().userRepository,
+          ),
+        ),
+        BlocProvider(
+          create: (context) => SignUpBloc(
+            userRepository: context.read<AuthenticationBloc>().userRepository,
+          ),
         ),
       ],
       child: MaterialApp(
@@ -42,17 +55,29 @@ class MainApp extends StatelessWidget {
         scaffoldMessengerKey: scaffoldMessengerKey,
         home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
           builder: (context, state) {
-            if (state.status == AuthenticationStatus.unauthenticated) {
-              return LoginScreen(); // User is not authenticated
-            } else if (state.status == AuthenticationStatus.authenticated) {
-              if (state.user != null && !state.user!.emailVerified) {
-                return LoginScreen(); // If email is not verified, go to LoginScreen
+            if (state.status == AuthenticationStatus.authenticated) {
+              if (state.user!.emailVerified) {
+                // User is authenticated and email is verified
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) => ProgressBloc(
+                        userProgressRepository: userProgressRepository,
+                      )..add(GetUserProgressEvent()),
+                    ),
+                  ],
+                  child: const MainAppScreen(),
+                );
+              } else {
+                // Email is not verified, show login screen
+                return const LoginScreen();
               }
-              return MainAppScreen(); // If email is verified, go to MainAppScreen
+            } else if (state.status == AuthenticationStatus.unauthenticated) {
+              return const LoginScreen(); // User is not authenticated
             } else if (state.status == AuthenticationStatus.unknown) {
-              return GetStartedScreen(); // Loading or first-time screen
+              return const GetStartedScreen(); // Loading or first-time screen
             } else {
-              return LoginScreen(); // Default to login screen
+              return const LoginScreen(); // Default to login screen
             }
           },
         ),

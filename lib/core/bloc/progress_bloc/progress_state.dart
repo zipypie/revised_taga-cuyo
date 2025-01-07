@@ -13,7 +13,6 @@ class ProgressLoading extends ProgressState {}
 class ProgressSuccess extends ProgressState {
   final UserProgress userProgress;
 
-  // Ensure this constructor is defined correctly
   ProgressSuccess({required this.userProgress});
 
   @override

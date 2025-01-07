@@ -1,9 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 // Entity for data storage (e.g., Firestore)
+// MyUserEntity Class for Data Storage (Firestore)
 class MyUserEntity extends Equatable {
   final String uid;
   final String firstName;
@@ -29,7 +31,6 @@ class MyUserEntity extends Equatable {
     this.createdAt,
   });
 
-  /// Copy Method
   MyUserEntity copyWith({
     String? uid,
     String? firstName,
@@ -56,7 +57,6 @@ class MyUserEntity extends Equatable {
     );
   }
 
-  /// Convert to Map
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
@@ -72,26 +72,27 @@ class MyUserEntity extends Equatable {
     };
   }
 
-  /// Create from Map
   factory MyUserEntity.fromMap(Map<String, dynamic> map) {
     return MyUserEntity(
-      uid: map['uid'] as String,
-      firstName: map['firstName'] as String,
-      lastName: map['lastName'] as String,
-      email: map['email'] as String,
-      age: map['age'] as String,
+      uid: map['uid'] ?? '',
+      firstName: map['firstName'] ?? '',
+      lastName: map['lastName'] ?? '',
+      email: map['email'] ?? '',
+      age: map['age'] ?? '',
       gender: map['gender'] as String?,
       profileImage: map['profileImage'] as String?,
       motherTounge: map['motherTounge'] as String?,
-      hasCompletedSurvey: map['hasCompletedSurvey'] as bool,
-      createdAt: map['createdAt'] as String?,
+      hasCompletedSurvey: map['hasCompletedSurvey'] ?? false,
+      createdAt: map['createdAt'] != null
+          ? (map['createdAt'] is Timestamp
+              ? (map['createdAt'] as Timestamp).toDate().toIso8601String()
+              : map['createdAt']) // Handle Timestamp or String
+          : null,
     );
   }
 
-  /// Convert to JSON
   String toJson() => json.encode(toMap());
 
-  /// Create from JSON
   factory MyUserEntity.fromJson(String source) =>
       MyUserEntity.fromMap(json.decode(source) as Map<String, dynamic>);
 

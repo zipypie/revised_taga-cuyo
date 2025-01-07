@@ -40,7 +40,6 @@ class MyUser extends Equatable {
         createdAt,
       ];
 
-  /// Empty User Constant
   static const empty = MyUser(
     uid: '',
     firstName: '',
@@ -54,7 +53,6 @@ class MyUser extends Equatable {
     createdAt: null,
   );
 
-  /// Copy Method
   MyUser copyWith({
     String? uid,
     String? firstName,
@@ -81,13 +79,10 @@ class MyUser extends Equatable {
     );
   }
 
-  /// Check if User is Empty
   bool get isEmpty => this == MyUser.empty;
 
-  /// Check if User is Not Empty
   bool get isNotEmpty => this != MyUser.empty;
 
-  /// Convert to Entity
   MyUserEntity toEntity() {
     return MyUserEntity(
       uid: uid,
@@ -103,7 +98,6 @@ class MyUser extends Equatable {
     );
   }
 
-  /// Create from Entity
   static MyUser fromEntity(MyUserEntity entity) {
     return MyUser(
       uid: entity.uid,

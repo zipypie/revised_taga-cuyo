@@ -1,4 +1,6 @@
-part of 'my_user_bloc.dart';
+import 'package:equatable/equatable.dart';
+
+import '../../repositories/user_repository/src/models/models.dart';
 
 enum MyUserStatus { success, loading, failure }
 

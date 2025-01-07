@@ -4,14 +4,14 @@ import 'package:equatable/equatable.dart';
 
 class UserProgress extends Equatable {
   final int lessons;
-  final int category;
+  final int categories;
   final int days;
   final int minutes;
   final int longestStreak;
 
   const UserProgress({
     required this.lessons,
-    required this.category,
+    required this.categories,
     required this.days,
     required this.minutes,
     required this.longestStreak,
@@ -20,7 +20,7 @@ class UserProgress extends Equatable {
   @override
   List<Object?> get props => [
         lessons,
-        category,
+        categories,
         days,
         minutes,
         longestStreak,
@@ -29,7 +29,7 @@ class UserProgress extends Equatable {
   /// Empty UserProgress Constant
   static const empty = UserProgress(
     lessons: 0,
-    category: 0,
+    categories: 0,
     days: 0,
     minutes: 0,
     longestStreak: 0,
@@ -38,14 +38,14 @@ class UserProgress extends Equatable {
   /// Copy Method
   UserProgress copyWith({
     int? lessons,
-    int? category,
+    int? categories,
     int? days,
     int? minutes,
     int? longestStreak,
   }) {
     return UserProgress(
       lessons: lessons ?? this.lessons,
-      category: category ?? this.category,
+      categories: categories ?? this.categories,
       days: days ?? this.days,
       minutes: minutes ?? this.minutes,
       longestStreak: longestStreak ?? this.longestStreak,
@@ -62,7 +62,7 @@ class UserProgress extends Equatable {
   Map<String, dynamic> toMap() {
     return {
       'lessons': lessons,
-      'category': category,
+      'categories': categories,
       'days': days,
       'minutes': minutes,
       'longestStreak': longestStreak,
@@ -73,7 +73,7 @@ class UserProgress extends Equatable {
   static UserProgress fromMap(Map<String, dynamic> map) {
     return UserProgress(
       lessons: map['lessons'] as int,
-      category: map['category'] as int,
+      categories: map['categories'] as int,
       days: map['days'] as int,
       minutes: map['minutes'] as int,
       longestStreak: map['longestStreak'] as int,

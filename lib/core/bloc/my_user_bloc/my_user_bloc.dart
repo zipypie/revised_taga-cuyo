@@ -1,11 +1,10 @@
 import 'dart:developer';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:taga_cuyo/core/bloc/my_user_bloc/my_user_state.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/models/my_user.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/user_repo.dart';
-
 part 'my_user_event.dart';
-part 'my_user_state.dart';
 
 class MyUserBloc extends Bloc<MyUserEvent, MyUserState> {
   final UserRepository _userRepository;

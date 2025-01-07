@@ -32,11 +32,11 @@ class ProgressBloc extends Bloc<ProgressEvent, ProgressState> {
         emit(ProgressLoading());
         final userProgress =
             await _userProgressRepository.getUserProgressData();
-        emit(ProgressSuccess(
-            userProgress:
-                userProgress)); // Success state with fetched user progress
+
+        emit(ProgressSuccess(userProgress: userProgress));
       } catch (e) {
-        emit(ProgressFailure(message: e.toString()));
+        emit(ProgressFailure(
+            message: e.toString())); // Emit failure state in case of error
       }
     });
   }
