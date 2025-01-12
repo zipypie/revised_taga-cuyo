@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:taga_cuyo/core/common_widgets/popup%20displays/snackbar.dart';
 import 'package:taga_cuyo/core/common_widgets/selectables/button.dart';
 import 'package:taga_cuyo/core/common_widgets/textfields/textfield.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/core/constants/icons.dart';
+import 'package:taga_cuyo/core/cubit/change_password_cubit/change_password_cubit.dart';
 import 'package:taga_cuyo/core/utils/screen_utils.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -32,32 +35,49 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(25),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                _buildPasswordImage(screenWidth, screenHeight),
-                const SizedBox(height: 20),
-                _buildDescriptionText(),
-                _buildPasswordField(_oldpassword, 'Current Password',
-                    'Enter your current password', false),
-                _buildPasswordField(_npassword, 'New Password',
-                    'Enter your new password', false),
-                _buildPasswordField(_cnpassword, 'Confirm New Password',
-                    'Please confirm your password', true),
-                CustomButton(
-                  onTab: () {
-                    // Add password update logic here
-                  },
-                  text: "Update Password",
+      body: BlocConsumer<ChangePasswordCubit, ChangePasswordState>(
+        listener: (context, state) {
+          if (state is ChangePasswordSuccess) {
+            showSnackBar(context, 'Successfully changed your password');
+          }
+          if (state is ChangePasswordFailure) {
+            showSnackBar(context, 'Error: ${state.errorMessage}');
+          }
+        },
+        builder: (context, state) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(25),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    _buildPasswordImage(screenWidth, screenHeight),
+                    const SizedBox(height: 20),
+                    _buildDescriptionText(),
+                    _buildPasswordField(_oldpassword, 'Current Password',
+                        'Enter your current password', false),
+                    _buildPasswordField(_npassword, 'New Password',
+                        'Enter your new password', false),
+                    _buildPasswordField(_cnpassword, 'Confirm New Password',
+                        'Please confirm your password', true),
+                    CustomButton(
+                      onTab: () {
+                        if (_formKey.currentState!.validate()) {
+                          // Call the Cubit's updatePassword method
+                          context
+                              .read<ChangePasswordCubit>()
+                              .updatePassword(_npassword.text);
+                        }
+                      },
+                      text: "Update Password",
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

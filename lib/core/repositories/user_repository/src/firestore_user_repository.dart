@@ -113,4 +113,20 @@ class FirebaseUserRepository implements UserRepository {
   String? getCurrentUserId() {
     return _firebaseAuth.currentUser?.uid;
   }
+
+  @override
+  Future<void> updatePassword(String newPassword) async {
+    try {
+      User? user = _firebaseAuth.currentUser;
+
+      if (user != null) {
+        await user.updatePassword(newPassword);
+      } else {
+        throw Exception('User is not logged in');
+      }
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
 }

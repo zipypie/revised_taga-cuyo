@@ -23,4 +23,6 @@ abstract class UserRepository {
   Future<void> sendVerificationEmail();
 
   String? getCurrentUserId();
+
+  Future<void> updatePassword(String newPassword);
 }

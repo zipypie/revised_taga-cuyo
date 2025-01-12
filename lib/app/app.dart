@@ -7,6 +7,7 @@ import 'package:taga_cuyo/core/bloc/authentication_bloc/authentication_bloc.dart
 import 'package:taga_cuyo/core/bloc/progress_bloc/progress_bloc.dart';
 import 'package:taga_cuyo/core/bloc/sign_in_bloc/sign_in_bloc.dart';
 import 'package:taga_cuyo/core/bloc/sign_up_bloc/sign_up_bloc.dart'; // Import SignUpBloc
+import 'package:taga_cuyo/core/cubit/change_password_cubit/change_password_cubit.dart';
 import 'package:taga_cuyo/core/repositories/user_progress_repository/src/user_progress_repo.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/user_repo.dart';
 import 'package:taga_cuyo/presentation/onboarding/get_started/get_started.dart';
@@ -44,6 +45,9 @@ class MainApp extends StatelessWidget {
           create: (context) => SignUpBloc(
             userRepository: context.read<AuthenticationBloc>().userRepository,
           ),
+        ),
+        BlocProvider(
+          create: (context) => ChangePasswordCubit(userRepository),
         ),
       ],
       child: MaterialApp(
