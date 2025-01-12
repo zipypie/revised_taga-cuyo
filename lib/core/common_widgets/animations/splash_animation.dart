@@ -3,38 +3,45 @@ import 'package:lottie/lottie.dart';
 
 class SplashAnimation extends StatefulWidget {
   final String mainAnimationPath; // Path for the primary animation
-  final double mainAnimationSize; // Size for the primary animation
+  final double mainAnimationWidth; // Width for the primary animation
+  final double mainAnimationHeight; // Height for the primary animation
   final bool repeatMainAnimation; // Whether to repeat the primary animation
 
   const SplashAnimation({
     super.key,
     required this.mainAnimationPath,
-    this.mainAnimationSize = 250,
+    this.mainAnimationWidth = 250,
+    this.mainAnimationHeight = 250,
     this.repeatMainAnimation = true,
   });
 
   /// Factory constructor for the `book` animation
-  factory SplashAnimation.book({double size = 250}) {
+  factory SplashAnimation.book({double width = 250, double height = 250}) {
     return SplashAnimation(
       mainAnimationPath: AnimationStrings.book,
-      mainAnimationSize: size,
+      mainAnimationWidth: width,
+      mainAnimationHeight: height,
     );
   }
 
   /// Factory constructor for the `loading` animation
-  factory SplashAnimation.loading({double size = 300}) {
+  factory SplashAnimation.loading({double width = 300, double height = 300}) {
     return SplashAnimation(
       mainAnimationPath: AnimationStrings.loading,
-      mainAnimationSize: size,
+      mainAnimationWidth: width,
+      mainAnimationHeight: height,
     );
   }
 
-  factory SplashAnimation.confetti({double size = double.infinity}) {
+  factory SplashAnimation.confetti({double width = 250, double height = 250}) {
     return SplashAnimation(
-      mainAnimationPath: AnimationStrings.loading,
-      mainAnimationSize: size,
+      mainAnimationPath: AnimationStrings.confetti,
+      mainAnimationWidth: width,
+      mainAnimationHeight: height,
+      repeatMainAnimation: false,
     );
   }
+
   @override
   SplashAnimationState createState() => SplashAnimationState();
 }
@@ -45,16 +52,11 @@ class SplashAnimationState extends State<SplashAnimation>
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Darkened background overlay
-        Container(
-          color: Colors.black.withOpacity(0.5), // Adjust opacity for darkness
-        ),
-        // Centered loading animation
         Center(
           child: Lottie.asset(
             widget.mainAnimationPath,
-            width: widget.mainAnimationSize,
-            height: widget.mainAnimationSize,
+            width: widget.mainAnimationWidth,
+            height: widget.mainAnimationHeight,
           ),
         ),
       ],

@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import '../user_repository.dart';
+import 'models/feedback_model.dart';
+import 'models/submit_ticket_model.dart';
 
 abstract class UserRepository {
   Stream<User?> get user;
@@ -27,4 +29,8 @@ abstract class UserRepository {
   Future<void> updatePassword(String newPassword);
 
   Future<String> uploadPicture(String file, String userId);
+
+  Future<void> addTicketToFirestore(SubmitTicketModel ticket, MyUser user);
+
+  Future<void> addFeedbackToFirestore(FeedbackModel feedback, MyUser user);
 }

@@ -97,8 +97,6 @@ class _UpdateProfileViewState extends State<_UpdateProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Update Profile', style: TextStyles.h1b),
@@ -143,22 +141,28 @@ class _UpdateProfileViewState extends State<_UpdateProfileView> {
                       onTap: () {
                         _showImagePicker();
                       },
-                      child: CircleAvatar(
-                        radius: 45,
-                        backgroundColor: AppColors.primary,
-                        foregroundImage: _imageFile != null
-                            ? FileImage(_imageFile!)
-                            : (currentUser?.profileImage != null
-                                ? NetworkImage(currentUser!.profileImage!)
-                                : null),
-                        child: _imageFile == null &&
-                                currentUser?.profileImage == null
-                            ? const Icon(
-                                Icons.person,
-                                size: 50,
-                                color: AppColors.primaryBackground,
-                              )
-                            : null,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(100)),
+                        padding: EdgeInsets.all(8),
+                        child: CircleAvatar(
+                          radius: 45,
+                          backgroundColor: AppColors.primary,
+                          foregroundImage: _imageFile != null
+                              ? FileImage(_imageFile!)
+                              : (currentUser?.profileImage != null
+                                  ? NetworkImage(currentUser!.profileImage!)
+                                  : null),
+                          child: _imageFile == null &&
+                                  currentUser?.profileImage == null
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 50,
+                                  color: AppColors.primaryBackground,
+                                )
+                              : null,
+                        ),
                       ),
                     ),
                   ),
@@ -195,30 +199,30 @@ class _UpdateProfileViewState extends State<_UpdateProfileView> {
                     keyboardType: TextInputType.number,
                   ),
                   SizedBox(
-                    width: width * 0.8,
-                    child: CustomButton(
-                      onTab: () {
-                        if (currentUser != null) {
-                          final updatedUser = currentUser!.copyWith(
-                            firstName: fnController.text,
-                            lastName: lnController.text,
-                            email: emailController.text,
-                            gender: genderController.text,
-                            age: ageController.text,
-                          );
-                          context
-                              .read<ProfileCubit>()
-                              .updateUserProfile(updatedUser);
-                        }
-                        if (_imageFile != null && currentUser != null) {
-                          context.read<ProfileCubit>().uploadProfilePicture(
-                                currentUser!.uid,
-                                _imageFile!,
-                              );
-                        }
-                      },
-                      text: 'Update Profile',
-                    ),
+                    height: 20,
+                  ),
+                  CustomButton(
+                    onTab: () {
+                      if (currentUser != null) {
+                        final updatedUser = currentUser!.copyWith(
+                          firstName: fnController.text,
+                          lastName: lnController.text,
+                          email: emailController.text,
+                          gender: genderController.text,
+                          age: ageController.text,
+                        );
+                        context
+                            .read<ProfileCubit>()
+                            .updateUserProfile(updatedUser);
+                      }
+                      if (_imageFile != null && currentUser != null) {
+                        context.read<ProfileCubit>().uploadProfilePicture(
+                              currentUser!.uid,
+                              _imageFile!,
+                            );
+                      }
+                    },
+                    text: 'Update Profile',
                   ),
                 ],
               ),

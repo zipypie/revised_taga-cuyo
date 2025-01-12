@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:taga_cuyo/core/models/device_info.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/entities/entities.dart';
+import 'package:taga_cuyo/core/repositories/user_repository/src/models/feedback_model.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/models/my_user.dart';
+import 'package:taga_cuyo/core/repositories/user_repository/src/models/submit_ticket_model.dart';
 import 'user_repo.dart';
 
 class FirebaseUserRepository implements UserRepository {
@@ -13,6 +16,7 @@ class FirebaseUserRepository implements UserRepository {
   }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
   final FirebaseAuth _firebaseAuth;
+
   final usersCollection = FirebaseFirestore.instance.collection('users');
 
   @override
@@ -147,6 +151,53 @@ class FirebaseUserRepository implements UserRepository {
     } catch (e) {
       log(e.toString());
       rethrow;
+    }
+  }
+
+  @override
+  Future<void> addTicketToFirestore(
+      SubmitTicketModel ticket, MyUser user) async {
+    final ticketsCollection = FirebaseFirestore.instance.collection('tickets');
+    try {
+      // Get device details from DeviceInfoService
+      final deviceDetails = await DeviceInfoService().getDeviceDetails();
+
+      // Add the ticket data to Firestore
+      await ticketsCollection.add({
+        'fullName': '${user.firstName} ${user.lastName}',
+        'email': user.email,
+        'issue': ticket.issue,
+        'imageIssue': ticket.imageIssue ?? '',
+        'timeStamp': ticket.timeStamp,
+        'deviceInfo': deviceDetails,
+      });
+    } catch (e) {
+      log("Error adding ticket to Firestore: $e");
+    }
+  }
+
+  @override
+  Future<void> addFeedbackToFirestore(
+      FeedbackModel feedback, MyUser user) async {
+    final feedbackCollection =
+        FirebaseFirestore.instance.collection('feedback');
+    try {
+      // Get device details from DeviceInfoService (optional)
+      final deviceDetails = await DeviceInfoService().getDeviceDetails();
+
+      // Add the feedback data to Firestore
+      await feedbackCollection.add({
+        'rating': feedback.rating,
+        'selectedOptions': feedback.selectedOptions,
+        'comments': feedback.comments,
+        'timestamp': feedback.timestamp,
+        'userFullName': '${user.firstName} ${user.lastName}',
+        'userEmail': user.email,
+        'deviceInfo': deviceDetails,
+        'uid': user.uid
+      });
+    } catch (e) {
+      log("Error adding feedback to Firestore: $e");
     }
   }
 }

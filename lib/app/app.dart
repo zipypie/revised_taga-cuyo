@@ -6,12 +6,15 @@ import 'package:taga_cuyo/app/themes/themes.dart';
 import 'package:taga_cuyo/core/bloc/authentication_bloc/authentication_bloc.dart';
 import 'package:taga_cuyo/core/bloc/progress_bloc/progress_bloc.dart';
 import 'package:taga_cuyo/core/bloc/sign_in_bloc/sign_in_bloc.dart';
-import 'package:taga_cuyo/core/bloc/sign_up_bloc/sign_up_bloc.dart'; // Import SignUpBloc
+import 'package:taga_cuyo/core/bloc/sign_up_bloc/sign_up_bloc.dart';
 import 'package:taga_cuyo/core/cubit/change_password_cubit/change_password_cubit.dart';
 import 'package:taga_cuyo/core/repositories/user_progress_repository/src/user_progress_repo.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/user_repo.dart';
 import 'package:taga_cuyo/presentation/onboarding/get_started/get_started.dart';
 import 'package:taga_cuyo/presentation/onboarding/login/login_screen.dart';
+
+import '../core/cubit/feedback_cubit/feedback_cubit.dart';
+import '../core/cubit/submit_ticket_cubit/submit_ticket_cubit.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -48,6 +51,19 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => ChangePasswordCubit(userRepository),
+        ),
+        RepositoryProvider<UserRepository>(
+          create: (_) => userRepository,
+        ),
+        BlocProvider<SubmitTicketCubit>(
+          create: (context) => SubmitTicketCubit(
+            myUserRepository: context.read<UserRepository>(),
+          ),
+        ),
+        BlocProvider<FeedbackCubit>(
+          create: (context) => FeedbackCubit(
+            myUserRepository: context.read<UserRepository>(),
+          ),
         ),
       ],
       child: MaterialApp(
