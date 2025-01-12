@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/entities/entities.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/models/my_user.dart';
 import 'user_repo.dart';
@@ -124,6 +126,24 @@ class FirebaseUserRepository implements UserRepository {
       } else {
         throw Exception('User is not logged in');
       }
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String> uploadPicture(String file, String userId) async {
+    try {
+      File imageFile = File(file);
+      Reference firebaseStoreRef = FirebaseStorage.instance.ref().child(
+          'user_storage/$userId/profile_picture/${userId}_profile_picture');
+      await firebaseStoreRef.putFile(
+        imageFile,
+      );
+      String url = await firebaseStoreRef.getDownloadURL();
+      await usersCollection.doc(userId).update({'profileImage': url});
+      return url;
     } catch (e) {
       log(e.toString());
       rethrow;

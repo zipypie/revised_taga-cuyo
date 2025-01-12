@@ -77,8 +77,8 @@ class ProfileScreen extends StatelessWidget {
                     SizedBox(
                       child: Text(
                         state.status == MyUserStatus.loading
-                            ? 'Juan Dela Cruz' // Default text while loading
-                            : '${state.user?.firstName ?? 'Juan Dela Cruz'} ${state.user?.lastName ?? 'Juan Dela Cruz'}', // Update when data arrives
+                            ? 'Loading ...' // Default text while loading
+                            : '${state.user?.firstName ?? ''} ${state.user?.lastName ?? ''}', // Update when data arrives
                         style: TextStyles.h1b,
                       ),
                     ),

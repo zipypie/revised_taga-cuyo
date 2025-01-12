@@ -1,11 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 // Entity for data storage (e.g., Firestore)
-// MyUserEntity Class for Data Storage (Firestore)
 class MyUserEntity extends Equatable {
   final String uid;
   final String firstName;
@@ -64,9 +62,11 @@ class MyUserEntity extends Equatable {
       'lastName': lastName,
       'email': email,
       'age': age,
-      'gender': gender,
-      'profileImage': profileImage,
-      'motherTounge': motherTounge,
+      'gender': gender ?? '', // Ensure gender defaults to empty string if null
+      'profileImage':
+          profileImage ?? '', // Default profileImage to empty string if null
+      'motherTounge':
+          motherTounge ?? '', // Default motherTounge to empty string if null
       'hasCompletedSurvey': hasCompletedSurvey,
       'createdAt': createdAt,
     };
@@ -79,10 +79,14 @@ class MyUserEntity extends Equatable {
       lastName: map['lastName'] ?? '',
       email: map['email'] ?? '',
       age: map['age'] ?? '',
-      gender: map['gender'] as String?,
-      profileImage: map['profileImage'] as String?,
-      motherTounge: map['motherTounge'] as String?,
-      hasCompletedSurvey: map['hasCompletedSurvey'] ?? false,
+      gender: map['gender'] as String? ??
+          '', // Ensure gender defaults to empty string if null
+      profileImage: map['profileImage'] as String? ??
+          '', // Default to empty string if null
+      motherTounge: map['motherTounge'] as String? ??
+          '', // Default to empty string if null
+      hasCompletedSurvey:
+          map['hasCompletedSurvey'] ?? false, // Default to false if null
       createdAt: map['createdAt'] != null
           ? (map['createdAt'] is Timestamp
               ? (map['createdAt'] as Timestamp).toDate().toIso8601String()

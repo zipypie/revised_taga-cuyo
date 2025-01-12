@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:taga_cuyo/core/common_widgets/popup%20displays/snackbar.dart';
 import 'package:taga_cuyo/core/common_widgets/selectables/button.dart';
-import 'package:taga_cuyo/core/common_widgets/textfields/textfield_editable.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/core/cubit/profile_cubit/profile_cubit.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/firestore_user_repository.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/models/my_user.dart';
 import 'package:taga_cuyo/core/utils/screen_utils.dart';
+import 'dart:io';
+
+import '../../../../core/common_widgets/textfields/textfield_editable.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
   const UpdateProfileScreen({super.key});
@@ -42,6 +45,55 @@ class _UpdateProfileViewState extends State<_UpdateProfileView> {
   final TextEditingController ageController = TextEditingController();
 
   MyUser? currentUser;
+  File? _imageFile;
+
+  void _showImagePicker() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choose from Gallery'),
+              onTap: () async {
+                final pickedFile =
+                    await ImagePicker().pickImage(source: ImageSource.gallery);
+                if (pickedFile != null) {
+                  if (mounted) {
+                    setState(() {
+                      _imageFile = File(pickedFile.path);
+                    });
+                  }
+                }
+                if (mounted) {
+                  Navigator.pop(context); // Wrapped with curly braces
+                }
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Take a Photo'),
+              onTap: () async {
+                final pickedFile =
+                    await ImagePicker().pickImage(source: ImageSource.camera);
+                if (pickedFile != null) {
+                  if (mounted) {
+                    setState(() {
+                      _imageFile = File(pickedFile.path);
+                    });
+                  }
+                }
+                if (mounted) {
+                  Navigator.pop(context); // Wrapped with curly braces
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,40 +107,52 @@ class _UpdateProfileViewState extends State<_UpdateProfileView> {
       body: BlocConsumer<ProfileCubit, ProfileState>(
         listener: (context, state) {
           if (state is ProfileLoaded) {
-            currentUser = state.user;
+            // Only update the text controllers when the profile is loaded.
             fnController.text = state.user.firstName;
             lnController.text = state.user.lastName;
             emailController.text = state.user.email;
             genderController.text = state.user.gender ?? '';
             ageController.text = state.user.age;
+            currentUser = state.user;
           } else if (state is ProfileUpdated) {
-            showSnackBar(context, 'Profile updated successfully!');
+            if (mounted) {
+              showSnackBar(context, 'Profile updated successfully!');
+            }
           } else if (state is ProfileError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
+            }
           }
         },
         builder: (context, state) {
           if (state is ProfileLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state is ProfileLoaded || currentUser != null) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Center(
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        _showImagePicker();
+                      },
                       child: CircleAvatar(
                         radius: 45,
                         backgroundColor: AppColors.primary,
-                        foregroundImage: currentUser?.profileImage != null
-                            ? NetworkImage(currentUser!.profileImage!)
-                            : null,
-                        child: currentUser?.profileImage == null
+                        foregroundImage: _imageFile != null
+                            ? FileImage(_imageFile!)
+                            : (currentUser?.profileImage != null
+                                ? NetworkImage(currentUser!.profileImage!)
+                                : null),
+                        child: _imageFile == null &&
+                                currentUser?.profileImage == null
                             ? const Icon(
                                 Icons.person,
                                 size: 50,
@@ -97,65 +161,69 @@ class _UpdateProfileViewState extends State<_UpdateProfileView> {
                             : null,
                       ),
                     ),
-                    SizedBox(
-                      height: ScreenUtils.getScreenHeight(context) * 0.03,
+                  ),
+                  SizedBox(
+                    height: ScreenUtils.getScreenHeight(context) * 0.03,
+                  ),
+                  TextfieldWithEditIcon(
+                    label: 'First Name',
+                    controller: fnController,
+                    keyboardType: TextInputType.text,
+                  ),
+                  const SizedBox(height: 15),
+                  TextfieldWithEditIcon(
+                    label: 'Last Name',
+                    controller: lnController,
+                    keyboardType: TextInputType.text,
+                  ),
+                  const SizedBox(height: 15),
+                  TextfieldWithEditIcon(
+                    label: 'Email',
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  const SizedBox(height: 15),
+                  TextfieldWithEditIcon(
+                    label: 'Gender',
+                    controller: genderController,
+                    keyboardType: TextInputType.text,
+                  ),
+                  const SizedBox(height: 15),
+                  TextfieldWithEditIcon(
+                    label: 'Age',
+                    controller: ageController,
+                    keyboardType: TextInputType.number,
+                  ),
+                  SizedBox(
+                    width: width * 0.8,
+                    child: CustomButton(
+                      onTab: () {
+                        if (currentUser != null) {
+                          final updatedUser = currentUser!.copyWith(
+                            firstName: fnController.text,
+                            lastName: lnController.text,
+                            email: emailController.text,
+                            gender: genderController.text,
+                            age: ageController.text,
+                          );
+                          context
+                              .read<ProfileCubit>()
+                              .updateUserProfile(updatedUser);
+                        }
+                        if (_imageFile != null && currentUser != null) {
+                          context.read<ProfileCubit>().uploadProfilePicture(
+                                currentUser!.uid,
+                                _imageFile!,
+                              );
+                        }
+                      },
+                      text: 'Update Profile',
                     ),
-                    TextfieldWithEditIcon(
-                      label: 'First Name',
-                      controller: fnController,
-                      keyboardType: TextInputType.text,
-                    ),
-                    const SizedBox(height: 15),
-                    TextfieldWithEditIcon(
-                      label: 'Last Name',
-                      controller: lnController,
-                      keyboardType: TextInputType.text,
-                    ),
-                    const SizedBox(height: 15),
-                    TextfieldWithEditIcon(
-                      label: 'Email',
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    const SizedBox(height: 15),
-                    TextfieldWithEditIcon(
-                      label: 'Gender',
-                      controller: genderController,
-                      keyboardType: TextInputType.text,
-                    ),
-                    const SizedBox(height: 15),
-                    TextfieldWithEditIcon(
-                      label: 'Age',
-                      controller: ageController,
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 25),
-                    SizedBox(
-                      width: width * 0.8,
-                      child: CustomButton(
-                        onTab: () {
-                          if (currentUser != null) {
-                            final updatedUser = currentUser!.copyWith(
-                              firstName: fnController.text,
-                              lastName: lnController.text,
-                              email: emailController.text,
-                              gender: genderController.text,
-                              age: ageController.text,
-                            );
-                            context
-                                .read<ProfileCubit>()
-                                .updateUserProfile(updatedUser);
-                          }
-                        },
-                        text: 'Update Profile',
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          }
-          return const Center(child: Text('No user data available.'));
+            ),
+          );
         },
       ),
     );

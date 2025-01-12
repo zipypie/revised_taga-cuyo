@@ -54,6 +54,7 @@ dependencies:
   meta: ^1.15.0
   auto_route: ^9.2.2
   build_runner: ^2.4.13
+  firebase_storage: ^12.4.0
 
 
 

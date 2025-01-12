@@ -22,3 +22,12 @@ class ProfileError extends ProfileState {
 
   ProfileError(this.message);
 }
+
+class ProfileUploading
+    extends ProfileState {} // Add this state to track image upload
+
+class ProfileUploaded extends ProfileState {
+  final String imageUrl;
+
+  ProfileUploaded(this.imageUrl);
+}

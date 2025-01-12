@@ -25,4 +25,6 @@ abstract class UserRepository {
   String? getCurrentUserId();
 
   Future<void> updatePassword(String newPassword);
+
+  Future<String> uploadPicture(String file, String userId);
 }
