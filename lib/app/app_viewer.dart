@@ -57,7 +57,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
           return Scaffold(
             appBar: AppBar(
               automaticallyImplyLeading: false,
-              toolbarHeight: 65,
+              toolbarHeight: 65.0,
               title: Text(
                 _title[_currentIndex], // Dynamic title based on selected screen
                 style: TextStyles.h1b,

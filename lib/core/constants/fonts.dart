@@ -65,7 +65,7 @@ class TextStyles {
   static const TextStyle h3b = TextStyle(
     fontFamily: AppFonts.fcb,
     fontSize: 18,
-    color: Color.fromARGB(255, 47, 47, 47),
+    color: AppColors.titleColor,
   );
 
   /// Button Text Styles
