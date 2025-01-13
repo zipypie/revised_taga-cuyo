@@ -4,4 +4,7 @@ import 'package:taga_cuyo/core/repositories/category_repository.dart/src/user_pr
 class FirebaseCategoryRepository implements CategoryRepository {
   final categoriesCollection =
       FirebaseFirestore.instance.collection('categories');
+
+  final subcategoriesCollection =
+      FirebaseFirestore.instance.collection('subcategories');
 }

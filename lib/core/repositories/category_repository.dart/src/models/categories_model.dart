@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:taga_cuyo/core/repositories/category_repository.dart/src/entities/category_entity.dart';
+import 'package:taga_cuyo/core/repositories/category_repository.dart/src/entities/categories_entity.dart';
 
 class CategoryModel extends Equatable {
   final String categoryId;
