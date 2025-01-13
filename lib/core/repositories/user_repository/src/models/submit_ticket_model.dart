@@ -7,6 +7,7 @@ class SubmitTicketModel extends Equatable {
   final String firstName;
   final String lastName;
   final String email;
+  final String subject;
   final String issue;
   final String? imageIssue;
   final String timeStamp;
@@ -16,6 +17,7 @@ class SubmitTicketModel extends Equatable {
     required this.firstName,
     required this.lastName,
     required this.email,
+    required this.subject,
     required this.issue,
     this.imageIssue,
     required this.timeStamp,
@@ -27,6 +29,7 @@ class SubmitTicketModel extends Equatable {
         firstName,
         lastName,
         email,
+        subject,
         issue,
         imageIssue,
         timeStamp,
@@ -37,6 +40,7 @@ class SubmitTicketModel extends Equatable {
     firstName: '',
     lastName: '',
     email: '',
+    subject: '',
     issue: '',
     imageIssue: null,
     timeStamp: '',
@@ -47,6 +51,7 @@ class SubmitTicketModel extends Equatable {
     String? firstName,
     String? lastName,
     String? email,
+    String? subject,
     String? issue,
     String? imageIssue,
     String? timeStamp,
@@ -56,6 +61,7 @@ class SubmitTicketModel extends Equatable {
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
+      subject: subject ?? this.subject,
       issue: issue ?? this.issue,
       imageIssue: imageIssue ?? this.imageIssue,
       timeStamp: timeStamp ?? this.timeStamp,
@@ -72,6 +78,7 @@ class SubmitTicketModel extends Equatable {
       'firstName': firstName,
       'lastName': lastName,
       'email': email,
+      'subject': subject,
       'issue': issue,
       'imageIssue': imageIssue,
       'timeStamp': timeStamp,
@@ -84,6 +91,7 @@ class SubmitTicketModel extends Equatable {
       firstName: map['firstName'] as String,
       lastName: map['lastName'] as String,
       email: map['email'] as String,
+      subject: map['subject'] as String,
       issue: map['issue'] as String,
       imageIssue: map['imageIssue'] as String?,
       timeStamp: map['timeStamp'] as String,
@@ -97,12 +105,19 @@ class SubmitTicketModel extends Equatable {
       SubmitTicketModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   // Factory method to create SubmitTicketModel from MyUser
-  factory SubmitTicketModel.fromUserAndIssue(MyUser user, String issue,
-      String timeStamp, String deviceInfo, String? imageIssue) {
+  factory SubmitTicketModel.fromUserAndIssue(
+    MyUser user,
+    String subject,
+    String issue,
+    String timeStamp,
+    String deviceInfo,
+    String? imageIssue,
+  ) {
     return SubmitTicketModel(
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      subject: subject,
       issue: issue,
       imageIssue: imageIssue,
       timeStamp: timeStamp,

@@ -166,6 +166,7 @@ class FirebaseUserRepository implements UserRepository {
       await ticketsCollection.add({
         'fullName': '${user.firstName} ${user.lastName}',
         'email': user.email,
+        'subject': ticket.subject,
         'issue': ticket.issue,
         'imageIssue': ticket.imageIssue ?? '',
         'timeStamp': ticket.timeStamp,

@@ -7,6 +7,7 @@ import 'package:taga_cuyo/core/common_widgets/animations/splash_animation.dart';
 import 'package:taga_cuyo/core/common_widgets/popup%20displays/snackbar.dart';
 import 'package:taga_cuyo/core/common_widgets/textfields/big_textfield.dart';
 import 'package:taga_cuyo/core/common_widgets/selectables/button.dart';
+import 'package:taga_cuyo/core/common_widgets/textfields/textfield.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/core/models/device_info.dart';
@@ -25,12 +26,12 @@ class SubmitTicketScreen extends StatefulWidget {
 
 class SubmitTicketScreenState extends State<SubmitTicketScreen> {
   final TextEditingController _issueController = TextEditingController();
+  final TextEditingController _subjectController = TextEditingController();
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
-  bool isLoading = false; // To manage loading state
-  bool isSuccess = false; // To manage success animation display
+  bool isLoading = false;
+  bool isSuccess = false;
 
-  // Pick an image from gallery
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -40,10 +41,10 @@ class SubmitTicketScreenState extends State<SubmitTicketScreen> {
     }
   }
 
-  // Submit the ticket
-  void _submitTicket() async {
-    if (_issueController.text.isEmpty) {
-      showSnackBar(context, "Please describe the issue.");
+  Future<void> _submitTicket(
+      SubmitTicketCubit cubit, UserRepository userRepository) async {
+    if (_issueController.text.isEmpty || _subjectController.text.isEmpty) {
+      showSnackBar(context, "Please provide a subject and describe the issue.");
       return;
     }
 
@@ -51,25 +52,29 @@ class SubmitTicketScreenState extends State<SubmitTicketScreen> {
       isLoading = true;
     });
 
-    final currentUser = await _fetchCurrentUser();
-    if (currentUser == null) return;
+    final currentUser = await _fetchCurrentUser(userRepository);
+    if (currentUser == null) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
 
     try {
-      // Collecting necessary details for the ticket
       final ticket = SubmitTicketModel(
         firstName: currentUser.firstName,
         lastName: currentUser.lastName,
         email: currentUser.email,
         issue: _issueController.text,
+        subject: _subjectController.text,
         imageIssue: _selectedImage?.path,
         timeStamp: DateTime.now().toString(),
         deviceInfo: await _getDeviceDetails(),
       );
 
-      // Using the SubmitTicketCubit to submit the ticket
-      context.read<SubmitTicketCubit>().submitTicket(ticket);
+      await cubit.submitTicket(ticket);
     } catch (e) {
-      showSnackBar(context, "Failed to submit ticket: ${e.toString()}");
+      log("Failed to submit ticket: ${e.toString()}");
     } finally {
       setState(() {
         isLoading = false;
@@ -77,23 +82,20 @@ class SubmitTicketScreenState extends State<SubmitTicketScreen> {
     }
   }
 
-  // Fetch the current user
-  Future<MyUser?> _fetchCurrentUser() async {
+  Future<MyUser?> _fetchCurrentUser(UserRepository userRepository) async {
     try {
-      final currentUserId =
-          context.read<SubmitTicketCubit>().userRepository.getCurrentUserId();
+      final currentUserId = userRepository.getCurrentUserId();
       if (currentUserId == null) {
         showSnackBar(context, "No user is logged in.");
         return null;
       }
-      return await context.read<UserRepository>().getMyUser(currentUserId);
+      return await userRepository.getMyUser(currentUserId);
     } catch (e) {
       log("Failed to fetch user: ${e.toString()}");
       return null;
     }
   }
 
-  // Get the device details
   Future<String> _getDeviceDetails() async {
     try {
       return await DeviceInfoService().getDeviceDetails();
@@ -104,6 +106,9 @@ class SubmitTicketScreenState extends State<SubmitTicketScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final submitTicketCubit = context.read<SubmitTicketCubit>();
+    final userRepository = context.read<UserRepository>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Submit a Ticket', style: TextStyles.h1b),
@@ -115,20 +120,18 @@ class SubmitTicketScreenState extends State<SubmitTicketScreen> {
             showSnackBar(context, state.error);
           } else if (state is SubmitTicketSuccess) {
             setState(() {
-              isSuccess = true; // Trigger animation after success
+              isSuccess = true;
             });
             showSnackBar(context, "Ticket submitted successfully!");
-            // Optionally, navigate to another screen after a delay or reset the form
             Future.delayed(const Duration(seconds: 2), () {
               setState(() {
-                isSuccess = false; // Hide animation after a short time
+                isSuccess = false;
               });
             });
           }
         },
         child: Stack(
           children: [
-            // Main content
             SingleChildScrollView(
               child: Padding(
                 padding:
@@ -146,11 +149,16 @@ class SubmitTicketScreenState extends State<SubmitTicketScreen> {
                     ),
                     const SizedBox(height: 30),
                     const Text(
-                      "Please fill out the form below with as much detail as possible in order to submit a ticket. "
-                      "This will help us understand the issue you're facing and assist you more efficiently. ",
+                      "Please fill out the form below with as much detail as possible to submit a ticket. "
+                      "This will help us understand the issue and assist you more efficiently.",
                       style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     const SizedBox(height: 30),
+                    CustomTextField(
+                      controller: _subjectController,
+                      labelText: 'Problem',
+                      hintText: 'Enter the problem here',
+                    ),
                     BigTextfield(
                       controller: _issueController,
                       hintText: 'Describe the issue with the app',
@@ -158,8 +166,6 @@ class SubmitTicketScreenState extends State<SubmitTicketScreen> {
                       keyboardType: TextInputType.multiline,
                     ),
                     const SizedBox(height: 20),
-
-                    // Image Picker Section
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -172,8 +178,6 @@ class SubmitTicketScreenState extends State<SubmitTicketScreen> {
                         ),
                       ],
                     ),
-
-                    // Display the selected image
                     if (_selectedImage != null)
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 10),
@@ -186,21 +190,18 @@ class SubmitTicketScreenState extends State<SubmitTicketScreen> {
                           ),
                         ),
                       ),
-
                     const SizedBox(height: 30),
-
-                    // Submit Button
                     CustomButton(
                       onTab: isLoading
                           ? () {}
-                          : _submitTicket, // Disable during loading
+                          : () =>
+                              _submitTicket(submitTicketCubit, userRepository),
                       text: isLoading ? 'Submitting...' : 'Submit Ticket',
                     ),
                   ],
                 ),
               ),
             ),
-            // Confetti Animation, centered in the Stack
             if (isSuccess)
               Positioned.fill(
                 child: Align(
