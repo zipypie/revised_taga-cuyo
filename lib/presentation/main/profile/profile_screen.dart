@@ -19,6 +19,9 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<MyUserBloc>().add(GetMyUser(myUserId: userId));
+    context
+        .read<ProgressBloc>()
+        .add(GetUserProgressEvent()); // Dispatch event to get user progress
     return Scaffold(
       body: Column(
         children: [

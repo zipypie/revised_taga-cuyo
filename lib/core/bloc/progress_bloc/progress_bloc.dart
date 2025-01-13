@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
@@ -32,11 +34,10 @@ class ProgressBloc extends Bloc<ProgressEvent, ProgressState> {
         emit(ProgressLoading());
         final userProgress =
             await _userProgressRepository.getUserProgressData();
-
+        log('Fetched user progress: $userProgress');
         emit(ProgressSuccess(userProgress: userProgress));
       } catch (e) {
-        emit(ProgressFailure(
-            message: e.toString())); // Emit failure state in case of error
+        emit(ProgressFailure(message: e.toString()));
       }
     });
   }

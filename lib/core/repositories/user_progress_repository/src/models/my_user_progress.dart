@@ -1,6 +1,5 @@
-import 'dart:convert';
-
 import 'package:equatable/equatable.dart';
+import 'package:taga_cuyo/core/repositories/user_progress_repository/src/entities/entities.dart';
 
 class UserProgress extends Equatable {
   final int lessons;
@@ -26,7 +25,6 @@ class UserProgress extends Equatable {
         longestStreak,
       ];
 
-  /// Empty UserProgress Constant
   static const empty = UserProgress(
     lessons: 0,
     categories: 0,
@@ -35,7 +33,6 @@ class UserProgress extends Equatable {
     longestStreak: 0,
   );
 
-  /// Copy Method
   UserProgress copyWith({
     int? lessons,
     int? categories,
@@ -52,39 +49,27 @@ class UserProgress extends Equatable {
     );
   }
 
-  /// Check if UserProgress is Empty
   bool get isEmpty => this == UserProgress.empty;
 
-  /// Check if UserProgress is Not Empty
   bool get isNotEmpty => this != UserProgress.empty;
 
-  /// Convert to Map
-  Map<String, dynamic> toMap() {
-    return {
-      'lessons': lessons,
-      'categories': categories,
-      'days': days,
-      'minutes': minutes,
-      'longestStreak': longestStreak,
-    };
-  }
-
-  /// Create from Map
-  static UserProgress fromMap(Map<String, dynamic> map) {
-    return UserProgress(
-      lessons: map['lessons'] as int,
-      categories: map['categories'] as int,
-      days: map['days'] as int,
-      minutes: map['minutes'] as int,
-      longestStreak: map['longestStreak'] as int,
+  UserProgressEntity toEntity() {
+    return UserProgressEntity(
+      lessons: lessons,
+      categories: categories,
+      days: days,
+      minutes: minutes,
+      longestStreak: longestStreak,
     );
   }
 
-  /// Convert to JSON
-  String toJson() => json.encode(toMap());
-
-  /// Create from JSON
-  static UserProgress fromJson(String source) {
-    return UserProgress.fromMap(json.decode(source) as Map<String, dynamic>);
+  static UserProgress fromEntity(UserProgressEntity entity) {
+    return UserProgress(
+      lessons: entity.lessons,
+      categories: entity.categories,
+      days: entity.days,
+      minutes: entity.minutes,
+      longestStreak: entity.longestStreak,
+    );
   }
 }

@@ -3,14 +3,14 @@ import 'package:equatable/equatable.dart';
 
 class UserProgressEntity extends Equatable {
   final int lessons;
-  final int category;
+  final int categories;
   final int days;
   final int minutes;
   final int longestStreak;
 
   const UserProgressEntity({
     required this.lessons,
-    required this.category,
+    required this.categories,
     required this.days,
     required this.minutes,
     required this.longestStreak,
@@ -19,7 +19,7 @@ class UserProgressEntity extends Equatable {
   @override
   List<Object?> get props => [
         lessons,
-        category,
+        categories,
         days,
         minutes,
         longestStreak,
@@ -28,14 +28,14 @@ class UserProgressEntity extends Equatable {
   /// Copy Method
   UserProgressEntity copyWith({
     int? lessons,
-    int? category,
+    int? categories,
     int? days,
     int? minutes,
     int? longestStreak,
   }) {
     return UserProgressEntity(
       lessons: lessons ?? this.lessons,
-      category: category ?? this.category,
+      categories: categories ?? this.categories,
       days: days ?? this.days,
       minutes: minutes ?? this.minutes,
       longestStreak: longestStreak ?? this.longestStreak,
@@ -46,7 +46,7 @@ class UserProgressEntity extends Equatable {
   Map<String, dynamic> toMap() {
     return {
       'lessons': lessons,
-      'category': category,
+      'categories': categories,
       'days': days,
       'minutes': minutes,
       'longestStreak': longestStreak,
@@ -57,7 +57,7 @@ class UserProgressEntity extends Equatable {
   factory UserProgressEntity.fromMap(Map<String, dynamic> map) {
     return UserProgressEntity(
       lessons: map['lessons'] as int,
-      category: map['category'] as int,
+      categories: map['categories'] as int,
       days: map['days'] as int,
       minutes: map['minutes'] as int,
       longestStreak: map['longestStreak'] as int,
