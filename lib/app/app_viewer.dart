@@ -30,6 +30,9 @@ class _MainAppScreenState extends State<MainAppScreen> {
     'Profile',
   ];
 
+  // List of colors for selected and unselected icons
+  final Color _selectedColor = AppColors.wrong;
+  final Color _unselectedColor = AppColors.titleColor;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -76,12 +79,27 @@ class _MainAppScreenState extends State<MainAppScreen> {
             bottomNavigationBar: CurvedNavigationBar(
               index: _currentIndex,
               height: 65.0,
-              items: const [
-                Icon(Icons.home, size: 33, color: AppColors.titleColor),
-                Icon(Icons.translate, size: 33, color: AppColors.titleColor),
-                Icon(Icons.book, size: 33, color: AppColors.titleColor),
-                Icon(Icons.category, size: 33, color: AppColors.titleColor),
-                Icon(Icons.person, size: 33, color: AppColors.titleColor),
+              items: [
+                Icon(Icons.home,
+                    size: 33,
+                    color:
+                        _currentIndex == 0 ? _selectedColor : _unselectedColor),
+                Icon(Icons.translate,
+                    size: 33,
+                    color:
+                        _currentIndex == 1 ? _selectedColor : _unselectedColor),
+                Icon(Icons.book,
+                    size: 33,
+                    color:
+                        _currentIndex == 2 ? _selectedColor : _unselectedColor),
+                Icon(Icons.category,
+                    size: 33,
+                    color:
+                        _currentIndex == 3 ? _selectedColor : _unselectedColor),
+                Icon(Icons.person,
+                    size: 33,
+                    color:
+                        _currentIndex == 4 ? _selectedColor : _unselectedColor),
               ],
               color: AppColors.primary,
               buttonBackgroundColor: AppColors.primary,
@@ -94,8 +112,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
                 });
               },
             ),
-            body: screens[
-                _currentIndex], // Show the current screen based on index
+            body: screens[_currentIndex],
           );
         } else {
           // If the user is not authenticated, show login screen or any other fallback
