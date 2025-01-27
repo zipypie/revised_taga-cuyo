@@ -31,7 +31,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
   ];
 
   // List of colors for selected and unselected icons
-  final Color _selectedColor = AppColors.wrong;
+  final Color _selectedColor = AppColors.titleColor;
   final Color _unselectedColor = AppColors.titleColor;
   @override
   Widget build(BuildContext context) {

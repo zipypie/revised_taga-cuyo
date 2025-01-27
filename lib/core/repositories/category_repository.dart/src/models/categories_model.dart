@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:taga_cuyo/core/repositories/category_repository.dart/src/entities/categories_entity.dart';
 
 class CategoryModel extends Equatable {
-  final String categoryId;
+  final int categoryId; // Keep as int
   final String categoryName;
 
   const CategoryModel({
@@ -18,13 +18,13 @@ class CategoryModel extends Equatable {
 
   /// Empty CategoryModel Constant
   static const empty = CategoryModel(
-    categoryId: '',
+    categoryId: 0, // Change to int
     categoryName: '',
   );
 
   /// Copy Method
   CategoryModel copyWith({
-    String? categoryId,
+    int? categoryId, // Keep as int
     String? categoryName,
   }) {
     return CategoryModel(

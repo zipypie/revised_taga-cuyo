@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 
 class CategoryEntity extends Equatable {
-  final String categoryId;
+  final int categoryId;
   final String categoryName;
 
   const CategoryEntity({
@@ -18,7 +18,7 @@ class CategoryEntity extends Equatable {
 
   /// Copy Method
   CategoryEntity copyWith({
-    String? categoryId,
+    int? categoryId,
     String? categoryName,
   }) {
     return CategoryEntity(
@@ -38,7 +38,7 @@ class CategoryEntity extends Equatable {
   /// Create from Map
   factory CategoryEntity.fromMap(Map<String, dynamic> map) {
     return CategoryEntity(
-      categoryId: map['category_id'] as String,
+      categoryId: map['category_id'] as int,
       categoryName: map['category_name'] as String,
     );
   }

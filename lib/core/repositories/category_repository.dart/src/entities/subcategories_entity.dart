@@ -1,45 +1,44 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
-import 'package:taga_cuyo/core/repositories/category_repository.dart/src/entities/words_entity.dart';
 
 class SubcategoryEntity extends Equatable {
   final String subCategoryId;
   final String subCategoryName;
-  final List<WordEntity> words; // List of WordEntities
+  final String imagePath; // Property for image path
 
   const SubcategoryEntity({
     required this.subCategoryId,
     required this.subCategoryName,
-    required this.words, // Initialize the list of words
+    required this.imagePath, // Initialize image path
   });
 
   @override
   List<Object?> get props => [
         subCategoryId,
         subCategoryName,
-        words,
+        imagePath, // Add imagePath to equality check
       ];
 
   /// Copy Method
   SubcategoryEntity copyWith({
     String? subCategoryId,
     String? subCategoryName,
-    List<WordEntity>? words,
+    String? imagePath,
   }) {
     return SubcategoryEntity(
       subCategoryId: subCategoryId ?? this.subCategoryId,
       subCategoryName: subCategoryName ?? this.subCategoryName,
-      words: words ?? this.words,
+      imagePath: imagePath ?? this.imagePath,
     );
   }
 
   /// Convert to Map
   Map<String, dynamic> toMap() {
     return {
-      'sub_category_id': subCategoryId,
-      'sub_category_name': subCategoryName,
-      'words': words.map((e) => e.toMap()).toList(), // Convert list of words
+      'subcategory_id': subCategoryId,
+      'subcategory_name': subCategoryName,
+      'image_path': imagePath, // Add imagePath to map
     };
   }
 
@@ -48,13 +47,8 @@ class SubcategoryEntity extends Equatable {
       Map<String, dynamic> map, String subCategoryId) {
     return SubcategoryEntity(
       subCategoryId: subCategoryId,
-      subCategoryName: map['sub_category_name'] as String,
-      words: List<WordEntity>.from(
-        (map['words'] as List).map(
-          (wordData) => WordEntity.fromMap(
-              wordData['word_id'] as String, wordData as Map<String, dynamic>),
-        ),
-      ), // Convert map to list of WordEntity
+      subCategoryName: map['subcategory_name'] as String,
+      imagePath: map['image_path'] as String, // Add imagePath from map
     );
   }
 
