@@ -2,32 +2,38 @@ import 'package:equatable/equatable.dart';
 import 'package:taga_cuyo/core/repositories/category_repository.dart/src/entities/categories_entity.dart';
 
 class CategoryModel extends Equatable {
-  final int categoryId; // Keep as int
+  final String id; // Firestore Document ID
+  final int categoryId; // Keep as int for the category ID
   final String categoryName;
 
   const CategoryModel({
+    required this.id, // Document ID
     required this.categoryId,
     required this.categoryName,
   });
 
   @override
   List<Object?> get props => [
+        id, // Include Firestore document ID in comparison
         categoryId,
         categoryName,
       ];
 
   /// Empty CategoryModel Constant
   static const empty = CategoryModel(
-    categoryId: 0, // Change to int
+    id: '', // Empty document ID
+    categoryId: 0, // Empty category ID
     categoryName: '',
   );
 
   /// Copy Method
   CategoryModel copyWith({
-    int? categoryId, // Keep as int
+    String? id,
+    int? categoryId,
     String? categoryName,
   }) {
     return CategoryModel(
+      id: id ?? this.id, // Copy Firestore document ID
       categoryId: categoryId ?? this.categoryId,
       categoryName: categoryName ?? this.categoryName,
     );
@@ -41,6 +47,7 @@ class CategoryModel extends Equatable {
 
   CategoryEntity toEntity() {
     return CategoryEntity(
+      id: id, // Pass the document ID to Entity
       categoryId: categoryId,
       categoryName: categoryName,
     );
@@ -48,6 +55,7 @@ class CategoryModel extends Equatable {
 
   static CategoryModel fromEntity(CategoryEntity entity) {
     return CategoryModel(
+      id: entity.id, // Get document ID from the Entity
       categoryId: entity.categoryId,
       categoryName: entity.categoryName,
     );

@@ -7,6 +7,7 @@ import '../../repositories/category_repository.dart/src/models/subcategories_mod
 
 part 'category_state.dart';
 
+// CategoryCubit
 class CategoryCubit extends Cubit<CategoryState> {
   final FirebaseCategoryRepository _categoryRepository;
 
@@ -23,25 +24,13 @@ class CategoryCubit extends Cubit<CategoryState> {
     }
   }
 
-  // Fetch categories by categoryId
-  Future<void> fetchCategoriesById(String categoryId) async {
+  // Fetch subcategories for a specific category
+  Future<void> fetchSubcategories(String categoryId) async {
     try {
       emit(CategoryLoading());
-      final categories =
-          await _categoryRepository.getCategoriesById(categoryId);
-      emit(CategoryLoaded(categories));
-    } catch (e) {
-      emit(CategoryError('Failed to load categories: ${e.toString()}'));
-    }
-  }
-
-  // Fetch subcategories by categoryId
-  Future<void> fetchSubCategories(String categoryId) async {
-    try {
-      emit(CategoryLoading());
-      final subCategories =
+      final subcategories =
           await _categoryRepository.getSubcategories(categoryId);
-      emit(SubcategoryLoaded(subCategories));
+      emit(SubcategoryLoaded(subcategories));
     } catch (e) {
       emit(CategoryError('Failed to load subcategories: ${e.toString()}'));
     }

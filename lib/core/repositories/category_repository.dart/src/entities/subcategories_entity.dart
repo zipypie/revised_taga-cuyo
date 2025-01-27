@@ -36,8 +36,8 @@ class SubcategoryEntity extends Equatable {
   /// Convert to Map
   Map<String, dynamic> toMap() {
     return {
-      'subcategory_id': subCategoryId,
-      'subcategory_name': subCategoryName,
+      'subcategories_id': subCategoryId,
+      'subcategories_name': subCategoryName,
       'image_path': imagePath, // Add imagePath to map
     };
   }
@@ -47,7 +47,7 @@ class SubcategoryEntity extends Equatable {
       Map<String, dynamic> map, String subCategoryId) {
     return SubcategoryEntity(
       subCategoryId: subCategoryId,
-      subCategoryName: map['subcategory_name'] as String,
+      subCategoryName: map['subcategories_name'] as String,
       imagePath: map['image_path'] as String, // Add imagePath from map
     );
   }

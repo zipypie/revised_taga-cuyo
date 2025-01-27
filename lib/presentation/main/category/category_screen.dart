@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taga_cuyo/core/constants/capitalize.dart';
-import 'package:taga_cuyo/core/repositories/category_repository.dart/src/firestore_user_progress_repository.dart';
 import 'package:taga_cuyo/core/utils/screen_utils.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/constants/fonts.dart';
 import '../../../core/cubit/category_cubit/category_cubit.dart';
+import '../../../core/repositories/category_repository.dart/src/firestore_user_progress_repository.dart';
 import '../../../core/repositories/category_repository.dart/src/models/models.dart';
 import '../../../core/repositories/category_repository.dart/src/models/subcategories_model.dart';
 
@@ -20,8 +20,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          CategoryCubit(FirebaseCategoryRepository())..fetchCategories(),
+      create: (_) => CategoryCubit(FirebaseCategoryRepository())
+        ..fetchCategories(), // Fetch categories immediately
       child: BlocBuilder<CategoryCubit, CategoryState>(
         builder: (context, state) {
           if (state is CategoryLoading) {
@@ -46,17 +46,38 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Sort categories by `categoryId` for consistency
-    final sortedCategories = List<CategoryModel>.from(categories)
-      ..sort((a, b) => a.categoryId.compareTo(b.categoryId));
-
     return ListView.builder(
-      shrinkWrap: true, // Adjusts to fit the content
-      physics:
-          AlwaysScrollableScrollPhysics(), // Prevents independent scrolling
-      itemCount: sortedCategories.length, // Number of categories
+      shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(),
+      itemCount: categories.length,
       itemBuilder: (context, index) {
-        final category = sortedCategories[index];
+        final category = categories[index];
+
+        return CategoryTile(category: category);
+      },
+    );
+  }
+}
+
+class CategoryTile extends StatelessWidget {
+  final CategoryModel category;
+
+  const CategoryTile({super.key, required this.category});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<SubcategoryModel>>(
+      future: FirebaseCategoryRepository().getSubcategories(category.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Text('No subcategories available');
+        }
+
+        final subcategories = snapshot.data!;
 
         return Container(
           height: ScreenUtils.getScreenHeight(context, subtract: 154) / 3,
@@ -71,10 +92,8 @@ class CategoryCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TopCategoryCard(
-                categories: sortedCategories,
-                categoryId: category.categoryId, // Pass current category ID
-              ),
+              TopCategoryCard(category: category),
+              SubcategoriesSlider(subcategories: subcategories),
             ],
           ),
         );
@@ -84,35 +103,23 @@ class CategoryCard extends StatelessWidget {
 }
 
 class TopCategoryCard extends StatelessWidget {
-  final List<CategoryModel> categories;
-  final int categoryId; // Keep as int
+  final CategoryModel category;
 
-  const TopCategoryCard({
-    super.key,
-    required this.categories,
-    required this.categoryId,
-  });
+  const TopCategoryCard({super.key, required this.category});
 
   @override
   Widget build(BuildContext context) {
-    // Find the category that matches the categoryId
-    final category = categories.firstWhere(
-      (cat) => cat.categoryId == categoryId,
-      orElse: () => CategoryModel(
-          categoryId: 0, categoryName: 'Unknown'), // Fallback if not found
-    );
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            capitalizeFirstLetter(category.categoryName), // Correct usage
+            capitalizeFirstLetter(category.categoryName),
             style: TextStyles.h2b,
           ),
           Text(
-            '0/4',
+            '0/4', // Hardcoded value, can be dynamically fetched later
             style: TextStyles.h3b,
           ),
         ],
@@ -150,20 +157,64 @@ class SubcategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(right: 20),
+      margin: const EdgeInsets.only(right: 20, top: 15),
       height: ScreenUtils.getScreenHeight(context, subtract: 394) / 3,
       width: (ScreenUtils.getScreenWidth(context) - 80) / 3,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
-            height: ScreenUtils.getScreenHeight(context, subtract: 550) / 3,
-            decoration: BoxDecoration(
-              color: AppColors.secondaryBackground,
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(width: 10, color: AppColors.primary),
-            ),
-          ),
+          subcategory.imagePath.isNotEmpty
+              ? Container(
+                  height:
+                      ScreenUtils.getScreenHeight(context, subtract: 550) / 3,
+                  decoration: BoxDecoration(
+                    color: Colors.white, // White background for images
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset:
+                            Offset(0, 5), // Subtle shadow effect for elevation
+                      ),
+                    ],
+                  ),
+                  clipBehavior: Clip
+                      .hardEdge, // Ensure the child image stays within rounded corners
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: Image.network(
+                      subcategory.imagePath,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(
+                          child:
+                              Icon(Icons.image, size: 50, color: Colors.grey),
+                        );
+                      },
+                    ),
+                  ),
+                )
+              : Container(
+                  height:
+                      ScreenUtils.getScreenHeight(context, subtract: 550) / 3,
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBackground,
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 8,
+                        offset: Offset(0, 4), // Subtle shadow for fallback
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Icon(Icons.image,
+                        size: 50, color: Colors.grey), // Fallback icon styled
+                  ),
+                ),
+          SizedBox(height: 8),
           Text(
             capitalizeFirstLetter(subcategory.subCategoryName),
             textAlign: TextAlign.center,
