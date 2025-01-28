@@ -5,6 +5,7 @@ import 'entities/categories_entity.dart';
 import 'entities/subcategories_entity.dart';
 import 'models/categories_model.dart';
 import 'models/subcategories_model.dart';
+import 'models/words_model.dart';
 
 class FirebaseCategoryRepository implements CategoryRepository {
   final CollectionReference categoriesCollection =
@@ -65,6 +66,57 @@ class FirebaseCategoryRepository implements CategoryRepository {
     } catch (e) {
       log('Error fetching subcategories for Category Doc ID $categoryDocId: $e');
       throw Exception('Failed to load subcategories for $categoryDocId');
+    }
+  }
+
+  @override
+  Future<List<WordsModel>> getWords(
+      String categoryDocId, String subcategoryDocId) async {
+    try {
+      final snapshot = await categoriesCollection
+          .doc(categoryDocId)
+          .collection('subcategories')
+          .doc(subcategoryDocId)
+          .collection(
+              'words') // Assuming the words collection is nested under subcategories
+          .get();
+
+      log('Words for Subcategory Doc ID $subcategoryDocId: ${snapshot.docs.length}');
+
+      if (snapshot.docs.isEmpty) {
+        log('No words found for Subcategory Doc ID $subcategoryDocId');
+        return [];
+      }
+
+      // Map Firestore documents to WordsModel instances
+      final words = snapshot.docs.map((doc) {
+        // Safely extract fields from the document
+        final wordId = doc.id; // Firestore document ID
+        final word = doc.data()['word']?.toString() ?? '';
+        final translated = doc.data()['translated']?.toString() ?? '';
+        final imagePath = doc.data()['image_path']?.toString() ?? '';
+        final options = List<String>.from(doc.data()['options'] ?? []);
+
+        log('Word data: $wordId, $word, $translated, $imagePath, $options');
+
+        return WordsModel(
+          wordId: wordId,
+          word: word,
+          translated: translated,
+          imagePath: imagePath,
+          options: options,
+        );
+      }).toList();
+
+      // Example: Use the getter to access the word field
+      for (var word in words) {
+        log('Word (using getter): ${word.wordValue}');
+      }
+
+      return words;
+    } catch (e) {
+      log('Error fetching words for Subcategory Doc ID $subcategoryDocId: $e');
+      throw Exception('Failed to load words for $subcategoryDocId');
     }
   }
 }

@@ -12,6 +12,9 @@ class SubcategoryModel extends Equatable {
     required this.imagePath, // Initialize image path
   });
 
+  // Getter for subCategoryId
+  String get id => subCategoryId;
+
   @override
   List<Object?> get props => [
         subCategoryId,

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:taga_cuyo/core/repositories/category_repository.dart/src/entities/words_entity.dart'; // Import WordEntity
+import '../entities/words_entity.dart';
 
 class WordsModel extends Equatable {
   final String wordId; // Firestore document ID
@@ -15,6 +15,9 @@ class WordsModel extends Equatable {
     required this.imagePath,
     required this.options,
   });
+
+  // Getter for the word field
+  String get wordValue => word;
 
   @override
   List<Object?> get props => [

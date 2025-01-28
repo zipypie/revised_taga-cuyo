@@ -19,6 +19,8 @@ class CategoryModel extends Equatable {
         categoryName,
       ];
 
+  String get getCategoryName => categoryName;
+
   /// Empty CategoryModel Constant
   static const empty = CategoryModel(
     id: '', // Empty document ID
