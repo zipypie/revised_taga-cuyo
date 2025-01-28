@@ -75,7 +75,8 @@ class _DropDownState extends State<DropDown> {
       decoration: InputDecoration(
         labelText: widget.labelText, // Add labelText for better UX
         labelStyle: TextStyle(
-          color: AppColors.titleColor.withOpacity(0.7), // Faded label color
+          color:
+              AppColors.titleColor.withValues(alpha: 0.7), // Faded label color
         ),
         filled: true,
         fillColor: isSelected

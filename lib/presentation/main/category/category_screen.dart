@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taga_cuyo/core/constants/capitalize.dart';
 import 'package:taga_cuyo/core/utils/screen_utils.dart';
-import '../../../core/constants/colors.dart';
 import '../../../core/constants/fonts.dart';
 import '../../../core/cubit/category_cubit/category_cubit.dart';
 import '../../../core/repositories/category_repository.dart/src/firestore_user_progress_repository.dart';
@@ -156,72 +155,67 @@ class SubcategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 20, top: 15),
-      height: ScreenUtils.getScreenHeight(context, subtract: 394) / 3,
-      width: (ScreenUtils.getScreenWidth(context) - 80) / 3,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          subcategory.imagePath.isNotEmpty
-              ? Container(
-                  height:
-                      ScreenUtils.getScreenHeight(context, subtract: 550) / 3,
-                  decoration: BoxDecoration(
-                    color: Colors.white, // White background for images
-                    borderRadius: BorderRadius.circular(25),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset:
-                            Offset(0, 5), // Subtle shadow effect for elevation
-                      ),
-                    ],
-                  ),
-                  clipBehavior: Clip
-                      .hardEdge, // Ensure the child image stays within rounded corners
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(25),
-                    child: Image.network(
-                      subcategory.imagePath,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(
-                          child:
-                              Icon(Icons.image, size: 50, color: Colors.grey),
-                        );
-                      },
+    final cubit = context.read<CategoryCubit>();
+
+    return FutureBuilder<String?>(
+      future: cubit.getDownloadableUrl(subcategory.imagePath),
+      builder: (context, snapshot) {
+        Widget imageWidget;
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          imageWidget = const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError || snapshot.data == null) {
+          imageWidget = const Center(
+            child: Icon(Icons.image, size: 50, color: Colors.grey),
+          );
+        } else {
+          imageWidget = Image.network(
+            snapshot.data!,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return const Center(
+                child: Icon(Icons.image, size: 50, color: Colors.grey),
+              );
+            },
+          );
+        }
+
+        return Container(
+          margin: const EdgeInsets.only(right: 20, top: 15),
+          height: ScreenUtils.getScreenHeight(context, subtract: 394) / 3,
+          width: (ScreenUtils.getScreenWidth(context) - 80) / 3,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                height: ScreenUtils.getScreenHeight(context, subtract: 550) / 3,
+                width: (ScreenUtils.getScreenWidth(context) - 80) / 3,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      offset: Offset(0, 5),
                     ),
-                  ),
-                )
-              : Container(
-                  height:
-                      ScreenUtils.getScreenHeight(context, subtract: 550) / 3,
-                  decoration: BoxDecoration(
-                    color: AppColors.secondaryBackground,
-                    borderRadius: BorderRadius.circular(25),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 8,
-                        offset: Offset(0, 4), // Subtle shadow for fallback
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Icon(Icons.image,
-                        size: 50, color: Colors.grey), // Fallback icon styled
-                  ),
+                  ],
                 ),
-          SizedBox(height: 8),
-          Text(
-            capitalizeFirstLetter(subcategory.subCategoryName),
-            textAlign: TextAlign.center,
-            style: TextStyles.h4n.copyWith(fontWeight: FontWeight.w500),
+                clipBehavior: Clip.hardEdge,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(25),
+                  child: imageWidget,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                capitalizeFirstLetter(subcategory.subCategoryName),
+                textAlign: TextAlign.center,
+                style: TextStyles.h4n.copyWith(fontWeight: FontWeight.w500),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -43,7 +43,7 @@ class ProfileScreen extends StatelessWidget {
             color: AppColors.primaryBackground,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.25),
+                color: Colors.black.withValues(alpha: 0.5),
                 offset: const Offset(0, 2),
                 blurRadius: 4.0,
               ),

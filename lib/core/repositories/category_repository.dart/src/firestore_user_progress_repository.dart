@@ -34,7 +34,7 @@ class FirebaseCategoryRepository implements CategoryRepository {
   Future<List<SubcategoryModel>> getSubcategories(String categoryDocId) async {
     try {
       final snapshot = await categoriesCollection
-          .doc(categoryDocId) // Using the category document ID here
+          .doc(categoryDocId)
           .collection('subcategories')
           .get();
 
@@ -46,24 +46,19 @@ class FirebaseCategoryRepository implements CategoryRepository {
       }
 
       return snapshot.docs.map((doc) {
-        // Safely extract fields from the document, providing fallback values if needed
-        final subcategoryId = doc.data()['subcategory_id']?.toString() ??
-            '0'; // Fallback to '0' if null or not a String
-        final subcategoryName = doc.data()['subcategory_name']?.toString() ??
-            'Unknown'; // Fallback to 'Unknown' if null
-        final imagePath = doc.data()['image_path']?.toString() ??
-            ''; // Fallback to empty string if null
+        // Safely extract fields from the document
+        final subCategoryId = doc.data()['subcategory_id']?.toString() ?? '';
+        final subCategoryName =
+            doc.data()['subcategory_name']?.toString() ?? 'Unknown';
+        final imagePath = doc.data()['image_path']?.toString() ?? '';
 
-        log('Subcategory data: $subcategoryId, $subcategoryName, $imagePath');
+        log('Subcategory data: $subCategoryId, $subCategoryName, $imagePath');
 
         return SubcategoryModel.fromEntity(
-          SubcategoryEntity.fromMap(
-            {
-              'subcategories_id': subcategoryId,
-              'subcategories_name': subcategoryName,
-              'image_path': imagePath,
-            },
-            doc.id, // Firestore document ID for subcategory
+          SubcategoryEntity(
+            subCategoryId: subCategoryId,
+            subCategoryName: subCategoryName,
+            imagePath: imagePath,
           ),
         );
       }).toList();

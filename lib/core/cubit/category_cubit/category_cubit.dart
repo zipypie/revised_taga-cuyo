@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repositories/category_repository.dart/src/firestore_user_progress_repository.dart';
@@ -33,6 +34,15 @@ class CategoryCubit extends Cubit<CategoryState> {
       emit(SubcategoryLoaded(subcategories));
     } catch (e) {
       emit(CategoryError('Failed to load subcategories: ${e.toString()}'));
+    }
+  }
+
+  Future<String?> getDownloadableUrl(String gsUrl) async {
+    try {
+      final ref = FirebaseStorage.instance.refFromURL(gsUrl);
+      return await ref.getDownloadURL();
+    } catch (e) {
+      return null;
     }
   }
 }

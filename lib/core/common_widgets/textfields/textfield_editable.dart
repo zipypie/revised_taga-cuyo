@@ -85,7 +85,7 @@ class _TextfieldWithEditIconState extends State<TextfieldWithEditIcon> {
           fillColor: _isEditable
               ? AppColors.secondaryBackground
               : AppColors.secondaryBackground
-                  .withOpacity(0.7), // Apply opacity when not editable
+                  .withValues(alpha: 0.7), // Apply opacity when not editable
         ),
       ),
     );
