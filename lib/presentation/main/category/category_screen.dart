@@ -29,12 +29,16 @@ class _CategoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CategoryCubit, CategoryState>(
       builder: (context, state) {
-        return switch (state) {
-          CategoryLoading() => const Center(child: CircularProgressIndicator()),
-          CategoryLoaded() => CategoryCard(categories: state.categories),
-          CategoryError() => Center(child: Text(state.message)),
-          _ => const SizedBox.shrink(), // Default case
-        };
+        if (state is CategoryLoading) {
+          // Show loading indicator only once while fetching categories
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is CategoryLoaded) {
+          return CategoryCard(categories: state.categories);
+        } else if (state is CategoryError) {
+          return Center(child: Text(state.message));
+        } else {
+          return const SizedBox.shrink(); // Default case
+        }
       },
     );
   }
@@ -56,18 +60,57 @@ class CategoryCard extends StatelessWidget {
         return FutureBuilder<List<SubcategoryModel>>(
           future: FirebaseCategoryRepository().getSubcategories(category.id),
           builder: (context, snapshot) {
-            return switch (snapshot.connectionState) {
-              ConnectionState.waiting =>
-                const Center(child: CircularProgressIndicator()),
-              _ when snapshot.hasError => Text('Error: ${snapshot.error}'),
-              _ when !snapshot.hasData || snapshot.data!.isEmpty =>
-                const Text('No subcategories available'),
-              _ =>
-                CategoryTile(category: category, subcategories: snapshot.data!),
-            };
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // Only show loading for subcategories, not categories
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text('No subcategories available'),
+              );
+            } else {
+              return CategoryTile(
+                  category: category, subcategories: snapshot.data!);
+            }
           },
         );
       },
+    );
+  }
+}
+
+class TopCategoryCard extends StatelessWidget {
+  final CategoryModel category;
+  final int subcategoryCount; // Add subcategory count parameter
+
+  const TopCategoryCard({
+    super.key,
+    required this.category,
+    required this.subcategoryCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            capitalizeFirstLetter(category.categoryName),
+            style: TextStyles.h2b,
+          ),
+          Text(
+            '0/$subcategoryCount', // Dynamically show the subcategory count
+            style: TextStyles.h3b,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -76,8 +119,11 @@ class CategoryTile extends StatelessWidget {
   final CategoryModel category;
   final List<SubcategoryModel> subcategories;
 
-  const CategoryTile(
-      {super.key, required this.category, required this.subcategories});
+  const CategoryTile({
+    super.key,
+    required this.category,
+    required this.subcategories,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -94,34 +140,12 @@ class CategoryTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TopCategoryCard(category: category),
+          // Pass the subcategory count to TopCategoryCard
+          TopCategoryCard(
+            category: category,
+            subcategoryCount: subcategories.length,
+          ),
           SubcategoriesSlider(subcategories: subcategories, category: category),
-        ],
-      ),
-    );
-  }
-}
-
-class TopCategoryCard extends StatelessWidget {
-  final CategoryModel category;
-
-  const TopCategoryCard({super.key, required this.category});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            capitalizeFirstLetter(category.categoryName),
-            style: TextStyles.h2b,
-          ),
-          Text(
-            '0/4', // Hardcoded value, can be dynamically fetched later
-            style: TextStyles.h3b,
-          ),
         ],
       ),
     );

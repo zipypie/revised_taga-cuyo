@@ -5,7 +5,14 @@ import 'package:taga_cuyo/core/constants/fonts.dart';
 class CustomButton extends StatelessWidget {
   final VoidCallback onTab;
   final String text;
-  const CustomButton({super.key, required this.onTab, required this.text});
+  final Color? backgroundColor;
+  final Color? textColor;
+  const CustomButton(
+      {super.key,
+      required this.onTab,
+      required this.text,
+      this.backgroundColor,
+      this.textColor});
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +24,12 @@ class CustomButton extends StatelessWidget {
           height: 50,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-              color: AppColors.primary,
+              color: backgroundColor ?? AppColors.primary,
               borderRadius: BorderRadius.circular(15)),
           child: Text(
             text,
-            style: TextStyles.buttonDark,
+            style: TextStyles.buttonDark
+                .copyWith(color: textColor ?? AppColors.titleColor),
           ),
         ),
       ),

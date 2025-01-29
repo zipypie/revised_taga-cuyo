@@ -7,7 +7,7 @@ class AppColors {
   static const Color titleColor = Color(0xFF212121);
   static const Color secondary = Color(0xFFFFFFFF);
   static const Color primary = Color(0xFFFFD54F);
-  static const Color correct = Color(0xFF88E9A3);
+  static const Color correct = Color.fromARGB(255, 9, 211, 67);
   static const Color wrong = Color(0xFFF90909);
   static const Color accentColor = Color.fromARGB(255, 133, 188, 250);
   static const Color grey = Color.fromARGB(255, 190, 190, 190);

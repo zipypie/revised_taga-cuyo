@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'categories_repo.dart';
 import 'entities/categories_entity.dart';
-import 'entities/subcategories_entity.dart';
 import 'models/categories_model.dart';
 import 'models/subcategories_model.dart';
 import 'models/words_model.dart';
@@ -47,57 +46,73 @@ class FirebaseCategoryRepository implements CategoryRepository {
       }
 
       return snapshot.docs.map((doc) {
-        // Safely extract fields from the document
-        final subCategoryId = doc.data()['subcategory_id']?.toString() ?? '';
-        final subCategoryName =
-            doc.data()['subcategory_name']?.toString() ?? 'Unknown';
-        final imagePath = doc.data()['image_path']?.toString() ?? '';
+        final data = doc.data() as Map<String, dynamic>?;
 
-        log('Subcategory data: $subCategoryId, $subCategoryName, $imagePath');
+        if (data == null) {
+          log('Subcategory data is null for document ID: ${doc.id}');
+          throw Exception('Null data in subcategories');
+        }
 
-        return SubcategoryModel.fromEntity(
-          SubcategoryEntity(
-            subCategoryId: subCategoryId,
-            subCategoryName: subCategoryName,
-            imagePath: imagePath,
-          ),
+        log('Subcategory data: $data');
+
+        return SubcategoryModel(
+          id: doc.id, // Firestore document ID
+          subCategoryId: data['subcategory_id']?.toString() ?? '',
+          subCategoryName: data['subcategory_name']?.toString() ?? 'Unknown',
+          imagePath: data['image_path']?.toString() ?? '',
         );
       }).toList();
-    } catch (e) {
-      log('Error fetching subcategories for Category Doc ID $categoryDocId: $e');
+    } catch (e, stackTrace) {
+      log('Error fetching subcategories for Category Doc ID $categoryDocId: $e',
+          stackTrace: stackTrace);
       throw Exception('Failed to load subcategories for $categoryDocId');
+    }
+  }
+
+  /// Counts the subcategories inside the specified category.
+  @override
+  Future<void> countSubcategories(String subcategoryDocId) async {
+    try {
+      final snapshot = await categoriesCollection
+          .doc(subcategoryDocId) // Use subcategoryDocId if necessary
+          .collection('subcategories')
+          .get();
+
+      final subcategoryCount = snapshot.docs.length;
+
+      log('Category Doc ID $subcategoryDocId has $subcategoryCount subcategories.');
+    } catch (e, stackTrace) {
+      log('Error counting subcategories for Category Doc ID $subcategoryDocId: $e',
+          stackTrace: stackTrace);
+      throw Exception('Failed to count subcategories for $subcategoryDocId');
     }
   }
 
   @override
   Future<List<WordsModel>> getWords(
-      String categoryDocId, String subcategoryDocId) async {
+      String subcategoryDocId, String categoryDocId) async {
     try {
+      // Query the words collection under the subcategory
       final snapshot = await categoriesCollection
-          .doc(categoryDocId)
-          .collection('subcategories')
-          .doc(subcategoryDocId)
-          .collection(
-              'words') // Assuming the words collection is nested under subcategories
+          .doc(categoryDocId) // Start with the category document
+          .collection('subcategories') // Go to the subcategories collection
+          .doc(subcategoryDocId) // Use the subcategory document ID
+          .collection('words') // Now query the words collection
           .get();
 
-      log('Words for Subcategory Doc ID $subcategoryDocId: ${snapshot.docs.length}');
+      log('Category ID: $categoryDocId, Subcategory ID: $subcategoryDocId');
 
       if (snapshot.docs.isEmpty) {
         log('No words found for Subcategory Doc ID $subcategoryDocId');
         return [];
       }
 
-      // Map Firestore documents to WordsModel instances
       final words = snapshot.docs.map((doc) {
-        // Safely extract fields from the document
-        final wordId = doc.id; // Firestore document ID
+        final wordId = doc.id;
         final word = doc.data()['word']?.toString() ?? '';
         final translated = doc.data()['translated']?.toString() ?? '';
         final imagePath = doc.data()['image_path']?.toString() ?? '';
         final options = List<String>.from(doc.data()['options'] ?? []);
-
-        log('Word data: $wordId, $word, $translated, $imagePath, $options');
 
         return WordsModel(
           wordId: wordId,
@@ -117,6 +132,27 @@ class FirebaseCategoryRepository implements CategoryRepository {
     } catch (e) {
       log('Error fetching words for Subcategory Doc ID $subcategoryDocId: $e');
       throw Exception('Failed to load words for $subcategoryDocId');
+    }
+  }
+
+  @override
+  Future<int> countWords(String categoryDocId, String subcategoryDocId) async {
+    try {
+      final snapshot = await categoriesCollection
+          .doc(categoryDocId)
+          .collection('subcategories')
+          .doc(subcategoryDocId)
+          .collection('words') // Targeting the words collection
+          .get();
+
+      final wordCount = snapshot.docs.length;
+
+      log('Word count for Subcategory Doc ID $subcategoryDocId: $wordCount');
+
+      return wordCount; // Return the total number of words
+    } catch (e) {
+      log('Error counting words for Subcategory Doc ID $subcategoryDocId: $e');
+      throw Exception('Failed to count words for $subcategoryDocId');
     }
   }
 }
