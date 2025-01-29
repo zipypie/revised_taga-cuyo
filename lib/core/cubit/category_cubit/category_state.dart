@@ -52,11 +52,12 @@ class WordsLoading extends CategoryState {}
 
 class WordsLoaded extends CategoryState {
   final List<WordsModel> words;
+  final int currentIndex;
 
-  const WordsLoaded(this.words);
+  const WordsLoaded(this.words, this.currentIndex);
 
   @override
-  List<Object?> get props => [words];
+  List<Object?> get props => [words, currentIndex];
 }
 
 class WordsEmpty extends CategoryState {}
@@ -73,12 +74,36 @@ class WordsCounted extends CategoryState {
 class CheckAnswerResult extends CategoryState {
   final bool isCorrect;
   final String correctAnswer;
+  final int currentIndex;
+  final List<WordsModel> words; // Add this
+  final int score;
 
   const CheckAnswerResult({
+    required this.score,
     required this.isCorrect,
     required this.correctAnswer,
+    required this.currentIndex,
+    required this.words, // Initialize this
   });
 
   @override
-  List<Object?> get props => [isCorrect, correctAnswer];
+  List<Object> get props =>
+      [score, isCorrect, correctAnswer, currentIndex, words];
+}
+
+class QuizResultsComputed extends CategoryState {
+  final int score;
+  final int minutes;
+  final String winRate;
+  final int seconds;
+
+  const QuizResultsComputed({
+    required this.score,
+    required this.minutes,
+    required this.winRate,
+    required this.seconds,
+  });
+
+  @override
+  List<Object> get props => [score, minutes, winRate];
 }

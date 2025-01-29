@@ -7,8 +7,6 @@ abstract class CategoryRepository {
 
   Future<List<SubcategoryModel>> getSubcategories(String categoryId);
 
-  Future<void> countSubcategories(String categoryDocId);
-
   Future<List<WordsModel>> getWords(
       String categoryDocId, String subcategoryDocId);
 

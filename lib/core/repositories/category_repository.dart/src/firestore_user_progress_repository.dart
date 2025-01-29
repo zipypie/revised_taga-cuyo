@@ -69,25 +69,6 @@ class FirebaseCategoryRepository implements CategoryRepository {
     }
   }
 
-  /// Counts the subcategories inside the specified category.
-  @override
-  Future<void> countSubcategories(String subcategoryDocId) async {
-    try {
-      final snapshot = await categoriesCollection
-          .doc(subcategoryDocId) // Use subcategoryDocId if necessary
-          .collection('subcategories')
-          .get();
-
-      final subcategoryCount = snapshot.docs.length;
-
-      log('Category Doc ID $subcategoryDocId has $subcategoryCount subcategories.');
-    } catch (e, stackTrace) {
-      log('Error counting subcategories for Category Doc ID $subcategoryDocId: $e',
-          stackTrace: stackTrace);
-      throw Exception('Failed to count subcategories for $subcategoryDocId');
-    }
-  }
-
   @override
   Future<List<WordsModel>> getWords(
       String subcategoryDocId, String categoryDocId) async {
@@ -99,13 +80,6 @@ class FirebaseCategoryRepository implements CategoryRepository {
           .doc(subcategoryDocId) // Use the subcategory document ID
           .collection('words') // Now query the words collection
           .get();
-
-      log('Category ID: $categoryDocId, Subcategory ID: $subcategoryDocId');
-
-      if (snapshot.docs.isEmpty) {
-        log('No words found for Subcategory Doc ID $subcategoryDocId');
-        return [];
-      }
 
       final words = snapshot.docs.map((doc) {
         final wordId = doc.id;
@@ -122,11 +96,6 @@ class FirebaseCategoryRepository implements CategoryRepository {
           options: options,
         );
       }).toList();
-
-      // Example: Use the getter to access the word field
-      for (var word in words) {
-        log('Word (using getter): ${word.wordValue}');
-      }
 
       return words;
     } catch (e) {
