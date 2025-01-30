@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taga_cuyo/core/common_widgets/selectables/button.dart';
 import 'package:taga_cuyo/core/constants/images.dart';
 
 class CompletionCategoryQuizScreen extends StatelessWidget {
@@ -21,7 +22,7 @@ class CompletionCategoryQuizScreen extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(50.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -50,14 +51,12 @@ class CompletionCategoryQuizScreen extends StatelessWidget {
                   style: const TextStyle(fontSize: 20),
                 ),
                 const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Play Again'),
-                ),
+                CustomButton(
+                    onTab: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    text: 'Back to Category'), // Add this
               ],
             ),
           ),
