@@ -31,6 +31,16 @@ class CategoryQuizScreen extends StatefulWidget {
 
 class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
   String? selectedOption;
+  final Map<String, Future<String?>> _imageUrlFutures = {};
+
+  // Add this method to cache the image URL futures
+  Future<String?> _getImageUrl(String imagePath) {
+    if (!_imageUrlFutures.containsKey(imagePath)) {
+      _imageUrlFutures[imagePath] =
+          context.read<CategoryCubit>().getDownloadableUrl(imagePath);
+    }
+    return _imageUrlFutures[imagePath]!;
+  }
 
   @override
   void initState() {
@@ -170,18 +180,15 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
 
   Widget _buildImage(WordsModel currentWord) {
     return FutureBuilder<String?>(
-      future: context
-          .read<CategoryCubit>()
-          .getDownloadableUrl(currentWord.imagePath),
+      future: _getImageUrl(currentWord.imagePath),
       builder: (context, snapshot) {
         return Container(
           margin: const EdgeInsets.only(top: 20),
           height: ScreenUtils.getScreenHeight(context) * 0.35,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: AppColors.grey,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.accentColor, width: 12),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: AppColors.accentColor, width: 14),
           ),
           child: _buildImageContent(snapshot),
         );
@@ -197,11 +204,15 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
       return const Center(
           child: Icon(Icons.image, size: 50, color: Colors.grey));
     }
-    return CachedNetworkImage(
-      imageUrl: snapshot.data!,
-      fit: BoxFit.cover,
-      placeholder: (_, __) => const Center(child: CircularProgressIndicator()),
-      errorWidget: (_, __, ___) => const Center(child: Icon(Icons.image)),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10), // Adjust the radius as needed
+      child: CachedNetworkImage(
+        imageUrl: snapshot.data!,
+        fit: BoxFit.cover,
+        placeholder: (_, __) =>
+            const Center(child: CircularProgressIndicator()),
+        errorWidget: (_, __, ___) => const Center(child: Icon(Icons.image)),
+      ),
     );
   }
 
