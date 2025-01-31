@@ -5,6 +5,9 @@ import 'package:taga_cuyo/core/repositories/user_progress_repository/src/models/
 import 'package:taga_cuyo/core/repositories/user_progress_repository/src/user_progress_repo.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/user_repository.dart';
 
+import '../../category_repository.dart/categories_repository.dart';
+import '../../category_repository.dart/src/models/subcategories_model.dart';
+
 class FirebaseUserProgressRepository implements UserProgressRepository {
   final UserRepository _userRepository;
   final usersProgressCollection =
@@ -53,5 +56,32 @@ class FirebaseUserProgressRepository implements UserProgressRepository {
       log(e.toString());
       rethrow;
     }
+  }
+
+  @override
+  Future<void> saveQuizCompletionData(
+    String userId,
+    CategoryModel category,
+    SubcategoryModel subcategory,
+    int score,
+    int minutes,
+    int seconds,
+  ) async {
+    final completionData = {
+      'categoryId': category.id,
+      'categoryName': category.getCategoryName,
+      'subcategoryId': subcategory.id,
+      'subcategoryName': subcategory.subCategoryName,
+      'score': score,
+      'minutes': minutes,
+      'seconds': seconds,
+      'timestamp': FieldValue.serverTimestamp(),
+    };
+
+    await FirebaseFirestore.instance
+        .collection('user_progress')
+        .doc(userId)
+        .collection('completed_quizzes')
+        .add(completionData);
   }
 }
