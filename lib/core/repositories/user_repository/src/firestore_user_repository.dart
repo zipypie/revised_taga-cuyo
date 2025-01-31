@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taga_cuyo/core/models/device_info.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/entities/entities.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/models/feedback_model.dart';
@@ -200,5 +201,35 @@ class FirebaseUserRepository implements UserRepository {
     } catch (e) {
       log("Error adding feedback to Firestore: $e");
     }
+  }
+
+  @override
+  Future<void> saveUserLocally(MyUser user) async {
+    // Removed the leading '_'
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_id', user.uid);
+    await prefs.setString('user_email', user.email);
+    await prefs.setBool('email_verified', user.hasCompletedSurvey);
+  }
+
+  // Method to retrieve user data from local storage
+  @override
+  Future<MyUser?> getUserFromLocalStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('user_id');
+    final userEmail = prefs.getString('user_email');
+    final emailVerified = prefs.getBool('email_verified') ?? false;
+
+    if (userId != null && userEmail != null) {
+      return MyUser(
+        uid: userId,
+        email: userEmail,
+        hasCompletedSurvey: emailVerified, // Modify accordingly to your needs
+        firstName: '', // You can retrieve other fields as needed
+        lastName: '',
+        age: '',
+      );
+    }
+    return null; // No user found in shared preferences
   }
 }

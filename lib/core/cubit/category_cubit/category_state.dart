@@ -10,8 +10,14 @@ abstract class CategoryState extends Equatable {
 
 class CategoriesWithSubcategoriesLoaded extends CategoryState {
   final List<CategoryWithSubcategories> categoriesWithSubcategories;
+  final int currentSubcategoryIndex; // Assuming you need this
 
-  const CategoriesWithSubcategoriesLoaded(this.categoriesWithSubcategories);
+  const CategoriesWithSubcategoriesLoaded(
+      this.categoriesWithSubcategories, this.currentSubcategoryIndex);
+
+  @override
+  List<Object?> get props =>
+      [categoriesWithSubcategories, currentSubcategoryIndex];
 }
 
 class CategoryWithSubcategories {

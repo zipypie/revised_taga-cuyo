@@ -83,6 +83,8 @@ class MyUser extends Equatable {
 
   bool get isNotEmpty => this != MyUser.empty;
 
+  String get userId => uid;
+
   MyUserEntity toEntity() {
     return MyUserEntity(
       uid: uid,

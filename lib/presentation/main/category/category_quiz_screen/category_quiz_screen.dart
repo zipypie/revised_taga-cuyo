@@ -45,9 +45,10 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<CategoryCubit>()
-        .fetchWords(widget.subcategory.id, widget.category.id);
+    context.read<CategoryCubit>().fetchWords(
+          category: widget.category,
+          subcategory: widget.subcategory,
+        );
   }
 
   void _checkAnswer() {

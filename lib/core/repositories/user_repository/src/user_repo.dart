@@ -33,4 +33,8 @@ abstract class UserRepository {
   Future<void> addTicketToFirestore(SubmitTicketModel ticket, MyUser user);
 
   Future<void> addFeedbackToFirestore(FeedbackModel feedback, MyUser user);
+
+  Future<void> saveUserLocally(MyUser user);
+
+  Future<MyUser?> getUserFromLocalStorage();
 }

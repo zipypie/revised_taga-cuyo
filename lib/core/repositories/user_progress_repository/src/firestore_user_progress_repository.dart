@@ -7,6 +7,7 @@ import 'package:taga_cuyo/core/repositories/user_repository/user_repository.dart
 
 import '../../category_repository.dart/categories_repository.dart';
 import '../../category_repository.dart/src/models/subcategories_model.dart';
+import 'models/category_quiz_completion.dart';
 
 class FirebaseUserProgressRepository implements UserProgressRepository {
   final UserRepository _userRepository;
@@ -67,21 +68,62 @@ class FirebaseUserProgressRepository implements UserProgressRepository {
     int minutes,
     int seconds,
   ) async {
-    final completionData = {
-      'categoryId': category.id,
-      'categoryName': category.getCategoryName,
-      'subcategoryId': subcategory.id,
-      'subcategoryName': subcategory.subCategoryName,
-      'score': score,
-      'minutes': minutes,
-      'seconds': seconds,
-      'timestamp': FieldValue.serverTimestamp(),
-    };
-
-    await FirebaseFirestore.instance
+    // Fetch existing quiz completion data from Firebase
+    final userProgressRef = FirebaseFirestore.instance
         .collection('user_progress')
         .doc(userId)
-        .collection('completed_quizzes')
-        .add(completionData);
+        .collection('completed_quizzes');
+
+    final querySnapshot = await userProgressRef
+        .where('categoryName', isEqualTo: category.getCategoryName)
+        .where('subcategoryName', isEqualTo: subcategory.subCategoryName)
+        .get();
+
+    // If there's existing data
+    if (querySnapshot.docs.isNotEmpty) {
+      final existingData = querySnapshot.docs.first.data();
+      final existingScore = existingData['score'] as int;
+
+      // Only update if the new score is higher
+      if (score > existingScore) {
+        // Create the CategoryQuizCompletion model with the new score and time
+        final quizCompletion = CategoryQuizCompletion(
+          categoryName: category.getCategoryName,
+          subcategoryName: subcategory.subCategoryName,
+          score: score,
+          minutes: minutes,
+          seconds: seconds,
+        );
+
+        // Convert to the CategoryQuizCompletionEntity
+        final quizCompletionEntity = quizCompletion.toEntity();
+
+        // Convert the entity to a map for Firestore
+        final completionData = quizCompletionEntity.toMap();
+
+        // Update the existing document with new score, minutes, and seconds
+        await userProgressRef
+            .doc(querySnapshot.docs.first.id)
+            .update(completionData);
+      }
+    } else {
+      // If no existing data, create a new document with the score, minutes, and seconds
+      final quizCompletion = CategoryQuizCompletion(
+        categoryName: category.getCategoryName,
+        subcategoryName: subcategory.subCategoryName,
+        score: score,
+        minutes: minutes,
+        seconds: seconds,
+      );
+
+      // Convert to the CategoryQuizCompletionEntity
+      final quizCompletionEntity = quizCompletion.toEntity();
+
+      // Convert the entity to a map for Firestore
+      final completionData = quizCompletionEntity.toMap();
+
+      // Save the new data (score + time) if there's no previous record
+      await userProgressRef.add(completionData);
+    }
   }
 }

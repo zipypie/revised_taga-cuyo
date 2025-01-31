@@ -17,6 +17,7 @@ import 'package:taga_cuyo/presentation/onboarding/login/login_screen.dart';
 
 import '../core/cubit/feedback_cubit/feedback_cubit.dart';
 import '../core/cubit/submit_ticket_cubit/submit_ticket_cubit.dart';
+import '../core/repositories/user_progress_repository/src/firestore_user_progress_repository.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -47,7 +48,16 @@ class MainApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
-            create: (_) => CategoryCubit(FirebaseCategoryRepository())),
+          create: (context) {
+            final userId =
+                context.read<AuthenticationBloc>().state.user?.uid ?? '';
+            return CategoryCubit(
+              FirebaseCategoryRepository(),
+              FirebaseUserProgressRepository(userRepository: userRepository),
+              userId, // Now using the user ID from AuthenticationBloc
+            )..fetchCategoriesWithSubcategories();
+          },
+        ),
         BlocProvider(
           create: (context) => SignUpBloc(
             userRepository: context.read<AuthenticationBloc>().userRepository,
