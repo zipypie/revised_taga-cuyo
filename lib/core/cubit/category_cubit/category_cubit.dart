@@ -59,6 +59,12 @@ class CategoryCubit extends Cubit<CategoryState> {
         emit(WordsEmpty());
         return;
       }
+
+      // Shuffle the options for each word
+      for (var word in words) {
+        word.options.shuffle(); // Shuffle the options list of each word
+      }
+
       _score = 0;
       _stopwatch
         ..reset()
