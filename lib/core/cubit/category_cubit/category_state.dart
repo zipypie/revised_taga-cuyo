@@ -8,6 +8,19 @@ abstract class CategoryState extends Equatable {
   List<Object?> get props => [];
 }
 
+class CategoriesWithSubcategoriesLoaded extends CategoryState {
+  final List<CategoryWithSubcategories> categoriesWithSubcategories;
+
+  const CategoriesWithSubcategoriesLoaded(this.categoriesWithSubcategories);
+}
+
+class CategoryWithSubcategories {
+  final CategoryModel category;
+  final List<SubcategoryModel> subcategories;
+
+  CategoryWithSubcategories(this.category, this.subcategories);
+}
+
 /// Initial state when no action has occurred
 class CategoryInitial extends CategoryState {}
 

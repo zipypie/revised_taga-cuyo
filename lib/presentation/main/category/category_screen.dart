@@ -15,8 +15,8 @@ class CategoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          CategoryCubit(FirebaseCategoryRepository())..fetchCategories(),
+      create: (_) => CategoryCubit(FirebaseCategoryRepository())
+        ..fetchCategoriesWithSubcategories(), // Modified method name
       child: const _CategoryView(),
     );
   }
@@ -30,22 +30,21 @@ class _CategoryView extends StatelessWidget {
     return BlocBuilder<CategoryCubit, CategoryState>(
       builder: (context, state) {
         if (state is CategoryLoading) {
-          // Show loading indicator only once while fetching categories
           return const Center(child: CircularProgressIndicator());
-        } else if (state is CategoryLoaded) {
-          return CategoryCard(categories: state.categories);
+        } else if (state is CategoriesWithSubcategoriesLoaded) {
+          // New state
+          return CategoryCard(categories: state.categoriesWithSubcategories);
         } else if (state is CategoryError) {
           return Center(child: Text(state.message));
-        } else {
-          return const SizedBox.shrink(); // Default case
         }
+        return const SizedBox.shrink();
       },
     );
   }
 }
 
 class CategoryCard extends StatelessWidget {
-  final List<CategoryModel> categories;
+  final List<CategoryWithSubcategories> categories;
 
   const CategoryCard({super.key, required this.categories});
 
@@ -56,37 +55,20 @@ class CategoryCard extends StatelessWidget {
       physics: const AlwaysScrollableScrollPhysics(),
       itemCount: categories.length,
       itemBuilder: (context, index) {
-        final category = categories[index];
-        return FutureBuilder<List<SubcategoryModel>>(
-          future: FirebaseCategoryRepository().getSubcategories(category.id),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // Only show loading for subcategories, not categories
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Center(child: CircularProgressIndicator()),
-              );
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text('No subcategories available'),
-              );
-            } else {
-              return CategoryTile(
-                  category: category, subcategories: snapshot.data!);
-            }
-          },
+        final categoryWithSubs = categories[index];
+        return CategoryTile(
+          category: categoryWithSubs.category,
+          subcategories: categoryWithSubs.subcategories,
         );
       },
     );
   }
 }
 
+// Modified TopCategoryCard to remove FutureBuilder
 class TopCategoryCard extends StatelessWidget {
   final CategoryModel category;
-  final int subcategoryCount; // Add subcategory count parameter
+  final int subcategoryCount;
 
   const TopCategoryCard({
     super.key,
@@ -106,7 +88,7 @@ class TopCategoryCard extends StatelessWidget {
             style: TextStyles.h2b,
           ),
           Text(
-            '0/$subcategoryCount', // Dynamically show the subcategory count
+            '0/$subcategoryCount',
             style: TextStyles.h3b,
           ),
         ],
@@ -140,7 +122,6 @@ class CategoryTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Pass the subcategory count to TopCategoryCard
           TopCategoryCard(
             category: category,
             subcategoryCount: subcategories.length,
@@ -179,85 +160,84 @@ class SubcategoriesSlider extends StatelessWidget {
 class SubcategoryCard extends StatelessWidget {
   final CategoryModel category;
   final SubcategoryModel subcategory;
+  final Map<String, String> _imageCache = {};
 
-  const SubcategoryCard(
-      {super.key, required this.subcategory, required this.category});
+  SubcategoryCard({
+    super.key,
+    required this.subcategory,
+    required this.category,
+  });
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<CategoryCubit>();
+    final cachedImage = _imageCache[subcategory.imagePath];
 
-    return FutureBuilder<String?>(
-      future: cubit.getDownloadableUrl(subcategory.imagePath),
-      builder: (context, snapshot) {
-        final imageWidget = switch (snapshot.connectionState) {
-          ConnectionState.waiting =>
-            const Center(child: CircularProgressIndicator()),
-          _ when snapshot.hasError || snapshot.data == null => const Center(
-              child: Icon(Icons.image, size: 50, color: Colors.grey),
-            ),
-          _ => Image.network(
-              snapshot.data!,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const Center(
-                  child: Icon(Icons.image, size: 50, color: Colors.grey),
-                );
-              },
-            ),
-        };
-
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CategoryQuizScreen(
-                  category: category,
-                  subcategory: subcategory,
-                ),
-              ),
-            );
-          },
-          child: Container(
-            margin: const EdgeInsets.only(right: 20, top: 15),
-            height: ScreenUtils.getScreenHeight(context, subtract: 394) / 3,
-            width: (ScreenUtils.getScreenWidth(context) - 80) / 3,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height:
-                      ScreenUtils.getScreenHeight(context, subtract: 550) / 3,
-                  width: (ScreenUtils.getScreenWidth(context) - 80) / 3,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset: Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  clipBehavior: Clip.hardEdge,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(25),
-                    child: imageWidget,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  capitalizeFirstLetter(subcategory.subCategoryName),
-                  textAlign: TextAlign.center,
-                  style: TextStyles.h4n.copyWith(fontWeight: FontWeight.w500),
-                ),
-              ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CategoryQuizScreen(
+              category: category,
+              subcategory: subcategory,
             ),
           ),
         );
       },
+      child: Container(
+        margin: const EdgeInsets.only(right: 20, top: 15),
+        height: ScreenUtils.getScreenHeight(context, subtract: 394) / 3,
+        width: (ScreenUtils.getScreenWidth(context) - 80) / 3,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              height: ScreenUtils.getScreenHeight(context, subtract: 550) / 3,
+              width: (ScreenUtils.getScreenWidth(context) - 80) / 3,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              clipBehavior: Clip.hardEdge,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(25),
+                child: cachedImage != null
+                    ? Image.network(cachedImage, fit: BoxFit.cover)
+                    : FutureBuilder<String?>(
+                        future: cubit.getDownloadableUrl(subcategory.imagePath),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            _imageCache[subcategory.imagePath] = snapshot.data!;
+                            return Image.network(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            );
+                          }
+                          return const Center(
+                            child:
+                                Icon(Icons.image, size: 50, color: Colors.grey),
+                          );
+                        },
+                      ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              capitalizeFirstLetter(subcategory.subCategoryName),
+              textAlign: TextAlign.center,
+              style: TextStyles.h4n.copyWith(fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

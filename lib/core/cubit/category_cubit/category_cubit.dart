@@ -21,24 +21,19 @@ class CategoryCubit extends Cubit<CategoryState> {
     _stopwatch = Stopwatch();
   }
 
-  Future<void> fetchCategories() async {
+  Future<void> fetchCategoriesWithSubcategories() async {
     emit(CategoryLoading());
     try {
       final categories = await _categoryRepository.getCategories();
-      emit(CategoryLoaded(categories));
+      final categoriesWithSubs =
+          await Future.wait(categories.map((category) async {
+        final subcategories =
+            await _categoryRepository.getSubcategories(category.id);
+        return CategoryWithSubcategories(category, subcategories);
+      }));
+      emit(CategoriesWithSubcategoriesLoaded(categoriesWithSubs));
     } catch (e) {
-      emit(CategoryError('Failed to load categories: $e'));
-    }
-  }
-
-  Future<void> fetchSubcategories(String categoryId) async {
-    emit(CategoryLoading());
-    try {
-      final subcategories =
-          await _categoryRepository.getSubcategories(categoryId);
-      emit(SubcategoryLoaded(subcategories));
-    } catch (e) {
-      emit(CategoryError('Failed to load subcategories: $e'));
+      emit(CategoryError('Failed to load data: $e'));
     }
   }
 

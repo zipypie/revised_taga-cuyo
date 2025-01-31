@@ -1,4 +1,5 @@
 // category_quiz_screen.dart
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taga_cuyo/core/common_widgets/selectables/button.dart';
@@ -99,14 +100,28 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
               if (state is CategoryLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
-              if (state is WordsLoaded) {
-                final currentIndex = state.currentIndex;
-                final currentWord = state.words[currentIndex];
+              if (state is CategoryError) {
+                return Center(child: Text(state.message));
+              }
+              if (state is WordsLoaded || state is CheckAnswerResult) {
+                // Extract current index and words based on the state type
+                int currentIndex;
+                List<WordsModel> words;
+                if (state is WordsLoaded) {
+                  currentIndex = state.currentIndex;
+                  words = state.words;
+                } else {
+                  final resultState = state as CheckAnswerResult;
+                  currentIndex = resultState.currentIndex;
+                  words = resultState.words;
+                }
+                final currentWord = words[currentIndex];
 
                 return Stack(
                   children: [
-                    _buildQuizContent(state, state.words, currentWord),
-                    _buildQuizControls(state.words.length, currentIndex),
+                    _buildQuizContent(
+                        words, currentWord, currentIndex), // Pass currentIndex
+                    _buildQuizControls(words.length, currentIndex),
                     Positioned(
                       top: 20,
                       right: 20,
@@ -118,9 +133,6 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
                   ],
                 );
               }
-              if (state is CategoryError) {
-                return Center(child: Text(state.message));
-              }
               return const Center(child: Text('No data available.'));
             },
           ),
@@ -130,7 +142,10 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
   }
 
   Widget _buildQuizContent(
-      WordsLoaded state, List<WordsModel> words, WordsModel currentWord) {
+    List<WordsModel> words,
+    WordsModel currentWord,
+    int currentIndex, // Receive currentIndex directly
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 16),
       child: Column(
@@ -147,7 +162,7 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
           ),
           _buildImage(currentWord),
           _buildWordText(currentWord),
-          _buildOptions(words, state.currentIndex),
+          _buildOptions(words, currentIndex), // Pass currentIndex
         ],
       ),
     );
@@ -162,6 +177,7 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
         return Container(
           margin: const EdgeInsets.only(top: 20),
           height: ScreenUtils.getScreenHeight(context) * 0.35,
+          width: double.infinity,
           decoration: BoxDecoration(
             color: AppColors.grey,
             borderRadius: BorderRadius.circular(20),
@@ -181,12 +197,11 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
       return const Center(
           child: Icon(Icons.image, size: 50, color: Colors.grey));
     }
-    return Image.network(
-      snapshot.data!,
-      key: ValueKey(snapshot.data!),
+    return CachedNetworkImage(
+      imageUrl: snapshot.data!,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) =>
-          const Center(child: Icon(Icons.image, size: 50, color: Colors.grey)),
+      placeholder: (_, __) => const Center(child: CircularProgressIndicator()),
+      errorWidget: (_, __, ___) => const Center(child: Icon(Icons.image)),
     );
   }
 
