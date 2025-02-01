@@ -2,6 +2,7 @@ import 'package:taga_cuyo/core/repositories/user_progress_repository/src/models/
 
 import '../../category_repository.dart/categories_repository.dart';
 import '../../category_repository.dart/src/models/subcategories_model.dart';
+import 'models/category_quiz_completion.dart';
 
 abstract class UserProgressRepository {
   Future<void> setUserProgressData(UserProgress userProgress);
@@ -16,4 +17,5 @@ abstract class UserProgressRepository {
     int minutes,
     int seconds,
   );
+  Future<List<CategoryQuizCompletion>> getQuizCompletionData(String userId);
 }

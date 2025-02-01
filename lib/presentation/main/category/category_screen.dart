@@ -39,9 +39,14 @@ class CategoryScreen extends StatelessWidget {
   }
 }
 
-class _CategoryView extends StatelessWidget {
+class _CategoryView extends StatefulWidget {
   const _CategoryView();
 
+  @override
+  _CategoryViewState createState() => _CategoryViewState();
+}
+
+class _CategoryViewState extends State<_CategoryView> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoryCubit, CategoryState>(
@@ -49,8 +54,11 @@ class _CategoryView extends StatelessWidget {
         if (state is CategoryLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is CategoriesWithSubcategoriesLoaded) {
-          // New state
-          return CategoryCard(categories: state.categoriesWithSubcategories);
+          return CategoryCard(
+            categories: state.categoriesWithSubcategories,
+            completedCategoriesCountMap:
+                state.completedCategoriesCountMap, // Access the count map
+          );
         } else if (state is CategoryError) {
           return Center(child: Text(state.message));
         }
@@ -62,8 +70,13 @@ class _CategoryView extends StatelessWidget {
 
 class CategoryCard extends StatelessWidget {
   final List<CategoryWithSubcategories> categories;
+  final Map<String, int> completedCategoriesCountMap;
 
-  const CategoryCard({super.key, required this.categories});
+  const CategoryCard({
+    super.key,
+    required this.categories,
+    required this.completedCategoriesCountMap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -76,40 +89,9 @@ class CategoryCard extends StatelessWidget {
         return CategoryTile(
           category: categoryWithSubs.category,
           subcategories: categoryWithSubs.subcategories,
+          completedCategoriesCountMap: completedCategoriesCountMap,
         );
       },
-    );
-  }
-}
-
-// Modified TopCategoryCard to remove FutureBuilder
-class TopCategoryCard extends StatelessWidget {
-  final CategoryModel category;
-  final int subcategoryCount;
-
-  const TopCategoryCard({
-    super.key,
-    required this.category,
-    required this.subcategoryCount,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            capitalizeFirstLetter(category.categoryName),
-            style: TextStyles.h2b,
-          ),
-          Text(
-            '0/$subcategoryCount',
-            style: TextStyles.h3b,
-          ),
-        ],
-      ),
     );
   }
 }
@@ -117,11 +99,13 @@ class TopCategoryCard extends StatelessWidget {
 class CategoryTile extends StatelessWidget {
   final CategoryModel category;
   final List<SubcategoryModel> subcategories;
+  final Map<String, int> completedCategoriesCountMap;
 
   const CategoryTile({
     super.key,
     required this.category,
     required this.subcategories,
+    required this.completedCategoriesCountMap,
   });
 
   @override
@@ -142,8 +126,43 @@ class CategoryTile extends StatelessWidget {
           TopCategoryCard(
             category: category,
             subcategoryCount: subcategories.length,
+            completedCategoriesCount:
+                completedCategoriesCountMap[category.categoryName] ?? 0,
           ),
           SubcategoriesSlider(subcategories: subcategories, category: category),
+        ],
+      ),
+    );
+  }
+}
+
+class TopCategoryCard extends StatelessWidget {
+  final CategoryModel category;
+  final int subcategoryCount;
+  final int completedCategoriesCount;
+
+  const TopCategoryCard({
+    super.key,
+    required this.category,
+    required this.subcategoryCount,
+    required this.completedCategoriesCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            capitalizeFirstLetter(category.categoryName),
+            style: TextStyles.h2b,
+          ),
+          Text(
+            '$completedCategoriesCount/$subcategoryCount', // Show completed categories count
+            style: TextStyles.h3b,
+          ),
         ],
       ),
     );

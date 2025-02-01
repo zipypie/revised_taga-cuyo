@@ -31,10 +31,11 @@ class CategoryCubit extends Cubit<CategoryState> {
     _stopwatch = Stopwatch();
   }
 
+  // Fetch categories and their subcategories
   Future<void> fetchCategoriesWithSubcategories() async {
     emit(CategoryLoading());
     try {
-      print('Fetching categories for user: $userId');
+      log('Fetching categories for user: $userId');
       final categories = await _categoryRepository.getCategories();
       final categoriesWithSubs =
           await Future.wait(categories.map((category) async {
@@ -42,11 +43,40 @@ class CategoryCubit extends Cubit<CategoryState> {
             await _categoryRepository.getSubcategories(category.id);
         return CategoryWithSubcategories(category, subcategories);
       }));
+
+      // Fetch completed categories count
+      final completedCategoriesCountMap = await getCompletedCategoriesCount();
+
       emit(CategoriesWithSubcategoriesLoaded(
-          categoriesWithSubs, currentSubcategoryIndex));
+        categoriesWithSubs,
+        currentSubcategoryIndex,
+        completedCategoriesCountMap, // Pass the updated completed categories map
+      ));
     } catch (e) {
       emit(CategoryError('Failed to load data: $e'));
     }
+  }
+
+  Future<Map<String, int>> getCompletedCategoriesCount() async {
+    final completedCategoriesCountMap = <String, int>{};
+    try {
+      final quizData =
+          await _userProgressRepository.getQuizCompletionData(userId);
+
+      for (var quiz in quizData) {
+        final categoryName = quiz.categoryName;
+
+        // Track the number of completed subcategories for each category
+        completedCategoriesCountMap.update(
+          categoryName,
+          (value) => value + 1,
+          ifAbsent: () => 1,
+        );
+      }
+    } catch (e) {
+      log('Error fetching quiz completion data: $e');
+    }
+    return completedCategoriesCountMap;
   }
 
   Future<String?> getDownloadableUrl(String gsUrl) async {

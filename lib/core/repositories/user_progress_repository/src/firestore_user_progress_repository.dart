@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:taga_cuyo/core/repositories/user_progress_repository/src/entities/category_quiz_completion_entity.dart';
 import 'package:taga_cuyo/core/repositories/user_progress_repository/src/entities/my_user_progress_entity.dart';
 import 'package:taga_cuyo/core/repositories/user_progress_repository/src/models/my_user_progress.dart';
 import 'package:taga_cuyo/core/repositories/user_progress_repository/src/user_progress_repo.dart';
@@ -68,46 +69,67 @@ class FirebaseUserProgressRepository implements UserProgressRepository {
     int minutes,
     int seconds,
   ) async {
-    // Fetch existing quiz completion data from Firebase
-    final userProgressRef = FirebaseFirestore.instance
-        .collection('user_progress')
-        .doc(userId)
-        .collection('completed_quizzes');
+    final userProgressRef =
+        FirebaseFirestore.instance.collection('user_progress').doc(userId);
 
-    final querySnapshot = await userProgressRef
-        .where('categoryName', isEqualTo: category.getCategoryName)
-        .where('subcategoryName', isEqualTo: subcategory.subCategoryName)
-        .get();
+    try {
+      // Fetch the user's progress document
+      final userDocSnapshot = await userProgressRef.get();
 
-    // If there's existing data
-    if (querySnapshot.docs.isNotEmpty) {
-      final existingData = querySnapshot.docs.first.data();
-      final existingScore = existingData['score'] as int;
+      // Fetch the completed category quizzes subcollection to count the completed categories
+      final completedQuizzesRef =
+          userProgressRef.collection('completed_category_quizzes');
+      final completedQuizzesSnapshot = await completedQuizzesRef.get();
+      final completedCategoriesCount = completedQuizzesSnapshot.docs.length;
 
-      // Only update if the new score is higher
-      if (score > existingScore) {
-        // Create the CategoryQuizCompletion model with the new score and time
-        final quizCompletion = CategoryQuizCompletion(
-          categoryName: category.getCategoryName,
-          subcategoryName: subcategory.subCategoryName,
-          score: score,
-          minutes: minutes,
-          seconds: seconds,
-        );
+      if (userDocSnapshot.exists) {
+        final userData = userDocSnapshot.data()!;
 
-        // Convert to the CategoryQuizCompletionEntity
-        final quizCompletionEntity = quizCompletion.toEntity();
+        // Get the current total minutes and seconds
+        final existingMinutes = userData['minutes'] ?? 0;
+        final existingSeconds = userData['seconds'] ?? 0;
 
-        // Convert the entity to a map for Firestore
-        final completionData = quizCompletionEntity.toMap();
+        // Add the new minutes and seconds to the existing values
+        final totalSeconds = existingSeconds + seconds;
+        final extraMinutes =
+            totalSeconds ~/ 60; // Convert seconds to minutes if > 60
+        final remainingSeconds =
+            totalSeconds % 60; // Get remaining seconds after conversion
 
-        // Update the existing document with new score, minutes, and seconds
-        await userProgressRef
-            .doc(querySnapshot.docs.first.id)
-            .update(completionData);
+        final updatedMinutes = existingMinutes + minutes + extraMinutes;
+        final updatedSeconds = remainingSeconds;
+
+        // Update the user's progress with the new total minutes, seconds, and categories count
+        await userProgressRef.update({
+          'minutes': updatedMinutes,
+          'seconds': updatedSeconds, // Store remaining seconds after conversion
+          'categories':
+              completedCategoriesCount, // Set categories based on the count of completed quizzes
+        });
+
+        log('User progress updated with new total minutes, seconds, and correct categories count.');
+      } else {
+        // If the user document doesn't exist, create it with initial values
+        final totalSeconds = seconds;
+        final extraMinutes =
+            totalSeconds ~/ 60; // Convert seconds to minutes if > 60
+        final remainingSeconds =
+            totalSeconds % 60; // Get remaining seconds after conversion
+
+        await userProgressRef.set({
+          'minutes': minutes + extraMinutes,
+          'seconds': remainingSeconds, // Store remaining seconds
+          'categories':
+              completedCategoriesCount, // Set categories to 0 initially
+          'lessons': 0,
+          'days': 0,
+          'longestStreak': 0,
+        });
+
+        log('New user progress document created with initial values.');
       }
-    } else {
-      // If no existing data, create a new document with the score, minutes, and seconds
+
+      // Now save the quiz completion data for the specific category/subcategory
       final quizCompletion = CategoryQuizCompletion(
         categoryName: category.getCategoryName,
         subcategoryName: subcategory.subCategoryName,
@@ -116,14 +138,32 @@ class FirebaseUserProgressRepository implements UserProgressRepository {
         seconds: seconds,
       );
 
-      // Convert to the CategoryQuizCompletionEntity
       final quizCompletionEntity = quizCompletion.toEntity();
-
-      // Convert the entity to a map for Firestore
       final completionData = quizCompletionEntity.toMap();
 
-      // Save the new data (score + time) if there's no previous record
-      await userProgressRef.add(completionData);
+      // Use Firestore's auto-generated document ID
+      await completedQuizzesRef.add(completionData);
+
+      log('Quiz completion data added or updated.');
+    } catch (e) {
+      log('Error saving quiz completion data: $e');
     }
+  }
+
+  @override
+  Future<List<CategoryQuizCompletion>> getQuizCompletionData(
+      String userId) async {
+    final userProgressRef = FirebaseFirestore.instance
+        .collection('user_progress')
+        .doc(userId)
+        .collection('completed_category_quizzes');
+
+    final querySnapshot = await userProgressRef.get();
+
+    return querySnapshot.docs
+        .map((doc) => CategoryQuizCompletion.fromEntity(
+              CategoryQuizCompletionEntity.fromMap(doc.data()),
+            ))
+        .toList();
   }
 }
