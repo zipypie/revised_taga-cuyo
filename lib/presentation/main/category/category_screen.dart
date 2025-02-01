@@ -10,46 +10,20 @@ import '../../../core/repositories/category_repository.dart/src/models/models.da
 import '../../../core/repositories/category_repository.dart/src/models/subcategories_model.dart';
 import '../../../core/repositories/user_progress_repository/src/firestore_user_progress_repository.dart';
 import '../../../core/repositories/user_repository/src/firestore_user_repository.dart';
-import '../../../core/repositories/user_repository/user_repository.dart';
 
 class CategoryScreen extends StatelessWidget {
   const CategoryScreen({super.key});
 
-  Future<MyUser?> _getUserFromLocalStorage() async {
-    return await FirebaseUserRepository().getUserFromLocalStorage();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<MyUser?>(
-      future: _getUserFromLocalStorage(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (snapshot.hasError) {
-          return const Center(child: Text('Error loading user data'));
-        }
-
-        if (snapshot.hasData) {
-          final MyUser user = snapshot.data!; // Get the user from snapshot
-
-          return BlocProvider(
-            create: (_) => CategoryCubit(
-              FirebaseCategoryRepository(),
-              FirebaseUserProgressRepository(
-                userRepository: FirebaseUserRepository(),
-              ),
-              user.uid, // Pass user data (e.g., userId) to CategoryCubit
-            )..fetchCategoriesWithSubcategories(),
-            child: const _CategoryView(),
-          );
-        }
-
-        // If no user is found in local storage, show an error or fallback UI
-        return const Center(child: Text('No user data found'));
-      },
+    return BlocProvider(
+      create: (_) => CategoryCubit(
+        FirebaseCategoryRepository(),
+        FirebaseUserProgressRepository(
+            userRepository: FirebaseUserRepository()), // Inject UserRepository
+        FirebaseUserRepository().toString(), // Inject UserRepository
+      )..fetchCategoriesWithSubcategories(),
+      child: const _CategoryView(),
     );
   }
 }

@@ -1,43 +1,13 @@
-# Flutter/Dart related
-.dart_tool/
-.idea/
-.vscode/
-.packages
-.pub-cache/
-.pub/
-
-# Android specific
-android/.gradle/
-android/gradle-wrapper.jar
-/android/captures/
-android/gradlew
-android/gradlew.bat
-android/local.properties
-android/gradle
-
-# iOS specific
-ios/Pods/
-ios/.symlinks/
-ios/Flutter/Flutter.podspec
-
-# Generated files
+gradle-wrapper.jar
+/.gradle
+/captures/
+/gradlew
+/gradlew.bat
+/local.properties
 GeneratedPluginRegistrant.java
+
+# Remember to never publicly share your keystore.
+# See https://flutter.dev/to/reference-keystore
+key.properties
 **/*.keystore
 **/*.jks
-key.properties
-
-# Build outputs
-build/
-
-# User-specific files
-.metadata
-*.log
-
-# IDE-specific files
-.idea/
-taga_cuyo.iml
-
-
-# Flutter configuration files
-pubspec.lock
-analysis_options.yaml

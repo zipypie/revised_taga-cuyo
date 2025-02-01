@@ -15,7 +15,7 @@ part 'category_state.dart';
 class CategoryCubit extends Cubit<CategoryState> {
   final FirebaseCategoryRepository _categoryRepository;
   final FirebaseUserProgressRepository _userProgressRepository;
-  final String userId; // Obtain this from your auth system
+  final String uid; // Obtain this from your auth system
   final Map<String, String> _urlCache = {};
   int _score = 0;
   late Stopwatch _stopwatch;
@@ -24,8 +24,10 @@ class CategoryCubit extends Cubit<CategoryState> {
   SubcategoryModel? _currentSubcategory;
 
   CategoryCubit(
-      this._categoryRepository, this._userProgressRepository, this.userId)
-      : super(CategoryInitial()) {
+    this._categoryRepository,
+    this._userProgressRepository,
+    this.uid, // No need for FirebaseUserRepository here
+  ) : super(CategoryInitial()) {
     _stopwatch = Stopwatch();
   }
 
@@ -141,7 +143,7 @@ class CategoryCubit extends Cubit<CategoryState> {
       // Save quiz data
       if (_currentCategory != null && _currentSubcategory != null) {
         _userProgressRepository.saveQuizCompletionData(
-          userId,
+          uid,
           _currentCategory!,
           _currentSubcategory!,
           finalScore.toInt(),
