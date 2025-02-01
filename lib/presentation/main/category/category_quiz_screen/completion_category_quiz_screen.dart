@@ -36,12 +36,6 @@ class CompletionCategoryQuizScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Score: $score',
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Text(
                   'Time: $minutes minutes $seconds seconds',
                   style: const TextStyle(fontSize: 20),
                 ),

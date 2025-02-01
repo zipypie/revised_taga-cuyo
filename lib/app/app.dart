@@ -86,33 +86,46 @@ class MainApp extends StatelessWidget {
         darkTheme: AppThemes.darkTheme,
         onGenerateRoute: AppRoutes.generateRoute,
         scaffoldMessengerKey: scaffoldMessengerKey,
-        home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-          builder: (context, state) {
+        home: BlocListener<AuthenticationBloc, AuthenticationState>(
+          listener: (context, state) {
             if (state.status == AuthenticationStatus.authenticated) {
-              if (state.user!.emailVerified) {
-                // User is authenticated and email is verified
-                return MultiBlocProvider(
-                  providers: [
-                    BlocProvider(
-                      create: (context) => ProgressBloc(
-                        userProgressRepository: userProgressRepository,
-                      )..add(GetUserProgressEvent()),
-                    ),
-                  ],
-                  child: const MainAppScreen(),
-                );
-              } else {
-                // Email is not verified, show login screen
-                return const LoginScreen();
+              // Trigger category fetch on successful login
+              final userId = state.user?.uid; // Extract the user ID
+              if (userId != null) {
+                context
+                    .read<CategoryCubit>()
+                    .fetchCategoriesWithSubcategories(); // Fetch categories for the authenticated user
               }
-            } else if (state.status == AuthenticationStatus.unauthenticated) {
-              return const LoginScreen(); // User is not authenticated
-            } else if (state.status == AuthenticationStatus.unknown) {
-              return const GetStartedScreen(); // Loading or first-time screen
-            } else {
-              return const LoginScreen(); // Default to login screen
             }
           },
+          child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (context, state) {
+              if (state.status == AuthenticationStatus.authenticated) {
+                if (state.user!.emailVerified) {
+                  // User is authenticated and email is verified
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (context) => ProgressBloc(
+                          userProgressRepository: userProgressRepository,
+                        )..add(GetUserProgressEvent()),
+                      ),
+                    ],
+                    child: const MainAppScreen(),
+                  );
+                } else {
+                  // Email is not verified, show login screen
+                  return const LoginScreen();
+                }
+              } else if (state.status == AuthenticationStatus.unauthenticated) {
+                return const LoginScreen(); // User is not authenticated
+              } else if (state.status == AuthenticationStatus.unknown) {
+                return const GetStartedScreen(); // Loading or first-time screen
+              } else {
+                return const LoginScreen(); // Default to login screen
+              }
+            },
+          ),
         ),
       ),
     );

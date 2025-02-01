@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taga_cuyo/core/constants/capitalize.dart';
 import 'package:taga_cuyo/core/utils/screen_utils.dart';
 import 'package:taga_cuyo/presentation/main/category/category_quiz_screen/category_quiz_screen.dart';
+import '../../../core/bloc/authentication_bloc/authentication_bloc.dart';
 import '../../../core/constants/fonts.dart';
 import '../../../core/cubit/category_cubit/category_cubit.dart';
 import '../../../core/repositories/category_repository.dart/src/firestore_user_progress_repository.dart';
@@ -16,12 +17,22 @@ class CategoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the authenticated user's ID from the AuthenticationBloc
+    final userId = context.select<AuthenticationBloc, String?>(
+      (bloc) => bloc.state.user?.uid,
+    );
+
+    if (userId == null) {
+      return const Center(child: Text('User not authenticated'));
+    }
+
     return BlocProvider(
       create: (_) => CategoryCubit(
         FirebaseCategoryRepository(),
         FirebaseUserProgressRepository(
-            userRepository: FirebaseUserRepository()), // Inject UserRepository
-        FirebaseUserRepository().toString(), // Inject UserRepository
+          userRepository: FirebaseUserRepository(),
+        ),
+        userId, // Pass the authenticated user's ID
       )..fetchCategoriesWithSubcategories(),
       child: const _CategoryView(),
     );
