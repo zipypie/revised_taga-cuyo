@@ -46,11 +46,14 @@ class CategoryCubit extends Cubit<CategoryState> {
 
       // Fetch completed categories count
       final completedCategoriesCountMap = await getCompletedCategoriesCount();
+      final completedSubcategoriesMap =
+          await getCompletedCategoriesWithSubcategories(); // ✅ Get completed subcategories
 
       emit(CategoriesWithSubcategoriesLoaded(
         categoriesWithSubs,
         currentSubcategoryIndex,
-        completedCategoriesCountMap, // Pass the updated completed categories map
+        completedCategoriesCountMap,
+        completedSubcategoriesMap, // ✅ Pass it here
       ));
     } catch (e) {
       emit(CategoryError('Failed to load data: $e'));
@@ -66,17 +69,45 @@ class CategoryCubit extends Cubit<CategoryState> {
       for (var quiz in quizData) {
         final categoryName = quiz.categoryName;
 
-        // Track the number of completed subcategories for each category
-        completedCategoriesCountMap.update(
-          categoryName,
-          (value) => value + 1,
-          ifAbsent: () => 1,
-        );
+        // Check if the category already exists in the map and if the subcategory is already counted
+        if (completedCategoriesCountMap.containsKey(categoryName)) {
+          // If it does, only increment the count if it's not already counted
+          completedCategoriesCountMap[categoryName] =
+              completedCategoriesCountMap[categoryName]! + 1;
+        } else {
+          // If not, add it to the map with an initial count of 1
+          completedCategoriesCountMap[categoryName] = 1;
+        }
       }
     } catch (e) {
       log('Error fetching quiz completion data: $e');
     }
     return completedCategoriesCountMap;
+  }
+
+  Future<Map<String, List<String>>>
+      getCompletedCategoriesWithSubcategories() async {
+    final completedCategoriesMap = <String, List<String>>{};
+
+    try {
+      final quizData =
+          await _userProgressRepository.getQuizCompletionData(userId);
+
+      for (var quiz in quizData) {
+        final categoryName = quiz.categoryName;
+        final subcategoryName = quiz.subcategoryName;
+
+        // Ensure the category exists in the map, then add the completed subcategory
+        completedCategoriesMap.putIfAbsent(categoryName, () => []);
+        if (!completedCategoriesMap[categoryName]!.contains(subcategoryName)) {
+          completedCategoriesMap[categoryName]!.add(subcategoryName);
+        }
+      }
+    } catch (e) {
+      log('Error fetching quiz completion data: $e');
+    }
+
+    return completedCategoriesMap;
   }
 
   Future<String?> getDownloadableUrl(String gsUrl) async {
@@ -182,6 +213,7 @@ class CategoryCubit extends Cubit<CategoryState> {
           seconds,
         );
       }
+      fetchCategoriesWithSubcategories();
     } catch (e) {
       log('Error saving quiz data: $e');
     }

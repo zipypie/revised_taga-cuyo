@@ -11,18 +11,23 @@ abstract class CategoryState extends Equatable {
 class CategoriesWithSubcategoriesLoaded extends CategoryState {
   final List<CategoryWithSubcategories> categoriesWithSubcategories;
   final int currentSubcategoryIndex;
-  final Map<String, int> completedCategoriesCountMap; // Added this field
+  final Map<String, int> completedCategoriesCountMap;
+  final Map<String, List<String>>
+      completedSubcategoriesMap; // ✅ Added this field
 
   const CategoriesWithSubcategoriesLoaded(
-      this.categoriesWithSubcategories,
-      this.currentSubcategoryIndex,
-      this.completedCategoriesCountMap); // Initialize this field
+    this.categoriesWithSubcategories,
+    this.currentSubcategoryIndex,
+    this.completedCategoriesCountMap,
+    this.completedSubcategoriesMap, // ✅ Initialize this field
+  );
 
   @override
   List<Object?> get props => [
         categoriesWithSubcategories,
         currentSubcategoryIndex,
-        completedCategoriesCountMap
+        completedCategoriesCountMap,
+        completedSubcategoriesMap, // ✅ Include in props for comparison
       ];
 }
 

@@ -18,6 +18,9 @@ class CompletionCategoryQuizScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const textStyle = TextStyle(fontSize: 20);
+    const titleTextStyle = TextStyle(fontSize: 26, fontWeight: FontWeight.bold);
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -30,27 +33,27 @@ class CompletionCategoryQuizScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 Text(
                   'Quiz Completed!',
-                  style: const TextStyle(
-                      fontSize: 26, fontWeight: FontWeight.bold),
+                  style: titleTextStyle,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
                 Text(
                   'Time: $minutes minutes $seconds seconds',
-                  style: const TextStyle(fontSize: 20),
+                  style: textStyle,
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Win Rate: ${winRate.toStringAsFixed(2)}%',
-                  style: const TextStyle(fontSize: 20),
+                  'Win Rate: ${winRate >= 0 ? winRate.toStringAsFixed(2) : '0.00'}%',
+                  style: textStyle,
                 ),
                 const SizedBox(height: 30),
                 CustomButton(
-                    onTab: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                    text: 'Back to Category'), // Add this
+                  onTab: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  text: 'Back to Category', // Add this
+                ),
               ],
             ),
           ),

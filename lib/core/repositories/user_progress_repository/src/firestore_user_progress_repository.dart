@@ -141,10 +141,30 @@ class FirebaseUserProgressRepository implements UserProgressRepository {
       final quizCompletionEntity = quizCompletion.toEntity();
       final completionData = quizCompletionEntity.toMap();
 
-      // Use Firestore's auto-generated document ID
-      await completedQuizzesRef.add(completionData);
+      // Check if the quiz completion already exists with a higher score
+      final existingQuizSnapshot = await completedQuizzesRef
+          .where('categoryName', isEqualTo: category.getCategoryName)
+          .where('subcategoryName', isEqualTo: subcategory.subCategoryName)
+          .get();
 
-      log('Quiz completion data added or updated.');
+      if (existingQuizSnapshot.docs.isNotEmpty) {
+        // Get the existing score for this category/subcategory
+        final existingScore = existingQuizSnapshot.docs.first['score'];
+
+        // Only update if the new score is greater than the existing score
+        if (score > existingScore) {
+          await completedQuizzesRef
+              .doc(existingQuizSnapshot.docs.first.id)
+              .update(completionData);
+          log('Quiz completion data updated with new score.');
+        } else {
+          log('Score is not higher than the existing score. No update made.');
+        }
+      } else {
+        // If the quiz completion doesn't exist, add it
+        await completedQuizzesRef.add(completionData);
+        log('Quiz completion data added.');
+      }
     } catch (e) {
       log('Error saving quiz completion data: $e');
     }

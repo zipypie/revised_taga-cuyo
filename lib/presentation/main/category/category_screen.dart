@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taga_cuyo/core/constants/capitalize.dart';
+import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/utils/screen_utils.dart';
 import 'package:taga_cuyo/presentation/main/category/category_quiz_screen/category_quiz_screen.dart';
 import '../../../core/bloc/authentication_bloc/authentication_bloc.dart';
@@ -58,6 +59,7 @@ class _CategoryViewState extends State<_CategoryView> {
             categories: state.categoriesWithSubcategories,
             completedCategoriesCountMap:
                 state.completedCategoriesCountMap, // Access the count map
+            completedSubcategoriesMap: state.completedSubcategoriesMap,
           );
         } else if (state is CategoryError) {
           return Center(child: Text(state.message));
@@ -71,11 +73,13 @@ class _CategoryViewState extends State<_CategoryView> {
 class CategoryCard extends StatelessWidget {
   final List<CategoryWithSubcategories> categories;
   final Map<String, int> completedCategoriesCountMap;
+  final Map<String, List<String>> completedSubcategoriesMap;
 
   const CategoryCard({
     super.key,
     required this.categories,
     required this.completedCategoriesCountMap,
+    required this.completedSubcategoriesMap,
   });
 
   @override
@@ -90,6 +94,7 @@ class CategoryCard extends StatelessWidget {
           category: categoryWithSubs.category,
           subcategories: categoryWithSubs.subcategories,
           completedCategoriesCountMap: completedCategoriesCountMap,
+          completedSubcategoriesMap: completedSubcategoriesMap,
         );
       },
     );
@@ -100,12 +105,13 @@ class CategoryTile extends StatelessWidget {
   final CategoryModel category;
   final List<SubcategoryModel> subcategories;
   final Map<String, int> completedCategoriesCountMap;
-
+  final Map<String, List<String>> completedSubcategoriesMap;
   const CategoryTile({
     super.key,
     required this.category,
     required this.subcategories,
     required this.completedCategoriesCountMap,
+    required this.completedSubcategoriesMap,
   });
 
   @override
@@ -129,7 +135,11 @@ class CategoryTile extends StatelessWidget {
             completedCategoriesCount:
                 completedCategoriesCountMap[category.categoryName] ?? 0,
           ),
-          SubcategoriesSlider(subcategories: subcategories, category: category),
+          SubcategoriesSlider(
+            subcategories: subcategories,
+            category: category,
+            completedSubcategoriesMap: completedSubcategoriesMap,
+          ),
         ],
       ),
     );
@@ -172,9 +182,14 @@ class TopCategoryCard extends StatelessWidget {
 class SubcategoriesSlider extends StatelessWidget {
   final List<SubcategoryModel> subcategories;
   final CategoryModel category;
+  final Map<String, List<String>> completedSubcategoriesMap;
 
-  const SubcategoriesSlider(
-      {super.key, required this.subcategories, required this.category});
+  const SubcategoriesSlider({
+    super.key,
+    required this.subcategories,
+    required this.category,
+    required this.completedSubcategoriesMap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +200,10 @@ class SubcategoriesSlider extends StatelessWidget {
         child: Row(
           children: subcategories.map((subcategory) {
             return SubcategoryCard(
-                subcategory: subcategory, category: category);
+              subcategory: subcategory,
+              category: category,
+              completedSubcategoriesMap: completedSubcategoriesMap,
+            );
           }).toList(),
         ),
       ),
@@ -196,18 +214,23 @@ class SubcategoriesSlider extends StatelessWidget {
 class SubcategoryCard extends StatelessWidget {
   final CategoryModel category;
   final SubcategoryModel subcategory;
+  final Map<String, List<String>> completedSubcategoriesMap;
   final Map<String, String> _imageCache = {};
 
   SubcategoryCard({
     super.key,
     required this.subcategory,
     required this.category,
+    required this.completedSubcategoriesMap,
   });
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<CategoryCubit>();
     final cachedImage = _imageCache[subcategory.imagePath];
+    bool isCompleted = completedSubcategoriesMap[category.categoryName]
+            ?.contains(subcategory.subCategoryName) ??
+        false;
 
     return GestureDetector(
       onTap: () {
@@ -232,7 +255,7 @@ class SubcategoryCard extends StatelessWidget {
               height: ScreenUtils.getScreenHeight(context, subtract: 550) / 3,
               width: (ScreenUtils.getScreenWidth(context) - 80) / 3,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.white, // Add background color
                 borderRadius: BorderRadius.circular(25),
                 boxShadow: const [
                   BoxShadow(
@@ -243,26 +266,69 @@ class SubcategoryCard extends StatelessWidget {
                 ],
               ),
               clipBehavior: Clip.hardEdge,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(25),
-                child: cachedImage != null
-                    ? Image.network(cachedImage, fit: BoxFit.cover)
-                    : FutureBuilder<String?>(
-                        future: cubit.getDownloadableUrl(subcategory.imagePath),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            _imageCache[subcategory.imagePath] = snapshot.data!;
-                            return Image.network(
-                              snapshot.data!,
-                              fit: BoxFit.cover,
-                            );
-                          }
-                          return const Center(
-                            child:
-                                Icon(Icons.image, size: 50, color: Colors.grey),
-                          );
-                        },
+              child: Stack(
+                children: [
+                  // Image container
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: cachedImage != null
+                        ? Image.network(
+                            cachedImage,
+                            fit: BoxFit
+                                .cover, // Ensure image fills the container
+                            width: double.infinity, // Take full width
+                            height: double.infinity, // Take full height
+                          )
+                        : FutureBuilder<String?>(
+                            future:
+                                cubit.getDownloadableUrl(subcategory.imagePath),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                _imageCache[subcategory.imagePath] =
+                                    snapshot.data!;
+                                return Image.network(
+                                  snapshot.data!,
+                                  fit: BoxFit
+                                      .cover, // Ensure image fills the container
+                                  width: double.infinity, // Take full width
+                                  height: double.infinity, // Take full height
+                                );
+                              }
+                              return const Center(
+                                child: Icon(
+                                  Icons.image,
+                                  size: 50,
+                                  color: Colors.grey,
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                  // Completion overlay
+                  if (isCompleted)
+                    Positioned(
+                      top: 5,
+                      right: 5,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.check_circle_rounded,
+                          color: AppColors.correct.withValues(alpha: 0.9),
+                          size: 24,
+                        ),
                       ),
+                    ),
+                ],
               ),
             ),
             const SizedBox(height: 8),
