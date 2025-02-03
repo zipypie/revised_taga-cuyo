@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:taga_cuyo/core/repositories/category_repository.dart/src/entities/report_entity/report_entity.dart';
 import 'categories_repo.dart';
 import 'entities/categories_entity.dart';
 import 'models/categories_model.dart';
@@ -122,6 +123,34 @@ class FirebaseCategoryRepository implements CategoryRepository {
     } catch (e) {
       log('Error counting words for Subcategory Doc ID $subcategoryDocId: $e');
       throw Exception('Failed to count words for $subcategoryDocId');
+    }
+  }
+
+  @override
+  Future<void> submitReport(String userId, String categoryName,
+      String subcategoryName, String wordId, String reportReason) async {
+    try {
+      final reportEntity = ReportEntity(
+        userId: userId,
+        categoryName: categoryName,
+        subcategoryName: subcategoryName,
+        wordId: wordId,
+        reportReason: reportReason,
+        timeStamp: DateTime.now(),
+      );
+
+      // Convert ReportEntity to a Map for Firestore
+      final reportData = reportEntity.toJson();
+
+      // Add the report to the Firestore collection
+      await FirebaseFirestore.instance
+          .collection('user_reports')
+          .add(reportData);
+
+      log('Report submitted successfully by user: $userId');
+    } catch (e, stackTrace) {
+      log('Error submitting report: $e', stackTrace: stackTrace);
+      rethrow;
     }
   }
 }

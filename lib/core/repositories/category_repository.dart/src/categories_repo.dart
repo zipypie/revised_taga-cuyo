@@ -11,4 +11,7 @@ abstract class CategoryRepository {
       String categoryDocId, String subcategoryDocId);
 
   Future<int> countWords(String categoryDocId, String subcategoryDocId);
+
+  Future<void> submitReport(String userId, String categoryName,
+      String subcategoryName, String wordId, String reportReason);
 }

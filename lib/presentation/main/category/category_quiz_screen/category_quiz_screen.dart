@@ -81,6 +81,10 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
                 enableDrag: false,
                 isScrollControlled: true,
                 builder: (_) => CheckingScreen(
+                  userId: cubit.userId,
+                  categoryName: widget.category.getCategoryName,
+                  subcategoryName: widget.subcategory.subCategoryName,
+                  wordId: state.words[state.currentIndex].wordId,
                   isCorrect: state.isCorrect,
                   correctAnswer: state.correctAnswer,
                   index: state.currentIndex,

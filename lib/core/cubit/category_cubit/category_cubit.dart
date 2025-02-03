@@ -219,5 +219,20 @@ class CategoryCubit extends Cubit<CategoryState> {
     }
   }
 
+  Future<void> submitReport(String userId, String categoryName,
+      String subcategoryName, String wordId, String reportReason) async {
+    try {
+      await _categoryRepository.submitReport(
+        userId,
+        categoryName,
+        subcategoryName,
+        wordId,
+        reportReason,
+      );
+    } catch (e) {
+      log('Error submitting report: $e');
+    }
+  }
+
   Duration get elapsed => _stopwatch.elapsed;
 }

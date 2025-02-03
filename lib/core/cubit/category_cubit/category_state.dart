@@ -137,3 +137,12 @@ class QuizResultsComputed extends CategoryState {
   @override
   List<Object> get props => [score, minutes, winRate];
 }
+
+class ReportSubmittedState extends CategoryState {
+  final bool isSubmitted;
+
+  const ReportSubmittedState(this.isSubmitted);
+
+  @override
+  List<Object?> get props => [isSubmitted];
+}
