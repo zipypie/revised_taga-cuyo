@@ -242,7 +242,11 @@ class SubcategoryCard extends StatelessWidget {
               subcategory: subcategory,
             ),
           ),
-        );
+        ).then((_) {
+          if (context.mounted) {
+            context.read<CategoryCubit>().fetchCategoriesWithSubcategories();
+          }
+        });
       },
       child: Container(
         margin: const EdgeInsets.only(right: 20, top: 15),

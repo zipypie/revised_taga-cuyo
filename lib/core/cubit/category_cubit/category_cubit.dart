@@ -179,7 +179,7 @@ class CategoryCubit extends Cubit<CategoryState> {
     }
   }
 
-  void _completeQuiz(int totalQuestions) {
+  void _completeQuiz(int totalQuestions) async {
     _stopwatch.stop();
     final totalSeconds = _stopwatch.elapsedMilliseconds ~/ 1000;
     final minutes = totalSeconds ~/ 60;
@@ -204,7 +204,7 @@ class CategoryCubit extends Cubit<CategoryState> {
     try {
       // Save quiz data
       if (_currentCategory != null && _currentSubcategory != null) {
-        _userProgressRepository.saveQuizCompletionData(
+        await _userProgressRepository.saveQuizCompletionData(
           userId, // Use the authenticated user's ID
           _currentCategory!,
           _currentSubcategory!,
@@ -212,8 +212,9 @@ class CategoryCubit extends Cubit<CategoryState> {
           minutes,
           seconds,
         );
+
+        await getCompletedCategoriesWithSubcategories();
       }
-      fetchCategoriesWithSubcategories();
     } catch (e) {
       log('Error saving quiz data: $e');
     }
