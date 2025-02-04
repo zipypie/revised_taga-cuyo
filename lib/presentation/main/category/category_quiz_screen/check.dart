@@ -51,6 +51,7 @@ class CheckingScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Icon(
                     isCorrect ? Icons.check_circle : Icons.cancel,
@@ -60,7 +61,7 @@ class CheckingScreen extends StatelessWidget {
                   const SizedBox(width: 10),
                   Text(
                     isCorrect
-                        ? 'Great! Your answer is Correct!'
+                        ? 'Your answer is Correct!'
                         : 'Your answer is Wrong!',
                     style: TextStyle(
                       fontSize: 18,
@@ -71,21 +72,28 @@ class CheckingScreen extends StatelessWidget {
                 ],
               ),
               GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return ReportScreen(
-                        userId: userId,
-                        categoryName: categoryName,
-                        subcategoryName: subcategoryName,
-                        wordId: wordId,
-                      );
-                    },
-                  );
-                },
-                child: const Icon(Icons.report),
-              ),
+                  // Inside CheckingScreen's GestureDetector onTap
+                  onTap: () {
+                    final parentContext =
+                        context; // Capture CheckingScreen's context
+                    showDialog(
+                      barrierDismissible: false,
+                      context: parentContext,
+                      builder: (BuildContext dialogContext) {
+                        return ReportScreen(
+                          parentContext: parentContext, // Pass parent context
+                          userId: userId,
+                          categoryName: categoryName,
+                          subcategoryName: subcategoryName,
+                          wordId: wordId,
+                        );
+                      },
+                    );
+                  },
+                  child: Icon(
+                    Icons.bug_report_outlined,
+                    size: 40,
+                  )),
             ],
           ),
           if (!isCorrect)
