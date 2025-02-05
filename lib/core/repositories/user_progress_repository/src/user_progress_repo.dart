@@ -17,5 +17,10 @@ abstract class UserProgressRepository {
     int minutes,
     int seconds,
   );
+
   Future<List<CategoryQuizCompletion>> getQuizCompletionData(String userId);
+
+  Future<void> updateUserOnlineDates(String userId);
+
+  Future<void> updateUserProgressStatistics(String userId);
 }

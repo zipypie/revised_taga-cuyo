@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:taga_cuyo/core/repositories/user_progress_repository/src/entities/category_quiz_completion_entity.dart';
 import 'package:taga_cuyo/core/repositories/user_progress_repository/src/entities/my_user_progress_entity.dart';
 import 'package:taga_cuyo/core/repositories/user_progress_repository/src/models/my_user_progress.dart';
+import 'package:taga_cuyo/core/repositories/user_progress_repository/src/models/time_model/time_model.dart';
 import 'package:taga_cuyo/core/repositories/user_progress_repository/src/user_progress_repo.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/user_repository.dart';
 
@@ -185,5 +186,68 @@ class FirebaseUserProgressRepository implements UserProgressRepository {
               CategoryQuizCompletionEntity.fromMap(doc.data()),
             ))
         .toList();
+  }
+
+  @override
+  Future<void> updateUserOnlineDates(String userId) async {
+    final CollectionReference userSessions =
+        FirebaseFirestore.instance.collection('user_sessions');
+
+    String todayDate =
+        DateTime.now().toLocal().toString().split(' ')[0]; // YYYY-MM-DD format
+
+    DocumentReference userDoc = userSessions.doc(userId);
+
+    DocumentSnapshot docSnapshot = await userDoc.get();
+
+    if (!docSnapshot.exists ||
+        (docSnapshot.data() as Map<String, dynamic>?)?['date'] != todayDate) {
+      // Convert TimeModel to JSON before saving
+      final timeData = TimeModel(userId: userId, date: todayDate).toJson();
+      await userDoc.set(timeData);
+    }
+  }
+
+  @override
+  Future<void> updateUserProgressStatistics(String userId) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('user_sessions')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      if (snapshot.docs.isEmpty) return;
+
+      final sessionDates = snapshot.docs
+          .map((doc) => DateTime.parse((doc.data())['date']))
+          .toList()
+        ..sort();
+
+      final days = sessionDates.toSet().length;
+      final longestStreak = _calculateLongestStreak(sessionDates);
+
+      await usersProgressCollection.doc(userId).set({
+        'days': days,
+        'longestStreak': longestStreak,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      log("Error updating user progress statistics: $e");
+    }
+  }
+
+  int _calculateLongestStreak(List<DateTime> sessionDates) {
+    int longestStreak = 1, currentStreak = 1;
+
+    for (int i = 1; i < sessionDates.length; i++) {
+      if (sessionDates[i].difference(sessionDates[i - 1]).inDays == 1) {
+        currentStreak++;
+      } else {
+        longestStreak =
+            longestStreak < currentStreak ? currentStreak : longestStreak;
+        currentStreak = 1;
+      }
+    }
+
+    return longestStreak < currentStreak ? currentStreak : longestStreak;
   }
 }

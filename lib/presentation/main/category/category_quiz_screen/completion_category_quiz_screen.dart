@@ -41,6 +41,11 @@ class CompletionCategoryQuizScreen extends StatelessWidget {
                   'Time: $minutes minutes $seconds seconds',
                   style: textStyle,
                 ),
+                // const SizedBox(height: 10),
+                // Text(
+                //   'Score: $score',
+                //   style: textStyle,
+                // ),
                 const SizedBox(height: 10),
                 Text(
                   'Win Rate: ${winRate >= 0 ? winRate.toStringAsFixed(2) : '0.00'}%',

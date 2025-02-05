@@ -28,6 +28,11 @@ class MainApp extends StatelessWidget {
 
   const MainApp(this.userRepository, this.userProgressRepository, {super.key});
 
+  Future<void> _setUserOnlineStatus(BuildContext context, String userId) async {
+    await userProgressRepository.updateUserOnlineDates(userId);
+    await userProgressRepository.updateUserProgressStatistics(userId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -92,6 +97,8 @@ class MainApp extends StatelessWidget {
               // Trigger category fetch on successful login
               final userId = state.user?.uid; // Extract the user ID
               if (userId != null) {
+                _setUserOnlineStatus(context, userId);
+
                 context
                     .read<CategoryCubit>()
                     .fetchCategoriesWithSubcategories(); // Fetch categories for the authenticated user
