@@ -1,1 +1,1 @@
-export 'lesson_entity.dart';
+export 'lesson_entity/lesson_entity.dart';

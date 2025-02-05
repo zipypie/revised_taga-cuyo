@@ -21,14 +21,10 @@ ReportEntity _$ReportEntityFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ReportEntity {
   String get userId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'category_name')
   String get categoryName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'subcategory_name')
   String get subcategoryName => throw _privateConstructorUsedError;
   String get reportReason => throw _privateConstructorUsedError;
-  @JsonKey(name: 'wordId')
   String get wordId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'time_stamp')
   DateTime get timeStamp => throw _privateConstructorUsedError;
 
   /// Serializes this ReportEntity to a JSON map.
@@ -49,11 +45,11 @@ abstract class $ReportEntityCopyWith<$Res> {
   @useResult
   $Res call(
       {String userId,
-      @JsonKey(name: 'category_name') String categoryName,
-      @JsonKey(name: 'subcategory_name') String subcategoryName,
+      String categoryName,
+      String subcategoryName,
       String reportReason,
-      @JsonKey(name: 'wordId') String wordId,
-      @JsonKey(name: 'time_stamp') DateTime timeStamp});
+      String wordId,
+      DateTime timeStamp});
 }
 
 /// @nodoc
@@ -117,11 +113,11 @@ abstract class _$$ReportEntityImplCopyWith<$Res>
   @useResult
   $Res call(
       {String userId,
-      @JsonKey(name: 'category_name') String categoryName,
-      @JsonKey(name: 'subcategory_name') String subcategoryName,
+      String categoryName,
+      String subcategoryName,
       String reportReason,
-      @JsonKey(name: 'wordId') String wordId,
-      @JsonKey(name: 'time_stamp') DateTime timeStamp});
+      String wordId,
+      DateTime timeStamp});
 }
 
 /// @nodoc
@@ -178,11 +174,11 @@ class __$$ReportEntityImplCopyWithImpl<$Res>
 class _$ReportEntityImpl implements _ReportEntity {
   const _$ReportEntityImpl(
       {required this.userId,
-      @JsonKey(name: 'category_name') required this.categoryName,
-      @JsonKey(name: 'subcategory_name') required this.subcategoryName,
+      required this.categoryName,
+      required this.subcategoryName,
       required this.reportReason,
-      @JsonKey(name: 'wordId') required this.wordId,
-      @JsonKey(name: 'time_stamp') required this.timeStamp});
+      required this.wordId,
+      required this.timeStamp});
 
   factory _$ReportEntityImpl.fromJson(Map<String, dynamic> json) =>
       _$$ReportEntityImplFromJson(json);
@@ -190,18 +186,14 @@ class _$ReportEntityImpl implements _ReportEntity {
   @override
   final String userId;
   @override
-  @JsonKey(name: 'category_name')
   final String categoryName;
   @override
-  @JsonKey(name: 'subcategory_name')
   final String subcategoryName;
   @override
   final String reportReason;
   @override
-  @JsonKey(name: 'wordId')
   final String wordId;
   @override
-  @JsonKey(name: 'time_stamp')
   final DateTime timeStamp;
 
   @override
@@ -250,11 +242,10 @@ class _$ReportEntityImpl implements _ReportEntity {
 abstract class _ReportEntity implements ReportEntity {
   const factory _ReportEntity(
       {required final String userId,
-      @JsonKey(name: 'category_name') required final String categoryName,
-      @JsonKey(name: 'subcategory_name') required final String subcategoryName,
+      required final String categoryName,
+      required final String subcategoryName,
       required final String reportReason,
-      @JsonKey(name: 'wordId') required final String wordId,
-      @JsonKey(name: 'time_stamp')
+      required final String wordId,
       required final DateTime timeStamp}) = _$ReportEntityImpl;
 
   factory _ReportEntity.fromJson(Map<String, dynamic> json) =
@@ -263,18 +254,14 @@ abstract class _ReportEntity implements ReportEntity {
   @override
   String get userId;
   @override
-  @JsonKey(name: 'category_name')
   String get categoryName;
   @override
-  @JsonKey(name: 'subcategory_name')
   String get subcategoryName;
   @override
   String get reportReason;
   @override
-  @JsonKey(name: 'wordId')
   String get wordId;
   @override
-  @JsonKey(name: 'time_stamp')
   DateTime get timeStamp;
 
   /// Create a copy of ReportEntity

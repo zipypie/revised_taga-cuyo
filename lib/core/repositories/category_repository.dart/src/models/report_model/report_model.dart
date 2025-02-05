@@ -8,11 +8,11 @@ part 'report_model.g.dart';
 class ReportModel with _$ReportModel {
   const factory ReportModel({
     required String userId,
-    @JsonKey(name: 'category_name') required String categoryName,
-    @JsonKey(name: 'subcategory_name') required String subcategoryName,
+    required String categoryName,
+    required String subcategoryName,
     required String reportReason,
-    @JsonKey(name: 'wordId') required String wordId,
-    @JsonKey(name: 'time_stamp') required DateTime timeStamp,
+    required String wordId,
+    required DateTime timeStamp,
   }) = _ReportModel;
 
   factory ReportModel.fromJson(Map<String, dynamic> json) =>
