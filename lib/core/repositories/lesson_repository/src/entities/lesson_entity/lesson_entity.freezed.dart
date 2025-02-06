@@ -20,6 +20,7 @@ LessonEntity _$LessonEntityFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$LessonEntity {
+  String get id => throw _privateConstructorUsedError;
   String get lessonName => throw _privateConstructorUsedError;
   String get lessonId => throw _privateConstructorUsedError;
   String get lessonImagePath => throw _privateConstructorUsedError;
@@ -40,7 +41,8 @@ abstract class $LessonEntityCopyWith<$Res> {
           LessonEntity value, $Res Function(LessonEntity) then) =
       _$LessonEntityCopyWithImpl<$Res, LessonEntity>;
   @useResult
-  $Res call({String lessonName, String lessonId, String lessonImagePath});
+  $Res call(
+      {String id, String lessonName, String lessonId, String lessonImagePath});
 }
 
 /// @nodoc
@@ -58,11 +60,16 @@ class _$LessonEntityCopyWithImpl<$Res, $Val extends LessonEntity>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? lessonName = null,
     Object? lessonId = null,
     Object? lessonImagePath = null,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       lessonName: null == lessonName
           ? _value.lessonName
           : lessonName // ignore: cast_nullable_to_non_nullable
@@ -87,7 +94,8 @@ abstract class _$$LessonEntityImplCopyWith<$Res>
       __$$LessonEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String lessonName, String lessonId, String lessonImagePath});
+  $Res call(
+      {String id, String lessonName, String lessonId, String lessonImagePath});
 }
 
 /// @nodoc
@@ -103,11 +111,16 @@ class __$$LessonEntityImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? lessonName = null,
     Object? lessonId = null,
     Object? lessonImagePath = null,
   }) {
     return _then(_$LessonEntityImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       lessonName: null == lessonName
           ? _value.lessonName
           : lessonName // ignore: cast_nullable_to_non_nullable
@@ -128,13 +141,16 @@ class __$$LessonEntityImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$LessonEntityImpl implements _LessonEntity {
   const _$LessonEntityImpl(
-      {required this.lessonName,
+      {required this.id,
+      required this.lessonName,
       required this.lessonId,
       required this.lessonImagePath});
 
   factory _$LessonEntityImpl.fromJson(Map<String, dynamic> json) =>
       _$$LessonEntityImplFromJson(json);
 
+  @override
+  final String id;
   @override
   final String lessonName;
   @override
@@ -144,7 +160,7 @@ class _$LessonEntityImpl implements _LessonEntity {
 
   @override
   String toString() {
-    return 'LessonEntity(lessonName: $lessonName, lessonId: $lessonId, lessonImagePath: $lessonImagePath)';
+    return 'LessonEntity(id: $id, lessonName: $lessonName, lessonId: $lessonId, lessonImagePath: $lessonImagePath)';
   }
 
   @override
@@ -152,6 +168,7 @@ class _$LessonEntityImpl implements _LessonEntity {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LessonEntityImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.lessonName, lessonName) ||
                 other.lessonName == lessonName) &&
             (identical(other.lessonId, lessonId) ||
@@ -163,7 +180,7 @@ class _$LessonEntityImpl implements _LessonEntity {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, lessonName, lessonId, lessonImagePath);
+      Object.hash(runtimeType, id, lessonName, lessonId, lessonImagePath);
 
   /// Create a copy of LessonEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -183,13 +200,16 @@ class _$LessonEntityImpl implements _LessonEntity {
 
 abstract class _LessonEntity implements LessonEntity {
   const factory _LessonEntity(
-      {required final String lessonName,
+      {required final String id,
+      required final String lessonName,
       required final String lessonId,
       required final String lessonImagePath}) = _$LessonEntityImpl;
 
   factory _LessonEntity.fromJson(Map<String, dynamic> json) =
       _$LessonEntityImpl.fromJson;
 
+  @override
+  String get id;
   @override
   String get lessonName;
   @override

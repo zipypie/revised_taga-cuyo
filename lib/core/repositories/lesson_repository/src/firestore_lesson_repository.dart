@@ -29,10 +29,10 @@ class FirebaseLessonRepository implements LessonRepository {
   }
 
   @override
-  Future<List<LessonQuizModel>> getLessonQuiz(String lessonId) async {
+  Future<List<LessonQuizModel>> getLessonQuiz() async {
     try {
       // Fetch the quizzes sub-collection for the specific lessonId
-      final lessonDocRef = lessonsCollection.doc(lessonId);
+      final lessonDocRef = lessonsCollection.doc();
       final lessonQuizzesCollection = lessonDocRef.collection('words');
 
       final QuerySnapshot snapshot = await lessonQuizzesCollection.get();
@@ -51,15 +51,15 @@ class FirebaseLessonRepository implements LessonRepository {
   }
 
   @override
-  Future<int> getLessonQuizCount(String lessonId) async {
+  Future<int> getLessonQuizCount(String id) async {
     try {
-      // Fetch the quizzes sub-collection for the specific lessonId
-      final lessonDocRef = lessonsCollection.doc(lessonId);
+      final lessonDocRef = lessonsCollection.doc(id);
       final lessonQuizzesCollection = lessonDocRef.collection('words');
 
       final QuerySnapshot snapshot = await lessonQuizzesCollection.get();
 
-      // Return the length of the documents in the collection
+      log('Lesson ID: , Quiz Count: ${snapshot.docs.length}'); // Debugging
+
       return snapshot.docs.length;
     } catch (e) {
       log('Error fetching lesson quizzes count: $e');

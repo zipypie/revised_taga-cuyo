@@ -7,6 +7,7 @@ part 'lesson_entity.g.dart';
 @freezed
 class LessonEntity with _$LessonEntity {
   const factory LessonEntity({
+    required String id,
     required String lessonName,
     required String lessonId,
     required String lessonImagePath,
@@ -18,6 +19,7 @@ class LessonEntity with _$LessonEntity {
   factory LessonEntity.fromSnapshot(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return LessonEntity(
+      id: doc.id,
       lessonName: data['lesson_name'],
       lessonId: data['lesson_id'],
       lessonImagePath: data['image_path'],

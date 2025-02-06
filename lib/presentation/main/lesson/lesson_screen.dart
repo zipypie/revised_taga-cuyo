@@ -6,7 +6,7 @@ import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/core/repositories/lesson_repository/src/models/lesson_model/lesson_model.dart';
 import '../../../core/constants/images.dart';
-import '../../../core/cubit/cubit/lesson_cubit.dart';
+import '../../../core/cubit/lesson_cubit/lesson_cubit.dart';
 
 class LessonScreen extends StatefulWidget {
   const LessonScreen({super.key});

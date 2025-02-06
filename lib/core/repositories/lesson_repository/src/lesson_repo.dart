@@ -4,7 +4,7 @@ import 'package:taga_cuyo/core/repositories/lesson_repository/src/models/lesson_
 abstract class LessonRepository {
   Future<List<LessonModel>> getLesson();
 
-  Future<List<LessonQuizModel>> getLessonQuiz(String lessonId);
+  Future<List<LessonQuizModel>> getLessonQuiz();
 
-  Future<int> getLessonQuizCount(String lessonId);
+  Future<int> getLessonQuizCount(String id);
 }

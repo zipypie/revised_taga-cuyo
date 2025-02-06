@@ -7,6 +7,7 @@ part 'lesson_model.g.dart';
 @freezed
 class LessonModel with _$LessonModel {
   const factory LessonModel({
+    required String id,
     required String lessonName,
     required String lessonId,
     required String lessonImagePath,
@@ -17,6 +18,7 @@ class LessonModel with _$LessonModel {
 
   factory LessonModel.fromEntity(LessonEntity entity) {
     return LessonModel(
+      id: entity.id,
       lessonName: entity.lessonName,
       lessonId: entity.lessonId,
       lessonImagePath: entity.lessonImagePath,
