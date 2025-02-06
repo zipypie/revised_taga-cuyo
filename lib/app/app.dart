@@ -9,7 +9,9 @@ import 'package:taga_cuyo/core/bloc/sign_in_bloc/sign_in_bloc.dart';
 import 'package:taga_cuyo/core/bloc/sign_up_bloc/sign_up_bloc.dart';
 import 'package:taga_cuyo/core/cubit/category_cubit/category_cubit.dart';
 import 'package:taga_cuyo/core/cubit/change_password_cubit/change_password_cubit.dart';
+import 'package:taga_cuyo/core/cubit/cubit/lesson_cubit.dart';
 import 'package:taga_cuyo/core/repositories/category_repository.dart/src/firestore_user_progress_repository.dart';
+import 'package:taga_cuyo/core/repositories/lesson_repository/src/firestore_lesson_repository.dart';
 import 'package:taga_cuyo/core/repositories/user_progress_repository/src/user_progress_repo.dart';
 import 'package:taga_cuyo/core/repositories/user_repository/src/user_repo.dart';
 import 'package:taga_cuyo/presentation/onboarding/get_started/get_started.dart';
@@ -62,6 +64,9 @@ class MainApp extends StatelessWidget {
               userId, // Now using the user ID from AuthenticationBloc
             )..fetchCategoriesWithSubcategories();
           },
+        ),
+        BlocProvider(
+          create: (context) => LessonCubit(FirebaseLessonRepository()),
         ),
         BlocProvider(
           create: (context) => SignUpBloc(

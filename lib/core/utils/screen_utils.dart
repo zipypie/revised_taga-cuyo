@@ -5,7 +5,7 @@ class ScreenUtils {
     return MediaQuery.of(context).size.width;
   }
 
-  static double getScreenHeight(BuildContext context, {double subtract = 0}) {
+  static double getScreenHeight(BuildContext context, {double subtract = 130}) {
     return MediaQuery.of(context).size.height - subtract;
   }
 }

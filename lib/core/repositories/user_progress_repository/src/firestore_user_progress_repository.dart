@@ -122,9 +122,6 @@ class FirebaseUserProgressRepository implements UserProgressRepository {
           'seconds': remainingSeconds, // Store remaining seconds
           'categories':
               completedCategoriesCount, // Set categories to 0 initially
-          'lessons': 0,
-          'days': 0,
-          'longestStreak': 0,
         });
 
         log('New user progress document created with initial values.');

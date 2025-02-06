@@ -47,13 +47,13 @@ class CategoryCubit extends Cubit<CategoryState> {
       // Fetch completed categories count
       final completedCategoriesCountMap = await getCompletedCategoriesCount();
       final completedSubcategoriesMap =
-          await getCompletedCategoriesWithSubcategories(); // ✅ Get completed subcategories
+          await getCompletedCategoriesWithSubcategories();
 
       emit(CategoriesWithSubcategoriesLoaded(
         categoriesWithSubs,
         currentSubcategoryIndex,
         completedCategoriesCountMap,
-        completedSubcategoriesMap, // ✅ Pass it here
+        completedSubcategoriesMap,
       ));
     } catch (e) {
       emit(CategoryError('Failed to load data: $e'));
