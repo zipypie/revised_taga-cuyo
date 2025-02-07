@@ -5,6 +5,7 @@ import 'package:taga_cuyo/core/utils/screen_utils.dart';
 import 'package:taga_cuyo/core/constants/colors.dart';
 import 'package:taga_cuyo/core/constants/fonts.dart';
 import 'package:taga_cuyo/core/repositories/lesson_repository/src/models/lesson_model/lesson_model.dart';
+import 'package:taga_cuyo/presentation/main/lesson/lesson_quiz/lesson_quiz_screen.dart';
 import '../../../core/constants/images.dart';
 import '../../../core/cubit/lesson_cubit/lesson_cubit.dart';
 
@@ -153,7 +154,13 @@ class _LessonScreenState extends State<LessonScreen> {
               ),
               CustomButton(
                 onTab: () {
-                  // Navigate to quiz screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) =>
+                          const LessonQuizScreen(),
+                    ),
+                  );
                 },
                 text: 'Enter',
               ),

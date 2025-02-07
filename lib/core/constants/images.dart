@@ -10,6 +10,7 @@ class LocalImages {
   static const String getStarted1 = 'assets/images/get_started_1.png';
   static const String getStarted2 = 'assets/images/get_started_2.png';
   static const String getStarted3 = 'assets/images/get_started_3.png';
+  static const String teacher = 'assets/images/teacher.png';
 
   // Widget factories for direct usage
   static Widget cashew1Image(

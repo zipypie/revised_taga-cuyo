@@ -33,7 +33,6 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
   String? selectedOption;
   final Map<String, Future<String?>> _imageUrlFutures = {};
 
-  // Add this method to cache the image URL futures
   Future<String?> _getImageUrl(String imagePath) {
     if (!_imageUrlFutures.containsKey(imagePath)) {
       _imageUrlFutures[imagePath] =
@@ -119,7 +118,6 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
                 return Center(child: Text(state.message));
               }
               if (state is WordsLoaded || state is CheckAnswerResult) {
-                // Extract current index and words based on the state type
                 int currentIndex;
                 List<WordsModel> words;
                 if (state is WordsLoaded) {
@@ -132,19 +130,25 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
                 }
                 final currentWord = words[currentIndex];
 
-                return Stack(
+                return Column(
                   children: [
-                    _buildQuizContent(
-                        words, currentWord, currentIndex), // Pass currentIndex
-                    _buildQuizControls(words.length, currentIndex),
-                    Positioned(
-                      top: 20,
-                      right: 20,
-                      child: GestureDetector(
-                        onTap: () => CloseScreen.showCloseBottomSheet(context),
-                        child: const Icon(Icons.close, size: 30),
+                    Expanded(
+                      child: Stack(
+                        children: [
+                          _buildQuizContent(words, currentWord, currentIndex),
+                          Positioned(
+                            top: 20,
+                            right: 20,
+                            child: GestureDetector(
+                              onTap: () =>
+                                  CloseScreen.showCloseBottomSheet(context),
+                              child: const Icon(Icons.close, size: 30),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    _buildQuizControls(words.length, currentIndex),
                   ],
                 );
               }
@@ -159,26 +163,28 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
   Widget _buildQuizContent(
     List<WordsModel> words,
     WordsModel currentWord,
-    int currentIndex, // Receive currentIndex directly
+    int currentIndex,
   ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            capitalizeFirstLetter(widget.category.getCategoryName),
-            style: TextStyles.h2b.copyWith(color: AppColors.grey),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            capitalizeFirstLetter(widget.subcategory.subCategoryName),
-            style: TextStyles.h1b,
-          ),
-          _buildImage(currentWord),
-          _buildWordText(currentWord),
-          _buildOptions(words, currentIndex), // Pass currentIndex
-        ],
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              capitalizeFirstLetter(widget.category.getCategoryName),
+              style: TextStyles.h2b.copyWith(color: AppColors.grey),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              capitalizeFirstLetter(widget.subcategory.subCategoryName),
+              style: TextStyles.h1b,
+            ),
+            _buildImage(currentWord),
+            _buildWordText(currentWord),
+            _buildOptions(words, currentIndex),
+          ],
+        ),
       ),
     );
   }
@@ -210,7 +216,7 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
           child: Icon(Icons.image, size: 50, color: Colors.grey));
     }
     return ClipRRect(
-      borderRadius: BorderRadius.circular(10), // Adjust the radius as needed
+      borderRadius: BorderRadius.circular(10),
       child: CachedNetworkImage(
         imageUrl: snapshot.data!,
         fit: BoxFit.cover,
@@ -256,22 +262,25 @@ class _CategoryQuizScreenState extends State<CategoryQuizScreen> {
               ),
             )),
         const SizedBox(height: 20),
-        Opacity(
-          opacity: selectedOption != null ? 1.0 : 0.3,
-          child: CustomButton(
-            onTab: _checkAnswer,
-            text: 'Check Answer',
-          ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Opacity(
+              opacity: selectedOption != null ? 1.0 : 0.3,
+              child: CustomButton(
+                onTab: _checkAnswer,
+                text: 'Check Answer',
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
   Widget _buildQuizControls(int totalQuestions, int currentIndex) {
-    return Positioned(
-      bottom: 20,
-      left: 20,
-      right: 20,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
         children: [
           Expanded(
